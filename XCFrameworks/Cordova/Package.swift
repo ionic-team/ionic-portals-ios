@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Cordova",
-            path: "XCFrameworks/Cordova.xcframework"
+            path: "Cordova.xcframework"
         )
     ]
 )

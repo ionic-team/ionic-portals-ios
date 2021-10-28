@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [
         .package(
             name: "Cordova",
-            path: "XCFrameworks/Cordova"
+            path: "./XCFrameworks/Cordova"
         )
     ],
     targets: [
