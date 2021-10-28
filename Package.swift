@@ -27,7 +27,11 @@ let package = Package(
         ),
         .binaryTarget(
             name: "Capacitor",
-            path: "Capacitor.xcframework"
+            path: "XCFrameworks/Capacitor.xcframework"
+        ),
+        .binaryTarget(
+            name: "Cordova",
+            path: "XCFrameworks/Capacitor.xcframework"
         )
     ]
 )
