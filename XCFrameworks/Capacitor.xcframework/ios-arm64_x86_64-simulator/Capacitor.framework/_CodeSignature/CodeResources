@@ -62,7 +62,7 @@
 		</data>
 		<key>Modules/Capacitor.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		mYa6dpQ09VIfe1mULrhlqeqzETM=
+		Q5lF6ngpR4CuHVHkxNSxZIJOMwg=
 		</data>
 		<key>Modules/Capacitor.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -74,7 +74,7 @@
 		</data>
 		<key>Modules/Capacitor.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		mYa6dpQ09VIfe1mULrhlqeqzETM=
+		Q5lF6ngpR4CuHVHkxNSxZIJOMwg=
 		</data>
 		<key>Modules/Capacitor.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
@@ -86,7 +86,7 @@
 		</data>
 		<key>Modules/Capacitor.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		7XbK5K2AKVXtcKBxeAuyR+JHQVs=
+		S4+ZkWSwu2IngDB3LsjSaj4GkMI=
 		</data>
 		<key>Modules/Capacitor.swiftmodule/x86_64.swiftdoc</key>
 		<data>
@@ -98,11 +98,11 @@
 		</data>
 		<key>Modules/Capacitor.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		7XbK5K2AKVXtcKBxeAuyR+JHQVs=
+		S4+ZkWSwu2IngDB3LsjSaj4GkMI=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
-		AoD4mh+fmz+7pOp89Mq1KOyfEeo=
+		vuWLMHyrFwzx0O9QMuR1xbQpbgg=
 		</data>
 		<key>PrivateHeaders/CAPBridgedJSTypes.h</key>
 		<data>
@@ -210,7 +210,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			NxpmX+LbXkrxp+FGAtCIxblCUEOtIXBo2mHpqUP0G60=
+			E4Vtilyz3P6fAyoUP2pwBrTYiUhX5QWMsF7/to8mJHI=
 			</data>
 		</dict>
 		<key>Modules/Capacitor.swiftmodule/arm64.swiftdoc</key>
@@ -231,7 +231,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			NxpmX+LbXkrxp+FGAtCIxblCUEOtIXBo2mHpqUP0G60=
+			E4Vtilyz3P6fAyoUP2pwBrTYiUhX5QWMsF7/to8mJHI=
 			</data>
 		</dict>
 		<key>Modules/Capacitor.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
@@ -252,7 +252,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ku6fdQ4hc0vFAoTTUz8U3v0IAZYVH76XuWH8+VgPKZk=
+			ktpQ8JiPrqsReqp0lGMyt5tYI3h13uXBbCJK2yYHJ/0=
 			</data>
 		</dict>
 		<key>Modules/Capacitor.swiftmodule/x86_64.swiftdoc</key>
@@ -273,14 +273,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ku6fdQ4hc0vFAoTTUz8U3v0IAZYVH76XuWH8+VgPKZk=
+			ktpQ8JiPrqsReqp0lGMyt5tYI3h13uXBbCJK2yYHJ/0=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			iIsblyechy1S+CdT/Ze97BvzqMLW/6fINN3k8ks5mMA=
+			tfVOJY9AkqifWqnRdWjyEw+j0uh8AnVco32JJkHjojI=
 			</data>
 		</dict>
 		<key>PrivateHeaders/CAPBridgedJSTypes.h</key>
