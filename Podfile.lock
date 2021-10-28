@@ -1,0 +1,21 @@
+PODS:
+  - Capacitor (3.2.2):
+    - CapacitorCordova
+  - CapacitorCordova (3.2.2)
+
+DEPENDENCIES:
+  - Capacitor
+  - CapacitorCordova
+
+SPEC REPOS:
+  trunk:
+    - Capacitor
+    - CapacitorCordova
+
+SPEC CHECKSUMS:
+  Capacitor: 393373b4c4e53bbb8d05a4977cd445ea0c53c6cd
+  CapacitorCordova: 7f8d701b1c863b861a467a43d635873382f88a04
+
+PODFILE CHECKSUM: dd17c059883acce829bd588d1839469c5653b692
+
+COCOAPODS: 1.11.0
