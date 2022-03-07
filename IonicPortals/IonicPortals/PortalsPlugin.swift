@@ -14,7 +14,7 @@ public class PortalsPlugin: CAPPlugin {
             call.reject("topic not provided")
             return
         }
-        let data = call.getAny("data")
+        let data = call.getValue("data")
         PortalsPlugin.publish(topic, data!)
         call.resolve()
     }
@@ -26,7 +26,7 @@ public class PortalsPlugin: CAPPlugin {
         }
         call.keepAlive = true
         let ref = PortalsPlugin.subscribe(topic, {result in
-            call.resolve(result.toMap())
+            call.resolve(result.dictionaryRepresentation)
         })
         call.resolve([
             "topic": topic,
@@ -61,7 +61,7 @@ public class PortalsPlugin: CAPPlugin {
         return PortalsPlugin.subscriptionRef
     }
     
-    public static func publish(_ topic: String, _ data: Any) {
+    public static func publish(_ topic: String, _ data: JSValue) {
         if let subscription = PortalsPlugin.subscriptions[topic] {
             for(ref, listener) in subscription {
                 let result = SubscriptionResult(topic: topic, data: data, subscriptionRef: ref)
@@ -81,10 +81,10 @@ public class PortalsPlugin: CAPPlugin {
 
 public struct SubscriptionResult {
     public var topic: String
-    public var data: Any
+    public var data: JSValue
     public var subscriptionRef: Int
     
-    func toMap() -> [String: Any] {
+    var dictionaryRepresentation: [String: Any] {
         return [
             "topic": self.topic,
             "data": self.data,
@@ -92,4 +92,5 @@ public struct SubscriptionResult {
         ]
     }
 }
+
 
