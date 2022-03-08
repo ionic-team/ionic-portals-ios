@@ -30,7 +30,7 @@ jobs:
       - name: Get Package Version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
-        with:
+        with: 
           path: core/
   verify-ios:
     runs-on: macos-11
@@ -43,10 +43,8 @@ jobs:
       - name: Install Cocoapods
         run: gem install cocoapods
       - run: pod install
-        working-directory: ./ios
       - run: carthage bootstrap --use-xcframeworks
       - run: npm run verify
-        working-directory: ./ios
   publish-ios:
     runs-on: macos-11
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release') && (!contains(github.event.head_commit.message, 'rc') && !contains(github.event.head_commit.message, 'beta') && !contains(github.event.head_commit.message, 'alpha'))
