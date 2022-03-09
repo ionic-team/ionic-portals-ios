@@ -3,35 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.5.0](https://github.com/ionic-team/ionic-portals/compare/0.4.2...0.5.0) (2022-02-16)
+## [0.5.1](https://github.com/ionic-team/ionic-portals/compare/0.5.0...0.5.1) (2022-03-09)
+
+### Bug Fixes
+
+* BREAKING CHANGE - Changed to use Capacitor 'CAPWebView' - frame parameter no longer required on CAPWebView and PortalWebView
+* Fixed possible race condition in pub/sub connections
+* Remove Frame-based layout
+* Seperate platforms into individual git repositories
+
+### Features
+* iOS now has a SwiftUI View! Use `PortalUIWebView`.
+
+## [0.5.0](https://github.com/ionic-team/ionic-portals/compare/0.4.2...0.5.0) (2022-02-16)
 
 **Note:** Version bump only for package ionic-portals-ios
 
-
-
-
-
 ## [0.4.1](https://github.com/ionic-team/ionic-portals/compare/0.4.0...0.4.1) (2022-01-27)
-
 
 ### Bug Fixes
 
 * Remove missing .xcframework files ([#113](https://github.com/ionic-team/ionic-portals/issues/113)) ([e9aac61](https://github.com/ionic-team/ionic-portals/commit/e9aac611ebe05d5d52f503486ac26eb6a7f25709))
 
-
-
-
-
 ## [0.3.1](https://github.com/ionic-team/ionic-portals/compare/0.3.0...0.3.1) (2021-12-17)
 
 **Note:** Version bump only for package ionic-portals-ios
 
-
-
-
-
-# [0.3.0](https://github.com/ionic-team/ionic-portals/compare/0.3.0-pre...0.3.0) (2021-11-18)
-
+## [0.3.0](https://github.com/ionic-team/ionic-portals/compare/0.3.0-pre...0.3.0) (2021-11-18)
 
 ### Bug Fixes
 
@@ -45,31 +43,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **ios:** diverse use cases via [@objc](https://github.com/objc) ([#91](https://github.com/ionic-team/ionic-portals/issues/91)) ([39ee7f7](https://github.com/ionic-team/ionic-portals/commit/39ee7f7d2945420a7e3ef24064ea951f2c7e0e48))
 * Add Github Action to generate .xcframwork on release ([#93](https://github.com/ionic-team/ionic-portals/issues/93)) ([2158843](https://github.com/ionic-team/ionic-portals/commit/215884321f037feeea07a8cb09246bc1264b8d19))
 
-
-
-
-
 ## [0.2.2](https://github.com/ionic-team/ionic-portals/compare/0.2.1...0.2.2) (2021-10-15)
 
 **Note:** Version bump only for package ionic-portals-ios
 
-
-
-
-
 ## [0.2.1](https://github.com/ionic-team/ionic-portals/compare/0.2.0...0.2.1) (2021-09-27)
-
 
 ### Bug Fixes
 
 * **ios:** remove unused method ([#55](https://github.com/ionic-team/ionic-portals/issues/55)) ([ac46b82](https://github.com/ionic-team/ionic-portals/commit/ac46b822c1e92048b58812a54ed2cc22b676a9a2))
 
-
-
-
-
-# 0.2.0 (2021-09-14)
-
+## [0.2.0](https://github.com/ionic-team/ionic-portals/compare/0.1.4...0.2.0) (2021-09-14)
 
 ### Bug Fixes
 
@@ -86,49 +70,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **ios:** Scaffolded iOS project ([e00ace9](https://github.com/ionic-team/ionic-portals/commit/e00ace93512994001fe60107d15c54cd65fab530))
 * **iOS:** PortalBuilder class ([619795f](https://github.com/ionic-team/ionic-portals/commit/619795f4fb27d16babe615c563ce9f5fb64df1cc))
 
-
-
-
-
 ## [0.1.4](https://github.com/ionic-team/ionic-portals/compare/0.1.3...0.1.4) (2021-09-14)
 
 **Note:** Version bump only for package ionic-portals-ios
-
-
-
-
 
 ## [0.1.3](https://github.com/ionic-team/ionic-portals/compare/0.1.2...0.1.3) (2021-09-14)
 
 **Note:** Version bump only for package ionic-portals-ios
 
-
-
-
-
 ## [0.1.2](https://github.com/ionic-team/ionic-portals/compare/0.1.1...0.1.2) (2021-09-14)
 
 **Note:** Version bump only for package ionic-portals-ios
-
-
-
-
 
 ## [0.1.1](https://github.com/ionic-team/ionic-portals/compare/0.1.0...0.1.1) (2021-09-14)
 
 **Note:** Version bump only for package ionic-portals-ios
 
-
-
-
-
-# 0.1.0 (2021-09-14)
-
+## 0.1.0 (2021-09-14)
 
 ### Bug Fixes
 
 * **iOS:** Add podspec and podfile to project ([52a4090](https://github.com/ionic-team/ionic-portals/commit/52a409048e2d4860e5afe692b711326eff8397f2))
-
 
 ### Features
 
