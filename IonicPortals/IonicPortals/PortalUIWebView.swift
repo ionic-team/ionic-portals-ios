@@ -8,43 +8,21 @@
 import SwiftUI
 import Capacitor
 
-public struct PortalUIWebView: UIViewControllerRepresentable {
-    public typealias UIViewControllerType = UIViewController
-
+public struct PortalUIWebView: UIViewRepresentable {
     let portal: Portal
-    var onBridgeAvailable: (CAPBridgeProtocol?) -> Void
+    var onBridgeAvailable: (CAPBridgeProtocol) -> Void
 
-    public init(_ portal: Portal, onBridgeAvailable: @escaping (CAPBridgeProtocol?) -> Void) {
+    public init(_ portal: Portal, onBridgeAvailable: @escaping (CAPBridgeProtocol) -> Void) {
         self.portal = portal
         self.onBridgeAvailable = onBridgeAvailable
     }
-
-    public func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-
-        let frame = vc.view.frame
-
-        let webView = PortalWebView(frame: frame, portal: self.portal)
+    
+    public func makeUIView(context: Context) -> PortalWebView {
+        let webView = PortalWebView(portal: portal)
         onBridgeAvailable(webView.bridge)
-        
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        vc.view.addSubview(webView)
-        
-        NSLayoutConstraint.activate([
-            webView.topAnchor
-                .constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor),
-            webView.leadingAnchor
-                .constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor),
-            webView.trailingAnchor
-                .constraint(equalTo: vc.view.safeAreaLayoutGuide.trailingAnchor),
-            webView.bottomAnchor
-                .constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor),
-        ])
-
-        return vc
+        return webView
     }
-
-    public func updateUIViewController(_ uiViewController: UIViewController,
-                                context: Context) {
-    }
+    
+    // Nothing to do here since there is no state to manage
+    public func updateUIView(_ uiView: PortalWebView, context: Context) {}
 }

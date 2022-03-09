@@ -7,56 +7,45 @@ import IonicLiveUpdates
 @objc(PortalWebView)
 public class PortalWebView: UIView {
     
-    var webView: InternalCapWebView?
-    var portal: Portal?
+    lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
+    var portal: Portal
     var liveUpdatePath: URL? = nil
-    public var bridge: CAPBridgeProtocol?
-    
-    required public init?(coder: NSCoder) {
-        super.init(coder: coder)
+    public var bridge: CAPBridgeProtocol {
+        webView.bridge
     }
     
-    @objc public init(frame: CGRect, portal: Portal) {
-        super.init(frame: frame)
+    @objc public init(portal: Portal) {
         self.portal = portal
+        super.init(frame: .zero)
         initView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func initView () {
         if PortalManager.isRegistered() {
-            guard let portal = portal else { return }
-
             if let liveUpdateConfig = portal.liveUpdateConfig {
                 self.liveUpdatePath = LiveUpdateManager.getLatestAppDirectory(liveUpdateConfig.appId)
             }
             
-            webView = InternalCapWebView(frame: self.frame, portal: portal, liveUpdatePath: self.liveUpdatePath)
-            
-            guard let bridge = webView?.bridge else { return }
-            self.bridge = bridge
-            
-            addSubview(webView!)
+            addPinnedSubview(webView)
         } else {
             let bundle = Bundle(for: UnregisteredView.classForCoder())
             let nib = UINib(nibName: "UnregisteredView", bundle: bundle)
             let view = nib.instantiate(withOwner: self, options: nil).first as! UIView
             
-            view.frame = self.frame
-            
-            addSubview(view)
+            addPinnedSubview(view)
         }
     }
     
     func reload() {
-        guard let portal = portal else { return }
-        
-        guard let bridge = bridge else { return }
-        
         guard let liveUpdate = portal.liveUpdateConfig else { return }
         guard let capViewController = bridge.viewController as? CAPBridgeViewController else { return }
         guard let latestAppPath = LiveUpdateManager.getLatestAppDirectory(liveUpdate.appId) else { return }
 
-        if (liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path) {
+        if liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
             capViewController.setServerBasePath(path: liveUpdatePath!.path)
             return
@@ -67,13 +56,13 @@ public class PortalWebView: UIView {
     }
     
     class InternalCapWebView: CAPWebView {
-        var portal: Portal!
+        var portal: Portal
         var liveUpdatePath: URL? = nil
 
-        init(frame: CGRect, portal: Portal, liveUpdatePath: URL?) {
+        init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
             self.liveUpdatePath = liveUpdatePath
-            super.init(frame: frame)
+            super.init()
         }
         
         required init?(coder: NSCoder) {
@@ -93,18 +82,19 @@ public class PortalWebView: UIView {
             return descriptor
         }
         
-        override func loadInitialContext(_ userContentViewController: WKUserContentController) throws {
-            if self.portal.initialContext != nil {
-                let jsonData = try JSONSerialization.data(withJSONObject: self.portal.initialContext ?? "")
+        override func loadInitialContext(_ userContentViewController: WKUserContentController) {
+            if self.portal.initialContext != nil,
+               let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext ?? "") {
+                
                 let jsonString = String(data: jsonData, encoding: .ascii) ?? ""
-                
-                let portalInitialContext = "{ \"name\": \"\(portal.name)\",                                          \"value\": \(jsonString) }"
-                
+                let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
                 let scriptSource = "window.portalInitialContext = " + portalInitialContext
                 
-                let userScript = WKUserScript(source: scriptSource,
-                                              injectionTime: .atDocumentStart,
-                                              forMainFrameOnly: true)
+                let userScript = WKUserScript(
+                    source: scriptSource,
+                    injectionTime: .atDocumentStart,
+                    forMainFrameOnly: true
+                )
                 
                 userContentViewController.addUserScript(userScript)
             }            
@@ -113,7 +103,22 @@ public class PortalWebView: UIView {
     
 }
 
-
+extension UIView {
+    func constraintsPinned(to view: UIView) -> [NSLayoutConstraint] {
+        return [
+            topAnchor.constraint(equalTo: view.topAnchor),
+            bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ]
+    }
+    
+    func addPinnedSubview(_ view: UIView) {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(view)
+        NSLayoutConstraint.activate(view.constraintsPinned(to: self))
+    }
+}
 
 
 
