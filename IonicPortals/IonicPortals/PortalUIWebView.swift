@@ -1,5 +1,5 @@
 //
-//  PortalView.swift
+//  PortalUIWebView.swift
 //  IonicPortals
 //
 //  Created by Dan Giralté on 1/24/22.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Capacitor
 
-public struct PortalView: UIViewRepresentable {
+public struct PortalUIWebView: UIViewRepresentable {
     let portal: Portal
     var onBridgeAvailable: (CAPBridgeProtocol) -> Void
 
