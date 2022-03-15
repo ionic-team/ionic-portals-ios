@@ -10,7 +10,7 @@ public class PortalWebView: UIView {
     lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
     var portal: Portal
     var liveUpdatePath: URL? = nil
-    public var bridge: CAPBridgeProtocol {
+    @objc public var bridge: CAPBridgeProtocol {
         webView.bridge
     }
     
@@ -40,7 +40,7 @@ public class PortalWebView: UIView {
         }
     }
     
-    func reload() {
+    @objc public func reload() {
         guard let liveUpdate = portal.liveUpdateConfig else { return }
         guard let capViewController = bridge.viewController as? CAPBridgeViewController else { return }
         guard let latestAppPath = LiveUpdateManager.getLatestAppDirectory(liveUpdate.appId) else { return }
