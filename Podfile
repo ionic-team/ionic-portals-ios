@@ -6,7 +6,6 @@ workspace 'IonicPortals'
 pod_project = './IonicPortals/IonicPortals.xcodeproj'
 
 def capacitor_pods
-  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
   pod 'Capacitor', :path => '../capacitor/ios'
   pod 'CapacitorCordova', :path => '../capacitor/ios'
