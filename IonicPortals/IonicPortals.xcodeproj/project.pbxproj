@@ -17,15 +17,13 @@
 		A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */; };
 		A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */; };
 		A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */; };
-		A725DEEE27D1571C00109471 /* JSObjectEncodingDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEED27D1571C00109471 /* JSObjectEncodingDecodingTests.swift */; };
-		A7FBF55227D2830300C489FC /* JSValueEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FBF55127D2830300C489FC /* JSValueEncoder.swift */; };
-		A7FBF55427D2834E00C489FC /* JSValueDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FBF55327D2834E00C489FC /* JSValueDecoder.swift */; };
+		A790000827ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */; };
 		B33B474B517C32464093FB86 /* Pods_IonicPortals.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE95777F19A5CA2F2504747 /* Pods_IonicPortals.framework */; };
 		D4B988A7279F4E0A0036033A /* PortalUIWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B988A6279F4E0A0036033A /* PortalUIWebView.swift */; };
 		E90B7D4C26A9C4F40067D73E /* PortalBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7D4B26A9C4F40067D73E /* PortalBuilder.swift */; };
 		E90B7D5026A9CB880067D73E /* PortalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7D4F26A9CB880067D73E /* PortalManager.swift */; };
 		E985F88A269E2D260031F820 /* IonicPortals.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E985F880269E2D260031F820 /* IonicPortals.framework */; };
-		E985F88F269E2D260031F820 /* IonicPortalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985F88E269E2D260031F820 /* IonicPortalsTests.swift */; };
+		E985F88F269E2D260031F820 /* PortalsPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985F88E269E2D260031F820 /* PortalsPluginTests.swift */; };
 		E985F891269E2D260031F820 /* IonicPortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E985F883269E2D260031F820 /* IonicPortals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E985F89F269E2D830031F820 /* Portal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E985F89E269E2D830031F820 /* Portal.swift */; };
 /* End PBXBuildFile section */
@@ -54,9 +52,7 @@
 		A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortalsPlugin+Combine.swift"; sourceTree = "<group>"; };
 		A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONEncoder+JSObject.swift"; sourceTree = "<group>"; };
 		A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+JSObject.swift"; sourceTree = "<group>"; };
-		A725DEED27D1571C00109471 /* JSObjectEncodingDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSObjectEncodingDecodingTests.swift; sourceTree = "<group>"; };
-		A7FBF55127D2830300C489FC /* JSValueEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueEncoder.swift; sourceTree = "<group>"; };
-		A7FBF55327D2834E00C489FC /* JSValueDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSValueDecoder.swift; sourceTree = "<group>"; };
+		A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortalsPlugin+SwiftConcurrency.swift"; sourceTree = "<group>"; };
 		C6C8C717F3A70899030A3FFC /* Pods-IonicPortals.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicPortals.debug.xcconfig"; path = "Target Support Files/Pods-IonicPortals/Pods-IonicPortals.debug.xcconfig"; sourceTree = "<group>"; };
 		D4B9889F279F451A0036033A /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B988A0279F451A0036033A /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,7 +63,7 @@
 		E985F883269E2D260031F820 /* IonicPortals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IonicPortals.h; sourceTree = "<group>"; };
 		E985F884269E2D260031F820 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E985F889269E2D260031F820 /* IonicPortalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IonicPortalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E985F88E269E2D260031F820 /* IonicPortalsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IonicPortalsTests.swift; sourceTree = "<group>"; };
+		E985F88E269E2D260031F820 /* PortalsPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalsPluginTests.swift; sourceTree = "<group>"; };
 		E985F890269E2D260031F820 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E985F89E269E2D830031F820 /* Portal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Portal.swift; sourceTree = "<group>"; };
 		EA5BBE1015F84D166BA030C4 /* Pods-IonicPortals.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicPortals.release.xcconfig"; path = "Target Support Files/Pods-IonicPortals/Pods-IonicPortals.release.xcconfig"; sourceTree = "<group>"; };
@@ -153,10 +149,9 @@
 				5564A85126DFE5D1000AF010 /* images.xcassets */,
 				D4B988A6279F4E0A0036033A /* PortalUIWebView.swift */,
 				A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */,
+				A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */,
 				A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */,
 				A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */,
-				A7FBF55127D2830300C489FC /* JSValueEncoder.swift */,
-				A7FBF55327D2834E00C489FC /* JSValueDecoder.swift */,
 			);
 			path = IonicPortals;
 			sourceTree = "<group>";
@@ -164,9 +159,8 @@
 		E985F88D269E2D260031F820 /* IonicPortalsTests */ = {
 			isa = PBXGroup;
 			children = (
-				E985F88E269E2D260031F820 /* IonicPortalsTests.swift */,
+				E985F88E269E2D260031F820 /* PortalsPluginTests.swift */,
 				E985F890269E2D260031F820 /* Info.plist */,
-				A725DEED27D1571C00109471 /* JSObjectEncodingDecodingTests.swift */,
 			);
 			path = IonicPortalsTests;
 			sourceTree = "<group>";
@@ -352,10 +346,9 @@
 				5564A84C26DE8909000AF010 /* UnregisteredView.swift in Sources */,
 				E90B7D4C26A9C4F40067D73E /* PortalBuilder.swift in Sources */,
 				E90B7D5026A9CB880067D73E /* PortalManager.swift in Sources */,
-				A7FBF55427D2834E00C489FC /* JSValueDecoder.swift in Sources */,
+				A790000827ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift in Sources */,
 				A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */,
 				A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */,
-				A7FBF55227D2830300C489FC /* JSValueEncoder.swift in Sources */,
 				A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */,
 				55F6736526C2C098001E7AB9 /* PortalWebView.swift in Sources */,
 				55113DAD26D4596500BD3C9B /* PortalsPlugin.m in Sources */,
@@ -369,8 +362,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E985F88F269E2D260031F820 /* IonicPortalsTests.swift in Sources */,
-				A725DEEE27D1571C00109471 /* JSObjectEncodingDecodingTests.swift in Sources */,
+				E985F88F269E2D260031F820 /* PortalsPluginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,7 +430,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -498,7 +490,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -no-serialize-debugging-options";
@@ -524,7 +516,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = IonicPortals/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -555,7 +547,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = IonicPortals/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

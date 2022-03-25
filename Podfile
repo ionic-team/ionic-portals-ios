@@ -7,8 +7,8 @@ pod_project = './IonicPortals/IonicPortals.xcodeproj'
 
 def capacitor_pods
   use_frameworks!
-  pod 'Capacitor', :path => '../capacitor/ios'
-  pod 'CapacitorCordova', :path => '../capacitor/ios'
+  pod 'Capacitor'
+  pod 'CapacitorCordova'
   pod 'IonicLiveUpdates'
 end
 
