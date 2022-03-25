@@ -15,13 +15,13 @@ jobs:
       - run: sudo xcode-select --switch /Applications/Xcode_13.2.app
       - uses: actions/checkout@v2
       - name: Install Cocoapods
-        run: gem install cocoapods
+        run: gem install cocoapods xcpretty
       - run: pod install
       - run: |
-          xcodebuild \
+          xcodebuild test \
           -workspace IonicPortals.xcworkspace \
           -scheme IonicPortals \
-          -destination generic/platform=iOS \
+          -destination 'platform=iOS Simulator,name=iPhone 13' | xcpretty
   publish-ios:
     runs-on: macos-11
     if: >
