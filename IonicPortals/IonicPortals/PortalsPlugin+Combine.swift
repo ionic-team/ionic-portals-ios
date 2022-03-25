@@ -58,7 +58,7 @@ extension PortalsPlugin {
     
     /// Subscribes to a topic and publishes a `SubscriptionResult` downstream
     /// - Parameter topic: The topic to subscribe to
-    /// - Returns: A `PortalsPlugin.Publisher`
+    /// - Returns: A ``Publisher``
     public static func publisher(for topic: String) -> Publisher {
         Publisher(topic: topic)
     }
@@ -71,24 +71,24 @@ extension PortalsPlugin.Publisher {
         public let description = "Unable to cast JSValue to \(T.self)"
     }
     
-    /// Extracts the `data` value from `SubscriptionResult`
-    /// - Returns: A publisher emitting the `data` value from the upstream `SubscriptionResult`
+    /// Extracts the ``SubscriptionResult/data`` value from ``SubscriptionResult``
+    /// - Returns: A publisher emitting the ``SubscriptionResult/data`` value from the upstream ``SubscriptionResult``
     public func data() -> AnyPublisher<JSValue, Never> {
         map(\.data)
             .eraseToAnyPublisher()
     }
     
-    /// Attempts to cast the `data` value of the upstream `SubscriptionResult`
-    /// - Parameter type: The concrete `JSValue` to cast `data` to
-    /// - Returns: A publisher emitting the an optional value after attempting to cast the `data` value to a concrete type
+    /// Attempts to cast the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult``
+    /// - Parameter type: The concrete `JSValue` to cast ``SubscriptionResult/data`` to
+    /// - Returns: A publisher emitting the an optional value after attempting to cast the ``SubscriptionResult/data`` value to a concrete type
     public func data<T>(as type: T.Type) -> AnyPublisher<T?, Never> where T: JSValue {
         map { $0.data as? T }
             .eraseToAnyPublisher()
     }
     
-    /// Attempts to cast the `data` value of the upstream `SubscriptionResult` and throws an error if unsuccessful
-    /// - Parameter type: The concrete `JSValue` to cast `data` to
-    /// - Returns: A publisher emitting the cast value or a `CastingError<T>`
+    /// Attempts to cast the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult`` and throws an error if unsuccessful
+    /// - Parameter type: The concrete `JSValue` to cast ``SubscriptionResult/data`` to
+    /// - Returns: A publisher emitting the cast value or a ``CastingError``
     public func tryData<T>(as type: T.Type) -> AnyPublisher<T, Error> where T: JSValue {
         tryMap { result in
             guard let data = result.data as? T else { throw CastingError<T>() }
@@ -97,9 +97,9 @@ extension PortalsPlugin.Publisher {
         .eraseToAnyPublisher()
     }
     
-    /// Attempts to decode the `data` value of the upstream `SubscriptionResult` to any type that conforms to `Decodable`.
+    /// Attempts to decode the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult`` to any type that conforms to `Decodable`.
     /// - Parameters:
-    ///   - type: The type to decode the `data` value of `SubscriptionResult` to.
+    ///   - type: The type to decode the ``SubscriptionResult/data`` value of ``SubscriptionResult`` to.
     ///   - decoder: A `JSONDecoder` to perform decoding.
     /// - Returns: A publisher emitting the decoded value or a decoding error.
     public func decodeData<T>(_ type: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, Error> where T: Decodable {
