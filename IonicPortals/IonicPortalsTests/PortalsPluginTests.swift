@@ -15,7 +15,8 @@ class PortalsPluginTests: XCTestCase {
         var results: [SubscriptionResult] = []
         var cancellables = Set<AnyCancellable>()
         let topic = "test:result"
-        
+       
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .sink { results.append($0) }
             .store(in: &cancellables)
@@ -35,6 +36,7 @@ class PortalsPluginTests: XCTestCase {
         var cancellables = Set<AnyCancellable>()
         let topic = "test:number:data"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .data()
             .sink { results.append($0) }
@@ -52,6 +54,7 @@ class PortalsPluginTests: XCTestCase {
         var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
@@ -72,6 +75,7 @@ class PortalsPluginTests: XCTestCase {
         var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
@@ -92,6 +96,7 @@ class PortalsPluginTests: XCTestCase {
         var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
@@ -112,6 +117,7 @@ class PortalsPluginTests: XCTestCase {
         var cancellables = Set<AnyCancellable>()
         let topic = "test:number:tryDataAs:success"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .tryData(as: Int.self)
             .assertNoFailure()
@@ -129,6 +135,7 @@ class PortalsPluginTests: XCTestCase {
         var completed = false
         let topic = "test:number:tryDataAs:failure"
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .tryData(as: Int.self)
             .catch { error in
@@ -163,6 +170,7 @@ class PortalsPluginTests: XCTestCase {
             convertedManaCost: 2
         )
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
             .assertNoFailure()
@@ -183,6 +191,7 @@ class PortalsPluginTests: XCTestCase {
         
         let emptyCard = MagicTheGatheringCard(name: "", manaCost: "", convertedManaCost: 0)
         
+        // SUT
         PortalsPlugin.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
             .replaceError(with: emptyCard)
@@ -199,8 +208,9 @@ class PortalsPluginTests: XCTestCase {
     }
     
     func test_asyncSubscribe__when_values_are_published__they_are_able_to_be_manipulated_with_async_sequence_apis() async {
-        let task = Task {
+        let sut = Task {
             await PortalsPlugin.subscribe("test:asyncstream")
+                .map { $0.data }
                 .prefix(2)
                 .first { _ in true }
         }
@@ -215,7 +225,7 @@ class PortalsPluginTests: XCTestCase {
             PortalsPlugin.publish("test:asyncstream", 2)
         }
         
-        guard let firstValue = await task.value?.data as? Int else {
+        guard let firstValue = await sut.value as? Int else {
             XCTFail("Awaited task value was not able to be cast as an Int")
             return
         }
