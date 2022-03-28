@@ -3,6 +3,8 @@
 platform :ios, '14.0'
 workspace 'IonicPortals'
 
+pod_project = './IonicPortals/IonicPortals.xcodeproj'
+
 def capacitor_pods
   use_frameworks!
   pod 'Capacitor'
@@ -11,6 +13,11 @@ def capacitor_pods
 end
 
 target 'IonicPortals' do
-  project './IonicPortals/IonicPortals.xcodeproj'
+  project pod_project
+  capacitor_pods
+end
+
+target 'IonicPortalsTests' do
+  project pod_project
   capacitor_pods
 end
