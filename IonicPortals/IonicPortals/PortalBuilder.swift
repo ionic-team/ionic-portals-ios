@@ -32,6 +32,7 @@ public class PortalBuilder: NSObject {
      * - Parameter startDir: The relative file path of the folder that contains your web app
      * - Returns: self
      */
+    @discardableResult
     @objc public func setStartDir(_ startDir: String) -> PortalBuilder {
         self.startDir = startDir
         return self
@@ -43,6 +44,7 @@ public class PortalBuilder: NSObject {
      * - Parameter initialContext: An object that can be serialized into JSON
      * - Returns: self
      */
+    @discardableResult
     @objc public func setInitialContext(_ initialContext: Dictionary<String, Any>) -> PortalBuilder {
         self.initialContext = initialContext
         return self
@@ -53,6 +55,7 @@ public class PortalBuilder: NSObject {
      * - Parameter liveUpdateConfig: A live update object that contains information on how to handle the Appflow Live Update functionality
      * - Parameter updateOnAppLoad: Starts an immediate sync to download the latest update on the Portal
      */
+    @discardableResult
     @objc public func setLiveUpdateConfig(liveUpdateConfig: LiveUpdate, updateOnAppLoad: Bool = true) -> PortalBuilder {
         self.liveUpdateConfig = liveUpdateConfig
         LiveUpdateManager.initialize()
