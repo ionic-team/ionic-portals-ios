@@ -18,6 +18,7 @@ jobs:
         run: gem install cocoapods xcpretty
       - run: pod install
       - run: |
+          set -eo pipefail
           xcodebuild test \
           -workspace IonicPortals.xcworkspace \
           -scheme IonicPortals \
