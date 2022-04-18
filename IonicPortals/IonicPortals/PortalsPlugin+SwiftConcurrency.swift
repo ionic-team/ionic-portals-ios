@@ -7,7 +7,7 @@
 
 import Foundation
 
-#if compiler(>=5.5) && canImport(_Concurrency)
+#if compiler(>=5.6) && canImport(_Concurrency)
 extension PortalsPlugin {
     /// Subscribe to a topic and receive the events in an `AsyncStream`
     /// - Parameter topic: The topic to subscribe to

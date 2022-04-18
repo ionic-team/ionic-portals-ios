@@ -9,15 +9,16 @@ on:
       - '**'
 jobs:
   verify-ios:
-    runs-on: macos-11
+    runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_13.2.app
+      - run: sudo xcode-select --switch /Applications/Xcode_13.2.1.app
       - uses: actions/checkout@v2
       - name: Install Cocoapods
         run: gem install cocoapods xcpretty
       - run: pod install
       - run: |
+          set -eo pipefail
           xcodebuild test \
           -workspace IonicPortals.xcworkspace \
           -scheme IonicPortals \
