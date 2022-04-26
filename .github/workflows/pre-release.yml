@@ -1,0 +1,22 @@
+name: Prerelease
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  update-version:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - run: sudo xcode-select --switch /Applications/Xcode_13.2.1.app
+      - uses: actions/checkout@v2
+      - name: Install build dependencies
+        run: gem install cocoapods xcpretty fastlane
+      - name: Assign version to RELEASE_VERSION environment variable
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/*/}" >> $GITHUB_ENV
+      - name: Bump podspec version
+        run: fastlane run version_bump_podspec version_number:"${RELEASE_VERSION}"
+      - name: Validate Pod Lib # We're not doing a pod spec lint because the tag is not valid yet
+        run: pod lib lint
