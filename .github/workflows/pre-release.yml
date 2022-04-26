@@ -20,3 +20,5 @@ jobs:
         run: fastlane run version_bump_podspec version_number:"${RELEASE_VERSION}"
       - name: Validate Pod Lib # We're not doing a pod spec lint because the tag is not valid yet
         run: pod lib lint
+      - name: Push version bump commit
+        uses: EndBug/add-and-commit@v9
