@@ -59,7 +59,7 @@ public class PortalsPlugin: CAPPlugin {
     /// - Returns: A subscription reference to use for unsubscribing
     /// > Tip: Using this method requires you to call ``unsubscribe(_:_:)`` when finished.
     /// Use ``subscribe(to:_:)`` to get an `AnyCancellable` that will automatically unsubscribe from the topic on deallocation.
-    public static func subscribe(_ topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> Int {
+    @objc public static func subscribe(_ topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> Int {
         queue.sync {
             subscriptionRef += 1
             
@@ -81,7 +81,7 @@ public class PortalsPlugin: CAPPlugin {
     ///   - topic: The topic to listen for events on
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: An `AnyCancellable` that unsubscribes from the topic when deallocated.
-    public static func subscribe(to topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> AnyCancellable {
+    @objc public static func subscribe(to topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> AnyCancellable {
         let ref = subscribe(topic, callback)
         return AnyCancellable { PortalsPlugin.unsubscribe(topic, ref) }
     }
@@ -90,7 +90,7 @@ public class PortalsPlugin: CAPPlugin {
     /// - Parameters:
     ///   - topic: The topic to publish to
     ///   - data: The data to deliver to all subscribers. Must be a valid JSON data type.
-    public static func publish(_ topic: String, _ data: JSValue) {
+    @objc public static func publish(_ topic: String, _ data: JSValue) {
         queue.sync {
             if let subscription = subscriptions[topic] {
                 for (ref, listener) in subscription {
@@ -105,7 +105,7 @@ public class PortalsPlugin: CAPPlugin {
     /// - Parameters:
     ///   - topic: The topic to unsubscribe from
     ///   - subscriptionRef: The subscriptionRef provided during subscription
-    public static func unsubscribe(_ topic: String, _ subscriptionRef: Int) {
+    @objc public static func unsubscribe(_ topic: String, _ subscriptionRef: Int) {
         queue.async(flags: .barrier) {
             if var subscription = subscriptions[topic] {
                 subscription[subscriptionRef] = nil
