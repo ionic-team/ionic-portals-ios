@@ -4,9 +4,9 @@ import UIKit
 import Capacitor
 import IonicLiveUpdates
 
-@objc(PortalWebView)
-public class PortalWebView: UIView {
-    
+/// A UIKit UIView to display ``Portal`` content
+@objc(PortalUIView)
+public class PortalUIView: UIView {
     lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
     var portal: Portal
     var liveUpdatePath: URL? = nil
@@ -14,6 +14,8 @@ public class PortalWebView: UIView {
         webView.bridge
     }
     
+    /// Creates an instance of ``PortalUIView``
+    /// - Parameter portal: The ``Portal`` to render.
     @objc public init(portal: Portal) {
         self.portal = portal
         super.init(frame: .zero)
@@ -40,6 +42,7 @@ public class PortalWebView: UIView {
         }
     }
     
+    /// Reloads the underlying `WKWebView`
     @objc public func reload() {
         guard let liveUpdate = portal.liveUpdateConfig else { return }
         guard let capViewController = bridge.viewController as? CAPBridgeViewController else { return }
