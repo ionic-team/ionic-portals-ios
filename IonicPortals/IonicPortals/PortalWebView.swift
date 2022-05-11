@@ -25,7 +25,7 @@ public class PortalWebView: UIView {
     }
     
     func initView () {
-        if PortalManager.isRegistered() {
+        if PortalManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
                 self.liveUpdatePath = LiveUpdateManager.getLatestAppDirectory(liveUpdateConfig.appId)
             }
