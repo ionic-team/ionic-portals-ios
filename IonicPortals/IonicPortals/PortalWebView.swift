@@ -77,7 +77,10 @@ public class PortalWebView: UIView {
                 return InstanceDescriptor()
             }
             
-            let descriptor = InstanceDescriptor(at: path, configuration: nil, cordovaConfiguration: nil)
+            let capConfigUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
+            let cordovaConfigUrl = Bundle.main.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
+            
+            let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
             
             return descriptor
         }
