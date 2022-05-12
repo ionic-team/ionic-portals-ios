@@ -12,14 +12,14 @@
 		5564A84C26DE8909000AF010 /* UnregisteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5564A84B26DE8909000AF010 /* UnregisteredView.swift */; };
 		5564A84E26DE8D31000AF010 /* UnregisteredView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5564A84D26DE8D31000AF010 /* UnregisteredView.xib */; };
 		5564A85226DFE5D1000AF010 /* images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5564A85126DFE5D1000AF010 /* images.xcassets */; };
-		55F6736526C2C098001E7AB9 /* PortalWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6736426C2C097001E7AB9 /* PortalWebView.swift */; };
+		55F6736526C2C098001E7AB9 /* PortalUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6736426C2C097001E7AB9 /* PortalUIView.swift */; };
 		9FE6157156CCFAE2EB45C746 /* Pods_IonicPortalsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75B0295D16569AE72DF5E457 /* Pods_IonicPortalsTests.framework */; };
 		A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */; };
 		A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */; };
 		A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */; };
 		A790000827ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */; };
 		B33B474B517C32464093FB86 /* Pods_IonicPortals.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE95777F19A5CA2F2504747 /* Pods_IonicPortals.framework */; };
-		D4B988A7279F4E0A0036033A /* PortalUIWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B988A6279F4E0A0036033A /* PortalUIWebView.swift */; };
+		D4B988A7279F4E0A0036033A /* PortalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B988A6279F4E0A0036033A /* PortalView.swift */; };
 		E90B7D4C26A9C4F40067D73E /* PortalBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7D4B26A9C4F40067D73E /* PortalBuilder.swift */; };
 		E90B7D5026A9CB880067D73E /* PortalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7D4F26A9CB880067D73E /* PortalManager.swift */; };
 		E985F88A269E2D260031F820 /* IonicPortals.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E985F880269E2D260031F820 /* IonicPortals.framework */; };
@@ -46,7 +46,7 @@
 		5564A84B26DE8909000AF010 /* UnregisteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnregisteredView.swift; sourceTree = "<group>"; };
 		5564A84D26DE8D31000AF010 /* UnregisteredView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UnregisteredView.xib; sourceTree = "<group>"; };
 		5564A85126DFE5D1000AF010 /* images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = images.xcassets; sourceTree = "<group>"; };
-		55F6736426C2C097001E7AB9 /* PortalWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortalWebView.swift; sourceTree = "<group>"; };
+		55F6736426C2C097001E7AB9 /* PortalUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortalUIView.swift; sourceTree = "<group>"; };
 		75B0295D16569AE72DF5E457 /* Pods_IonicPortalsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IonicPortalsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		806037FB6C3994ECAB6FB38F /* Pods-IonicPortalsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicPortalsTests.debug.xcconfig"; path = "Target Support Files/Pods-IonicPortalsTests/Pods-IonicPortalsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortalsPlugin+Combine.swift"; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		C6C8C717F3A70899030A3FFC /* Pods-IonicPortals.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicPortals.debug.xcconfig"; path = "Target Support Files/Pods-IonicPortals/Pods-IonicPortals.debug.xcconfig"; sourceTree = "<group>"; };
 		D4B9889F279F451A0036033A /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B988A0279F451A0036033A /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4B988A6279F4E0A0036033A /* PortalUIWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalUIWebView.swift; sourceTree = "<group>"; };
+		D4B988A6279F4E0A0036033A /* PortalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalView.swift; sourceTree = "<group>"; };
 		E90B7D4B26A9C4F40067D73E /* PortalBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalBuilder.swift; sourceTree = "<group>"; };
 		E90B7D4F26A9CB880067D73E /* PortalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortalManager.swift; sourceTree = "<group>"; };
 		E985F880269E2D260031F820 /* IonicPortals.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IonicPortals.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,7 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				E90B7D4F26A9CB880067D73E /* PortalManager.swift */,
-				55F6736426C2C097001E7AB9 /* PortalWebView.swift */,
+				55F6736426C2C097001E7AB9 /* PortalUIView.swift */,
 				E90B7D4B26A9C4F40067D73E /* PortalBuilder.swift */,
 				55113DAB26D4596500BD3C9B /* PortalsPlugin.m */,
 				55113DAC26D4596500BD3C9B /* PortalsPlugin.swift */,
@@ -147,7 +147,7 @@
 				5564A84B26DE8909000AF010 /* UnregisteredView.swift */,
 				5564A84D26DE8D31000AF010 /* UnregisteredView.xib */,
 				5564A85126DFE5D1000AF010 /* images.xcassets */,
-				D4B988A6279F4E0A0036033A /* PortalUIWebView.swift */,
+				D4B988A6279F4E0A0036033A /* PortalView.swift */,
 				A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */,
 				A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */,
 				A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */,
@@ -350,9 +350,9 @@
 				A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */,
 				A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */,
 				A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */,
-				55F6736526C2C098001E7AB9 /* PortalWebView.swift in Sources */,
+				55F6736526C2C098001E7AB9 /* PortalUIView.swift in Sources */,
 				55113DAD26D4596500BD3C9B /* PortalsPlugin.m in Sources */,
-				D4B988A7279F4E0A0036033A /* PortalUIWebView.swift in Sources */,
+				D4B988A7279F4E0A0036033A /* PortalView.swift in Sources */,
 				55113DAE26D4596500BD3C9B /* PortalsPlugin.swift in Sources */,
 				E985F89F269E2D830031F820 /* Portal.swift in Sources */,
 			);
