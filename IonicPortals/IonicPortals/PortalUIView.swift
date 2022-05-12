@@ -5,7 +5,7 @@ import Capacitor
 import IonicLiveUpdates
 
 /// A UIKit UIView to display ``Portal`` content
-@objc(PortalUIView)
+@objc(IONPortalUIView)
 public class PortalUIView: UIView {
     lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
     var portal: Portal
@@ -16,10 +16,16 @@ public class PortalUIView: UIView {
     
     /// Creates an instance of ``PortalUIView``
     /// - Parameter portal: The ``Portal`` to render.
-    @objc public init(portal: Portal) {
+    public init(portal: Portal) {
         self.portal = portal
         super.init(frame: .zero)
         initView()
+    }
+    
+    /// Creates an instance of ``PortalUIView``
+    /// - Parameter portal: The ``IONPortal`` to render.
+    @objc public convenience init(portal: IONPortal) {
+        self.init(portal: portal.portal)
     }
     
     required init?(coder: NSCoder) {
@@ -91,7 +97,7 @@ public class PortalUIView: UIView {
         }
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
-            guard let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext ?? [:]) else { return }
+            guard portal.initialContext.isNotEmpty, let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext) else { return }
                 
             let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
             let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
@@ -107,6 +113,10 @@ public class PortalUIView: UIView {
         }
     }
     
+}
+
+extension Collection {
+    var isNotEmpty: Bool { !isEmpty }
 }
 
 extension UIView {

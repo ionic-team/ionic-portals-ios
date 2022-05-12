@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import Capacitor
 
-extension PortalsPlugin {
+extension PubSub {
     public struct Publisher: Combine.Publisher {
         let topic: String
         
@@ -35,7 +35,7 @@ extension PortalsPlugin {
         where S: Subscriber, S.Input == SubscriptionResult, S.Failure == Never {
             self.subscriber = AnySubscriber(subscriber)
             self.topic = topic
-            subscriptionReference = PortalsPlugin.subscribe(topic) { [weak self] result in
+            subscriptionReference = PubSub.subscribe(topic) { [weak self] result in
                 _ = self?.subscriber.receive(result)
             }
         }
@@ -52,7 +52,7 @@ extension PortalsPlugin {
         
         func cancel() {
             guard let ref = subscriptionReference else { return }
-            PortalsPlugin.unsubscribe(topic, ref)
+            PubSub.unsubscribe(from: topic, subscriptionRef: ref)
         }
     }
     
@@ -64,7 +64,7 @@ extension PortalsPlugin {
     }
 }
 
-extension PortalsPlugin.Publisher {
+extension PubSub.Publisher {
     
     /// Error to be thrown when cating from JSValue to concrete value fails
     public struct CastingError<T>: Error, CustomStringConvertible {
@@ -73,7 +73,7 @@ extension PortalsPlugin.Publisher {
     
     /// Extracts the ``SubscriptionResult/data`` value from ``SubscriptionResult``
     /// - Returns: A publisher emitting the ``SubscriptionResult/data`` value from the upstream ``SubscriptionResult``
-    public func data() -> AnyPublisher<JSValue, Never> {
+    public func data() -> AnyPublisher<JSValue?, Never> {
         map(\.data)
             .eraseToAnyPublisher()
     }
