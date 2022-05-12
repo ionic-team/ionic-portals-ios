@@ -11,6 +11,6 @@ Pod::Spec.new do |s|
   s.source_files = 'IonicPortals/IonicPortals/*.{swift,h,m}'
   s.resources = ['IonicPortals/IonicPortals/**/*.{xib,xcassets,svg}']
   s.dependency 'Capacitor', '~> 3.5'
-  s.dependency 'IonicLiveUpdates', '~ 0.1.0'
+  s.dependency 'IonicLiveUpdates', '~> 0.1.0'
   s.swift_version = '5.4'
 end
