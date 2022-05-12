@@ -55,16 +55,6 @@ public class PortalManager: NSObject {
         return portals[name]
     }
     
-    
-    /// A helper method to build ``Portal`` classes and add them to the manager. Classes built with newPortal are added to the `PortalManager` automatically.
-    /// - Parameter name: The ``Portal`` name
-    /// - returns: A ``PortalBuilder`` object that has a fluent API to construct a ``Portal``.
-    @objc public func newPortal(named name: String) -> PortalBuilder {
-        PortalBuilder(name) { [unowned self] portal in
-            add(portal)
-        }
-    }
-    
     /// Validates that a valid registration key has been procured from http://ionic.io/register-portals
     /// - Parameter key: The registration key
     @objc public func register(key: String) {
