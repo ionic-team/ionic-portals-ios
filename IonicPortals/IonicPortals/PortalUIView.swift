@@ -29,7 +29,7 @@ public class PortalUIView: UIView {
     func initView () {
         if PortalManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = LiveUpdateManager.getLatestAppDirectory(liveUpdateConfig.appId)
+                self.liveUpdatePath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdateConfig.appId)
             }
             
             addPinnedSubview(webView)
@@ -44,9 +44,11 @@ public class PortalUIView: UIView {
     
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
-        guard let liveUpdate = portal.liveUpdateConfig else { return }
-        guard let capViewController = bridge.viewController as? CAPBridgeViewController else { return }
-        guard let latestAppPath = LiveUpdateManager.getLatestAppDirectory(liveUpdate.appId) else { return }
+        guard
+            let liveUpdate = portal.liveUpdateConfig,
+            let capViewController = bridge.viewController as? CAPBridgeViewController,
+            let latestAppPath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdate.appId)
+        else { return }
 
         if liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
@@ -89,21 +91,19 @@ public class PortalUIView: UIView {
         }
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
-            if self.portal.initialContext != nil,
-               let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext ?? "") {
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext ?? [:]) else { return }
                 
-                let jsonString = String(data: jsonData, encoding: .ascii) ?? ""
-                let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
-                let scriptSource = "window.portalInitialContext = " + portalInitialContext
-                
-                let userScript = WKUserScript(
-                    source: scriptSource,
-                    injectionTime: .atDocumentStart,
-                    forMainFrameOnly: true
-                )
-                
-                userContentViewController.addUserScript(userScript)
-            }            
+            let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+            let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
+            let scriptSource = "window.portalInitialContext = " + portalInitialContext
+            
+            let userScript = WKUserScript(
+                source: scriptSource,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+            
+            userContentViewController.addUserScript(userScript)
         }
     }
     
