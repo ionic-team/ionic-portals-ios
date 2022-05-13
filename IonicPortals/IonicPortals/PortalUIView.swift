@@ -33,7 +33,7 @@ public class PortalUIView: UIView {
     }
     
     func initView () {
-        if PortalManager.shared.isRegistered {
+        if PortalsRegistrationManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
                 self.liveUpdatePath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdateConfig.appId)
             }
