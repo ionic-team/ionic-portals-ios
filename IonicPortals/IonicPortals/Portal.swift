@@ -40,6 +40,17 @@ public struct Portal {
     }
 }
 
+extension Portal: ExpressibleByStringLiteral {
+    
+    /// ExpressibleByStringLiteral conformance for ``Portal``.
+    /// - Parameter value: The name of the portal
+    ///
+    /// Creates a ``Portal`` as if being called with the initializer as `Portal(name: "stringliteral")`
+    public init(stringLiteral value: StringLiteralType) {
+        self.init(name: value)
+    }
+}
+
 /// The objective-c representation of ``Portal``. If using Swift, ``Portal`` is preferred since it provides better type constraints.
 @objc public class IONPortal: NSObject {
     internal var portal: Portal
