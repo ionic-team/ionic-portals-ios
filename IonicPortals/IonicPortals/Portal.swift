@@ -40,7 +40,7 @@ public struct Portal {
     }
 }
 
-/// The objective-c representation of ``Portal``
+/// The objective-c representation of ``Portal``. If using Swift, ``Portal`` is preferred since it provides better type constraints.
 @objc public class IONPortal: NSObject {
     internal var portal: Portal
     
@@ -50,7 +50,15 @@ public struct Portal {
     /// The root directory of the ``Portal`` relative to root of the `Bundle`
     @objc public var startDir: String { portal.startDir }
     
-    /// Any initial state required by the web application
+    /// Any initial state required by the web application.
+    ///
+    /// The following types are valid values:
+    /// * NSNumber
+    /// * NSString
+    /// * NSArray
+    /// * NSDate
+    /// * NSNull
+    /// * NSDictionary keyed by a String and the value is any valid JS Value
     @objc public var initialContext: [String: Any] {
         get { portal.initialContext }
         set {
@@ -80,6 +88,14 @@ extension IONPortal {
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``Bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    ///
+    /// The following types are valid values in `initialContext`:
+    /// * NSNumber
+    /// * NSString
+    /// * NSArray
+    /// * NSDate
+    /// * NSNull
+    /// * NSDictionary keyed by a String and the value is any valid JS Value
     @objc public convenience init(name: String, startDir: String?, initialContext: [String: Any]?) {
         let portal = Portal(name: name, startDir: startDir, initialContext: initialContext as? [String: JSValue] ?? [:], liveUpdateConfig: nil)
         self.init(portal: portal)
