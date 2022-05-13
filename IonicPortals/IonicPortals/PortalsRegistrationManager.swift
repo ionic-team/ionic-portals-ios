@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-/// Maintains a registry of ``Portal``s for the lifecycle of an application
-@objc(IONPortalManager)
-public class PortalManager: NSObject {
+/// Manages the registration lifecycle
+@objc(IONPortalsRegistrationManager)
+public class PortalsRegistrationManager: NSObject {
     enum RegistrationState {
         case unregistered(messageShown: Bool)
         case registered
@@ -13,9 +13,8 @@ public class PortalManager: NSObject {
     private override init() {}
     
     /// The default singleton
-    @objc public static let shared = PortalManager()
+    @objc public static let shared = PortalsRegistrationManager()
 
-    private var portals: [String: Portal] = [:]
     private var registrationState: RegistrationState = .unregistered(messageShown: false)
 
     /// Whether Portals has been registered.
@@ -27,50 +26,6 @@ public class PortalManager: NSObject {
         case .registered:
             return true
         }
-    }
-    
-    /// The number of ``Portal``s added
-    @objc public var count: Int { portals.count }
-    
-    /// Adds a ``Portal`` to ``PortalManager``
-    /// - Parameter portal: The ``Portal`` to add
-    public func add(_ portal: Portal) {
-        portals[portal.name] = portal
-        
-        if case .unregistered(messageShown: false) = registrationState {
-            unregisteredMessage()
-        }
-    }
-    
-    /// Adds an ``IONPortal`` to ``PortalManager``
-    /// - Parameter portal: The ``IONPortal`` to add
-    ///
-    /// This method is meant to be used for Objective-C interop. The ``add(_:)`` method is preferred if being called from Swift
-    @objc public func addPortal(_ portal: IONPortal) {
-        add(portal.portal)
-    }
-    
-    /// Returns a ``Portal`` given the name of the portal
-    /// - Parameter name: The Portal name
-    /// - returns: The existing ``Portal`` with name `name`.
-    /// Returns `nil` if the ``Portal`` has not been added via ``add(_:)`` or if a registration error has occured
-    public func getPortal(named name: String) -> Portal? {
-        if case .error = registrationState {
-            registrationError()
-            return nil
-        }
-        
-        return portals[name]
-    }
-    
-    /// Returns an ``IONPortal`` given the name of the portal
-    /// - Parameter name: The IONPortal name
-    /// - returns: The existing ``IONPortal`` with name `name`.
-    /// Returns `nil` if the ``IONPortal`` has not been added via ``add(_:)``, ``addPortal(_:)``, or if a registration error has occured
-    ///
-    /// This method is meant to be used for Objective-C interop. The ``getPortal(named:)`` method is preferred if being called from Swift.
-    @objc public func getPortalNamed(_ name: String) -> IONPortal? {
-        getPortal(named: name).map(IONPortal.init(portal:))
     }
     
     /// Validates that a valid registration key has been procured from http://ionic.io/register-portals
