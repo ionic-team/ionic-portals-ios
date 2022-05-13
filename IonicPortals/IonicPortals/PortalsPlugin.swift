@@ -10,7 +10,7 @@ internal class Plugin: CAPPlugin {
         }
         
         let data = call.getValue("data")
-        PubSub.publish(topic, message: data)
+        PortalsPubSub.publish(topic, message: data)
         call.resolve()
     }
     
@@ -21,7 +21,7 @@ internal class Plugin: CAPPlugin {
         }
         call.keepAlive = true
         
-        let ref = IONPubSub.subscribe(topic: topic, callback: call.resolve)
+        let ref = IONPortalsPubSub.subscribe(topic: topic, callback: call.resolve)
         call.resolve([
             "topic": topic,
             "subscriptionRef": ref
@@ -37,7 +37,7 @@ internal class Plugin: CAPPlugin {
             call.reject("subscriptionRef not provided")
             return
         }
-        PubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
+        PortalsPubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
         call.resolve()
     }
     

@@ -18,7 +18,7 @@
 		A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */; };
 		A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */; };
 		A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */; };
-		A73E0FA2282DC2F500AE7C54 /* PubSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73E0FA1282DC2F500AE7C54 /* PubSub.swift */; };
+		A73E0FA2282DC2F500AE7C54 /* PortalsPubSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73E0FA1282DC2F500AE7C54 /* PortalsPubSub.swift */; };
 		A790000827ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */; };
 		B33B474B517C32464093FB86 /* Pods_IonicPortals.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE95777F19A5CA2F2504747 /* Pods_IonicPortals.framework */; };
 		D4B988A7279F4E0A0036033A /* PortalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B988A6279F4E0A0036033A /* PortalView.swift */; };
@@ -57,7 +57,7 @@
 		A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+JSObject.swift"; sourceTree = "<group>"; };
 		A73E0F9B282DA5E400AE7C54 /* Pods_IonicPortals.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_IonicPortals.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A73E0F9D282DA5F900AE7C54 /* Pods_IonicPortalsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_IonicPortalsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A73E0FA1282DC2F500AE7C54 /* PubSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubSub.swift; sourceTree = "<group>"; };
+		A73E0FA1282DC2F500AE7C54 /* PortalsPubSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalsPubSub.swift; sourceTree = "<group>"; };
 		A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortalsPlugin+SwiftConcurrency.swift"; sourceTree = "<group>"; };
 		C6C8C717F3A70899030A3FFC /* Pods-IonicPortals.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicPortals.debug.xcconfig"; path = "Target Support Files/Pods-IonicPortals/Pods-IonicPortals.debug.xcconfig"; sourceTree = "<group>"; };
 		D4B9889F279F451A0036033A /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,7 +163,7 @@
 				A790000727ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift */,
 				55F6736426C2C097001E7AB9 /* PortalUIView.swift */,
 				D4B988A6279F4E0A0036033A /* PortalView.swift */,
-				A73E0FA1282DC2F500AE7C54 /* PubSub.swift */,
+				A73E0FA1282DC2F500AE7C54 /* PortalsPubSub.swift */,
 				5564A84B26DE8909000AF010 /* UnregisteredView.swift */,
 				5564A84D26DE8D31000AF010 /* UnregisteredView.xib */,
 			);
@@ -358,7 +358,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A73E0FA2282DC2F500AE7C54 /* PubSub.swift in Sources */,
+				A73E0FA2282DC2F500AE7C54 /* PortalsPubSub.swift in Sources */,
 				5564A84C26DE8909000AF010 /* UnregisteredView.swift in Sources */,
 				E90B7D5026A9CB880067D73E /* PortalManager.swift in Sources */,
 				A790000827ECC82E003C4607 /* PortalsPlugin+SwiftConcurrency.swift in Sources */,

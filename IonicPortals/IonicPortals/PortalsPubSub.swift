@@ -1,5 +1,5 @@
 //
-//  PubSub.swift
+//  PortalsPubSub.swift
 //  IonicPortals
 //
 //  Created by Steven Sherry on 5/12/22.
@@ -10,7 +10,7 @@ import Combine
 import Capacitor
 
 /// An interface that enables marshalling data to and from a ``Portal`` over an event bus
-public enum PubSub {
+public enum PortalsPubSub {
     private static let queue = DispatchQueue(label: "io.ionic.portals.pubsub", attributes: .concurrent)
     
     private static var subscriptions: [String: [Int: (SubscriptionResult) -> Void]] = [:]
@@ -98,7 +98,7 @@ public struct SubscriptionResult {
 }
 
 /// An objective-c interface that enables marshalling data to and from a ``Portal`` over an event bus
-@objc public class IONPubSub: NSObject {
+@objc public class IONPortalsPubSub: NSObject {
     private override init() { }
     
     /// Subscribe to a topic and execute the provided callback when the event is received.
@@ -108,18 +108,18 @@ public struct SubscriptionResult {
     /// - Returns: A subscription reference to use for unsubscribing
     /// > Tip: Using this method requires you to call ``unsubscribe(from:subscriptionRef:)`` when finished.
     @objc(subscribeToTopic:callback:) public static func subscribe(topic: String, callback: @escaping ([String: Any]) -> Void) -> Int {
-        PubSub.subscribe(topic) { result in
+        PortalsPubSub.subscribe(topic) { result in
             callback(result.dictionaryRepresentation as [String: Any])
         }
     }
         
     @objc(publishToTopic:data:) public static func publish(topic: String, data: Any) {
         guard let data = data as? JSValue else { return }
-        PubSub.publish(topic, message: data)
+        PortalsPubSub.publish(topic, message: data)
     }
     
     @objc(unsubscribeFromTopic:subscriptionRef:) public static func unsubscribe(_ topic: String, _ subscriptionRef: Int) {
-        PubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
+        PortalsPubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
     }
     
 }

@@ -17,17 +17,17 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:result"
        
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .sink { results.append($0) }
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: 1)
+        PortalsPubSub.publish(topic, message: 1)
         XCTAssertEqual(results.count, 1)
         
-        PubSub.publish(topic, message: 2)
+        PortalsPubSub.publish(topic, message: 2)
         XCTAssertEqual(results.count, 2)
         
-        PubSub.publish(topic, message: 3)
+        PortalsPubSub.publish(topic, message: 3)
         XCTAssertEqual(results.count, 3)
     }
     
@@ -37,15 +37,15 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:data"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .data()
             .compactMap { $0 }
             .sink { results.append($0) }
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: 1)
-        PubSub.publish(topic, message: 2)
-        PubSub.publish(topic, message: 3)
+        PortalsPubSub.publish(topic, message: 1)
+        PortalsPubSub.publish(topic, message: 2)
+        PortalsPubSub.publish(topic, message: 3)
         
         XCTAssertEqual(results.count, 3)
     }
@@ -56,18 +56,18 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:dataAs"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: 1)
+        PortalsPubSub.publish(topic, message: 1)
         XCTAssertEqual(results, [1])
         
-        PubSub.publish(topic, message: 2)
+        PortalsPubSub.publish(topic, message: 2)
         XCTAssertEqual(results, [1, 2])
         
-        PubSub.publish(topic, message: 3)
+        PortalsPubSub.publish(topic, message: 3)
         XCTAssertEqual(results, [1, 2, 3])
     }
     
@@ -77,18 +77,18 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:dataAs"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: "hello")
+        PortalsPubSub.publish(topic, message: "hello")
         XCTAssertEqual(results, [nil])
         
-        PubSub.publish(topic, message: 59.03)
+        PortalsPubSub.publish(topic, message: 59.03)
         XCTAssertEqual(results, [nil, nil])
         
-        PubSub.publish(topic, message: true)
+        PortalsPubSub.publish(topic, message: true)
         XCTAssertEqual(results, [nil, nil, nil])
     }
     
@@ -98,18 +98,18 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:dataAs"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
             .sink { results.append($0) }
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: 1)
+        PortalsPubSub.publish(topic, message: 1)
         XCTAssertEqual(results, [1])
         
-        PubSub.publish(topic, message: 59.03)
+        PortalsPubSub.publish(topic, message: 59.03)
         XCTAssertEqual(results, [1, nil])
         
-        PubSub.publish(topic, message: true)
+        PortalsPubSub.publish(topic, message: true)
         XCTAssertEqual(results, [1, nil, nil])
     }
     
@@ -119,13 +119,13 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:tryDataAs:success"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .tryData(as: Int.self)
             .assertNoFailure()
             .sink { results.append($0) }
             .store(in: &cancellables)
        
-        PubSub.publish(topic, message: 1)
+        PortalsPubSub.publish(topic, message: 1)
         
         XCTAssertEqual(results, [1])
     }
@@ -137,7 +137,7 @@ class PortalsPluginTests: XCTestCase {
         let topic = "test:number:tryDataAs:failure"
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .tryData(as: Int.self)
             .catch { error in
                 Just(-1)
@@ -148,7 +148,7 @@ class PortalsPluginTests: XCTestCase {
             )
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: "hello")
+        PortalsPubSub.publish(topic, message: "hello")
         
         XCTAssertEqual(results, [-1])
         XCTAssertTrue(completed)
@@ -172,14 +172,14 @@ class PortalsPluginTests: XCTestCase {
         )
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
             .assertNoFailure()
             .sink { results.append($0) }
             .store(in: &cancellables)
         
         let jsObject = try JSONEncoder().encodeJSObject(card)
-        PubSub.publish(topic, message: jsObject)
+        PortalsPubSub.publish(topic, message: jsObject)
         
         XCTAssertEqual(results, [card])
     }
@@ -193,7 +193,7 @@ class PortalsPluginTests: XCTestCase {
         let emptyCard = MagicTheGatheringCard(name: "", manaCost: "", convertedManaCost: 0)
         
         // SUT
-        PubSub.publisher(for: topic)
+        PortalsPubSub.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
             .replaceError(with: emptyCard)
             .sink(
@@ -202,7 +202,7 @@ class PortalsPluginTests: XCTestCase {
             )
             .store(in: &cancellables)
         
-        PubSub.publish(topic, message: 99.82)
+        PortalsPubSub.publish(topic, message: 99.82)
         
         XCTAssertEqual(results, [emptyCard])
         XCTAssertTrue(completed)
@@ -211,7 +211,7 @@ class PortalsPluginTests: XCTestCase {
     #if compiler(>=5.6)
     func test_asyncSubscribe__when_values_are_published__they_are_able_to_be_manipulated_with_async_sequence_apis() async {
         let sut = Task {
-            await PubSub.subscribe("test:asyncstream")
+            await PortalsPubSub.subscribe("test:asyncstream")
                 .map { $0.data }
                 .prefix(2)
                 .first { _ in true }
@@ -223,8 +223,8 @@ class PortalsPluginTests: XCTestCase {
             // subscribers and publishers will be racing at the level of nanoseconds
             // to actually register and publish.
             try await Task.sleep(nanoseconds: 1)
-            PubSub.publish("test:asyncstream", message: 1)
-            PubSub.publish("test:asyncstream", message: 2)
+            PortalsPubSub.publish("test:asyncstream", message: 1)
+            PortalsPubSub.publish("test:asyncstream", message: 2)
         }
         
         guard let firstValue = await sut.value as? Int else {
