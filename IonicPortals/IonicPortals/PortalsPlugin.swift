@@ -40,6 +40,5 @@ internal class Plugin: CAPPlugin {
         PortalsPubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
         call.resolve()
     }
-    
 }
 

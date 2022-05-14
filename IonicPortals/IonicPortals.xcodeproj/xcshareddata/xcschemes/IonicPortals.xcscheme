@@ -20,6 +20,20 @@
                ReferencedContainer = "container:IonicPortals.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A73E0FEE282F74F700AE7C54"
+               BuildableName = "IonicPortalsObjcTests.xctest"
+               BlueprintName = "IonicPortalsObjcTests"
+               ReferencedContainer = "container:IonicPortals.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -35,6 +49,16 @@
                BlueprintIdentifier = "E985F888269E2D260031F820"
                BuildableName = "IonicPortalsTests.xctest"
                BlueprintName = "IonicPortalsTests"
+               ReferencedContainer = "container:IonicPortals.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A73E0FEE282F74F700AE7C54"
+               BuildableName = "IonicPortalsObjcTests.xctest"
+               BlueprintName = "IonicPortalsObjcTests"
                ReferencedContainer = "container:IonicPortals.xcodeproj">
             </BuildableReference>
          </TestableReference>

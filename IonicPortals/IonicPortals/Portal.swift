@@ -12,7 +12,7 @@ public struct Portal {
     public let startDir: String
     
     /// Any initial state required by the web application
-    public var initialContext: [String: JSValue]
+    public var initialContext: JSObject
     
     /// The `LiveUpdate` configuration used to determine the location of updated application assets.
     public var liveUpdateConfig: LiveUpdate? = nil {
@@ -29,7 +29,7 @@ public struct Portal {
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
-    public init(name: String, startDir: String? = nil, initialContext: [String: JSValue] = [:], liveUpdateConfig: LiveUpdate? = nil) {
+    public init(name: String, startDir: String? = nil, initialContext: JSObject = [:], liveUpdateConfig: LiveUpdate? = nil) {
         self.name = name
         self.startDir = startDir ?? name
         self.initialContext = initialContext
@@ -51,7 +51,7 @@ extension Portal: ExpressibleByStringLiteral {
     }
 }
 
-/// The objective-c representation of ``Portal``. If using Swift, ``Portal`` is preferred since it provides better type constraints.
+/// The objective-c representation of ``Portal``. If using Swift, using ``Portal`` is preferred.
 @objc public class IONPortal: NSObject {
     internal var portal: Portal
     
@@ -73,8 +73,8 @@ extension Portal: ExpressibleByStringLiteral {
     @objc public var initialContext: [String: Any] {
         get { portal.initialContext }
         set {
-            guard let context = newValue as? [String: JSValue] else { return }
-            portal.initialContext = context
+            guard let newValue = JSTypes.coerceDictionaryToJSObject(newValue) else { return }
+            portal.initialContext = newValue
         }
     }
     
@@ -99,16 +99,14 @@ extension IONPortal {
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``Bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
-    ///
-    /// The following types are valid values in `initialContext`:
-    /// * NSNumber
-    /// * NSString
-    /// * NSArray
-    /// * NSDate
-    /// * NSNull
-    /// * NSDictionary keyed by a String and the value is any valid JS Value
     @objc public convenience init(name: String, startDir: String?, initialContext: [String: Any]?) {
-        let portal = Portal(name: name, startDir: startDir, initialContext: initialContext as? [String: JSValue] ?? [:], liveUpdateConfig: nil)
+        let portal = Portal(
+            name: name,
+            startDir: startDir,
+            initialContext: initialContext.flatMap { JSTypes.coerceDictionaryToJSObject($0) } ?? [:],
+            liveUpdateConfig: nil
+        )
+        
         self.init(portal: portal)
     }
 }
