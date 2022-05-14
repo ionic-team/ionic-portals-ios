@@ -21,8 +21,3 @@ target 'IonicPortalsTests' do
   project pod_project
   capacitor_pods
 end
-
-target 'IonicPortalsObjcTests' do
-  project pod_project
-  capacitor_pods
-end
