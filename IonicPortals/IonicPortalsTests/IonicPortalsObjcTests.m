@@ -67,7 +67,7 @@
     
     [IONPortalsPubSub publishToTopic:@"test" data:aDict];
     
-    [self waitForExpectations:@[expectation] timeout:5.0];
+    [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
