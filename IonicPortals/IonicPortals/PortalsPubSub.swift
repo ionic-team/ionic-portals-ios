@@ -98,7 +98,7 @@ public struct SubscriptionResult {
     }
 }
 
-/// An objective-c interface that enables marshalling data to and from a ``Portal`` over an event bus
+/// An objective-c interface that enables marshalling data to and from a ``Portal`` over an event bus. If using Swift, ``PortalsPubSub`` is the perferred interface.
 @objc public class IONPortalsPubSub: NSObject {
     private override init() { }
     
@@ -114,26 +114,40 @@ public struct SubscriptionResult {
         }
     }
         
-    @objc(publishToTopic:data:) public static func publish(topic: String, data: Any) {
-        let publish = { (value: JSValue) -> Void in
-            PortalsPubSub.publish(topic, message: value)
-        }
-        
-        if let dict = JSTypes.coerceDictionaryToJSObject(data as? NSDictionary) {
-            return publish(dict)
-        }
-        
-        if let array = JSTypes.coerceArrayToJSArray(data as? [Any]) {
-            return publish(array)
-        }
-       
-        if let value = data as? JSValue {
-            return publish(value)
-        }
+    /// Publish event to all listeners of a topic
+    /// - Parameters:
+    ///   - topic: The topic to publish to
+    ///   - data: The data to deliver to all subscribers. Must be a valid JSON data type or nil.
+    @objc(publishToTopic:data:) public static func publish(topic: String, data: Any?) {
+        guard let data = data else { return PortalsPubSub.publish(topic) }
+        guard let value = coerceToJsValue(data) else { return print("\(data) is not a valid JSON type...not publishing") }
+        PortalsPubSub.publish(topic, message: value)
     }
     
-    @objc(unsubscribeFromTopic:subscriptionRef:) public static func unsubscribe(_ topic: String, _ subscriptionRef: Int) {
+    /// Stop receiving events. This must be called if subscribing occured through ``subscribe(topic:callback:)`` to prevent a closure from being executed indefinitely.
+    /// - Parameters:
+    ///   - topic: The topic to unsubscribe from
+    ///   - subscriptionRef: The subscriptionRef provided during subscription
+    @objc(unsubscribeFromTopic:subscriptionRef:) public static func unsubscribe(from topic: String, subscriptionRef: Int) {
         PortalsPubSub.unsubscribe(from: topic, subscriptionRef: subscriptionRef)
     }
     
+    // This is needed because NSDictionary, NSArray, NSString, NSDate do not coerce to their bridged types when their bridged types conform to JSValue, so we need to do so here.
+    // We could avoid doing this by making JSTypes.coerceToJSValue(_:formattingDates:) public in Capacitor.
+    internal static func coerceToJsValue(_ value: Any) -> JSValue? {
+        switch value {
+        case let dict as NSDictionary:
+            return JSTypes.coerceDictionaryToJSObject(dict)
+        case let array as [Any]:
+            return JSTypes.coerceArrayToJSArray(array)
+        case let jsValue as JSValue:
+            return jsValue
+        case let string as String:
+            return string
+        case let date as Date:
+            return date
+        default:
+            return nil
+        }
+    }
 }
