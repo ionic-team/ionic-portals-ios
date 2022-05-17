@@ -11,7 +11,6 @@ import Capacitor
 
 /// An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public enum PortalsPubSub {
-    private static let notificationCenter = NotificationCenter()
     private static let queue = DispatchQueue(label: "io.ionic.portals.pubsub", attributes: .concurrent)
     
     private static var subscriptions: [String: [Int: (SubscriptionResult) -> Void]] = [:]
