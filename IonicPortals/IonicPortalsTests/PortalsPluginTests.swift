@@ -208,6 +208,21 @@ class PortalsPluginTests: XCTestCase {
         XCTAssertTrue(completed)
     }
     
+    func test_subscribeTo__does_not_fire_callback__when_cancellable_is_deallocated() {
+        let expectation = self.expectation(description: "Callback should not have fired")
+        expectation.isInverted = true
+        
+        var cancellable: AnyCancellable? = PortalsPubSub.subscribe(to: "test:cancellable") { _ in
+            expectation.fulfill()
+        }
+        
+        cancellable = nil
+        
+        PortalsPubSub.publish("test:cancellable")
+        wait(for: [expectation], timeout: 1.0)
+        
+    }
+    
     #if compiler(>=5.6)
     func test_asyncSubscribe__when_values_are_published__they_are_able_to_be_manipulated_with_async_sequence_apis() async {
         let sut = Task {
