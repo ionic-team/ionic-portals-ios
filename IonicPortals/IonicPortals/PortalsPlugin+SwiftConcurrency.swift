@@ -12,7 +12,7 @@ extension PortalsPubSub {
     /// Subscribe to a topic and receive the events in an `AsyncStream`
     /// - Parameter topic: The topic to subscribe to
     /// - Returns: An AsyncStream emitting ``SubscriptionResult``
-    public static func subscribe(_ topic: String) -> AsyncStream<SubscriptionResult> {
+    public static func subscribe(to topic: String) -> AsyncStream<SubscriptionResult> {
         AsyncStream { continuation in
             let ref = PortalsPubSub.subscribe(topic) { result in
                 continuation.yield(result)
