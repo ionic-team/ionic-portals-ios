@@ -23,7 +23,7 @@
         [expectation fulfill];
     }];
     
-    [IONPortalsPubSub publishToTopic:@"test" data:@YES];
+    [IONPortalsPubSub publishMessage:@YES toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
@@ -38,7 +38,7 @@
     }];
     
     NSError *nonJsonCompatible = [[NSError alloc] initWithDomain:NSCocoaErrorDomain code:1 userInfo:nil];
-    [IONPortalsPubSub publishToTopic:@"test" data:nonJsonCompatible];
+    [IONPortalsPubSub publishMessage:nonJsonCompatible toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
@@ -65,7 +65,7 @@
         [expectation fulfill];
     }];
     
-    [IONPortalsPubSub publishToTopic:@"test" data:aDict];
+    [IONPortalsPubSub publishMessage:aDict toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
@@ -103,7 +103,7 @@
         [expectation fulfill];
     }];
     
-    [IONPortalsPubSub publishToTopic:@"test" data:aDictToPublish];
+    [IONPortalsPubSub publishMessage:aDictToPublish toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
@@ -120,7 +120,7 @@
         [expectation fulfill];
     }];
     
-    [IONPortalsPubSub publishToTopic:@"test" data:anArray];
+    [IONPortalsPubSub publishMessage:anArray toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
@@ -138,7 +138,7 @@
         [expectation fulfill];
     }];
     
-    [IONPortalsPubSub publishToTopic:@"test" data:anArray];
+    [IONPortalsPubSub publishMessage:anArray toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
     [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];

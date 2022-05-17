@@ -10,7 +10,7 @@ internal class Plugin: CAPPlugin {
         }
         
         let data = call.getValue("data")
-        PortalsPubSub.publish(topic, message: data)
+        PortalsPubSub.publish(data, to: topic)
         call.resolve()
     }
     

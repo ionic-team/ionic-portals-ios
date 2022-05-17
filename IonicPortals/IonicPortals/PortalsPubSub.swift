@@ -51,9 +51,9 @@ public enum PortalsPubSub {
     
     /// Publish event to all listeners of a topic
     /// - Parameters:
+    ///   - message: The data to deliver to all subscribers. Must be a valid JSON data type. Defaults to nil.
     ///   - topic: The topic to publish to
-    ///   - data: The data to deliver to all subscribers. Must be a valid JSON data type. Defaults to nil.
-    public static func publish(_ topic: String, message: JSValue? = nil) {
+    public static func publish(_ message: JSValue? = nil, to topic: String) {
         queue.sync {
             if let subscription = subscriptions[topic] {
                 for (ref, listener) in subscription {
@@ -115,12 +115,12 @@ public struct SubscriptionResult {
         
     /// Publish event to all listeners of a topic
     /// - Parameters:
+    ///   - message: The data to deliver to all subscribers. Must be a valid JSON data type or nil.
     ///   - topic: The topic to publish to
-    ///   - data: The data to deliver to all subscribers. Must be a valid JSON data type or nil.
-    @objc(publishToTopic:data:) public static func publish(topic: String, data: Any?) {
-        guard let data = data else { return PortalsPubSub.publish(topic) }
+    @objc(publishMessage:toTopic:) public static func publish(message: Any?, topic: String) {
+        guard let data = message else { return PortalsPubSub.publish(to: topic) }
         guard let value = coerceToJsValue(data) else { return print("\(data) is not a valid JSON type...not publishing") }
-        PortalsPubSub.publish(topic, message: value)
+        PortalsPubSub.publish(value, to: topic)
     }
     
     /// Stop receiving events. This must be called if subscribing occured through ``subscribe(topic:callback:)`` to prevent a closure from being executed indefinitely.
