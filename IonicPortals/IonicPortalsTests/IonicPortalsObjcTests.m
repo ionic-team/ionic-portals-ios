@@ -60,7 +60,6 @@
     
     NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         NSDictionary *publishedDict = dict[@"data"];
-        NSLog( @"%@", dict );
         XCTAssertTrue([publishedDict isEqualToDictionary:aDict]);
         [expectation fulfill];
     }];

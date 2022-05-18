@@ -11,7 +11,7 @@ import Capacitor
 
 /// An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public enum PortalsPubSub {
-    private static let queue = DispatchQueue(label: "io.ionic.portals.pubsub", attributes: .concurrent)
+    private static let queue = DispatchQueue(label: "io.ionic.portals.pubsub")
     
     private static var subscriptions: [String: [Int: (SubscriptionResult) -> Void]] = [:]
     private static var subscriptionRef = 0
@@ -54,7 +54,7 @@ public enum PortalsPubSub {
     ///   - message: The data to deliver to all subscribers. Must be a valid JSON data type. Defaults to nil.
     ///   - topic: The topic to publish to
     public static func publish(_ message: JSValue? = nil, to topic: String) {
-        queue.sync {
+        queue.async {
             if let subscription = subscriptions[topic] {
                 for (ref, listener) in subscription {
                     let result = SubscriptionResult(topic: topic, data: message, subscriptionRef: ref)
@@ -69,7 +69,7 @@ public enum PortalsPubSub {
     ///   - topic: The topic to unsubscribe from
     ///   - subscriptionRef: The subscriptionRef provided during subscription
     public static func unsubscribe(from topic: String, subscriptionRef: Int) {
-        queue.async(flags: .barrier) {
+        queue.async {
             if var subscription = subscriptions[topic] {
                 subscription[subscriptionRef] = nil
                 subscriptions[topic] = subscription

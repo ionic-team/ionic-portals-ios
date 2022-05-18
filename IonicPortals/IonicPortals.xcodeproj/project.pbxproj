@@ -18,6 +18,7 @@
 		A725DEE627D0266100109471 /* PortalsPlugin+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */; };
 		A725DEEA27D1548C00109471 /* JSONEncoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */; };
 		A725DEEC27D1553D00109471 /* JSONDecoder+JSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */; };
+		A72BF93D28346CC400180713 /* Publisher+TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72BF93C28346CC400180713 /* Publisher+TestSupport.swift */; };
 		A73E0FA2282DC2F500AE7C54 /* PortalsPubSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73E0FA1282DC2F500AE7C54 /* PortalsPubSub.swift */; };
 		A73E0FFA282F9BD500AE7C54 /* IonicPortalsObjcTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A73E0FF1282F74F700AE7C54 /* IonicPortalsObjcTests.m */; };
 		A73E0FFC2830842C00AE7C54 /* IONPortalsPubSubCoersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73E0FFB2830842C00AE7C54 /* IONPortalsPubSubCoersionTests.swift */; };
@@ -57,6 +58,7 @@
 		A725DEE527D0266100109471 /* PortalsPlugin+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PortalsPlugin+Combine.swift"; sourceTree = "<group>"; };
 		A725DEE927D1548C00109471 /* JSONEncoder+JSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONEncoder+JSObject.swift"; sourceTree = "<group>"; };
 		A725DEEB27D1553D00109471 /* JSONDecoder+JSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+JSObject.swift"; sourceTree = "<group>"; };
+		A72BF93C28346CC400180713 /* Publisher+TestSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Publisher+TestSupport.swift"; sourceTree = "<group>"; };
 		A73E0F9B282DA5E400AE7C54 /* Pods_IonicPortals.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_IonicPortals.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A73E0F9D282DA5F900AE7C54 /* Pods_IonicPortalsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_IonicPortalsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A73E0FA1282DC2F500AE7C54 /* PortalsPubSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalsPubSub.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				E985F88E269E2D260031F820 /* PortalsPluginTests.swift */,
 				E985F890269E2D260031F820 /* Info.plist */,
 				A73E0FFB2830842C00AE7C54 /* IONPortalsPubSubCoersionTests.swift */,
+				A72BF93C28346CC400180713 /* Publisher+TestSupport.swift */,
 			);
 			path = IonicPortalsTests;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A72BF93D28346CC400180713 /* Publisher+TestSupport.swift in Sources */,
 				A73E0FFC2830842C00AE7C54 /* IONPortalsPubSubCoersionTests.swift in Sources */,
 				A73E0FFA282F9BD500AE7C54 /* IonicPortalsObjcTests.m in Sources */,
 				E985F88F269E2D260031F820 /* PortalsPluginTests.swift in Sources */,
