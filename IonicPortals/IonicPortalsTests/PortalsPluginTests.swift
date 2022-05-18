@@ -12,146 +12,112 @@ import Combine
 
 class PortalsPluginTests: XCTestCase {
     func test_topicPublisher__when_SubscriptionResults_are_published__they_are_emitted_to_downstream_subscribers() {
-        var results: [SubscriptionResult] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:result"
        
         // SUT
-        PortalsPubSub.publisher(for: topic)
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+        let result = PortalsPubSub.publisher(for: topic)
+            .assertOutputs([
+                { $0.data as? Int == 1 && $0.topic == topic },
+                { $0.data as? Int == 2 && $0.topic == topic },
+                { $0.data as? Int == 3 && $0.topic == topic }
+            ])
         
         PortalsPubSub.publish(1, to: topic)
-        XCTAssertEqual(results.count, 1)
-        
         PortalsPubSub.publish(2, to: topic)
-        XCTAssertEqual(results.count, 2)
-        
         PortalsPubSub.publish(3, to: topic)
-        XCTAssertEqual(results.count, 3)
+        
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher__when_data_operator_is_called__only_the_data_is_emitted_to_downstream_subscribers() {
-        var results: [JSValue] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:number:data"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .data()
-            .compactMap { $0 }
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .assertOutputs([
+                { $0 as? Int == 1 },
+                { $0 as? Int == 2 },
+                { $0 as? Int == 3 }
+            ])
         
         PortalsPubSub.publish(1, to: topic)
         PortalsPubSub.publish(2, to: topic)
         PortalsPubSub.publish(3, to: topic)
         
-        XCTAssertEqual(results.count, 3)
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_data_as_operator__when_cast_as_a_valid_type__then_values_are_not_nil() {
-        var results: [Int?] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .expectOutput(toBe: [1, 2, 3])
         
         PortalsPubSub.publish(1, to: topic)
-        XCTAssertEqual(results, [1])
-        
         PortalsPubSub.publish(2, to: topic)
-        XCTAssertEqual(results, [1, 2])
-        
         PortalsPubSub.publish(3, to: topic)
-        XCTAssertEqual(results, [1, 2, 3])
+        
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_data_as_operator__when_cast_as_an_invalid_type__then_downstream_values_are_nil() {
-        var results: [Int?] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .expectOutput(toBe: [nil, nil, nil])
         
         PortalsPubSub.publish("hello", to: topic)
-        XCTAssertEqual(results, [nil])
-        
         PortalsPubSub.publish(59.03, to: topic)
-        XCTAssertEqual(results, [nil, nil])
-        
         PortalsPubSub.publish(true, to: topic)
-        XCTAssertEqual(results, [nil, nil, nil])
+        
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_data_as_operator__when_receiving_heterogenous_data__then_types_not_matching_the_cast_are_nil() {
-        var results: [Int?] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:number:dataAs"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .data(as: Int.self)
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .expectOutput(toBe: [1, nil, nil])
         
         PortalsPubSub.publish(1, to: topic)
-        XCTAssertEqual(results, [1])
-        
         PortalsPubSub.publish(59.03, to: topic)
-        XCTAssertEqual(results, [1, nil])
-        
         PortalsPubSub.publish(true, to: topic)
-        XCTAssertEqual(results, [1, nil, nil])
+        
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_tryData_as_operator__when_a_valid_type_is_cast__then_no_error_is_emitted_downstream() {
-        var results: [Int] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:number:tryDataAs:success"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .tryData(as: Int.self)
             .assertNoFailure()
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .expectOutput(toBe: 1)
        
         PortalsPubSub.publish(1, to: topic)
         
-        XCTAssertEqual(results, [1])
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_tryData_as_operator__when_an_invalid_type_is_cast__then_an_error_is_emitted_and_the_publisher_completes() {
-        var results: [Int] = []
-        var cancellables = Set<AnyCancellable>()
-        var completed = false
         let topic = "test:number:tryDataAs:failure"
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .tryData(as: Int.self)
-            .catch { error in
-                Just(-1)
-            }
-            .sink(
-                receiveCompletion: { _ in completed = true },
-                receiveValue: { results.append($0) }
-            )
-            .store(in: &cancellables)
+            .expectError()
         
         PortalsPubSub.publish("hello", to: topic)
         
-        XCTAssertEqual(results, [-1])
-        XCTAssertTrue(completed)
+        wait(for: result, timeout: 1)
     }
     
     struct MagicTheGatheringCard: Codable, Equatable {
@@ -161,8 +127,6 @@ class PortalsPluginTests: XCTestCase {
     }
     
     func test_topicPublisher_decodeData_operator__when_well_formed_data_is_received__then_the_value_is_decoded_and_emitted_downstream() throws {
-        var results: [MagicTheGatheringCard] = []
-        var cancellables = Set<AnyCancellable>()
         let topic = "test:decoding:wellformed"
         
         let card = MagicTheGatheringCard(
@@ -172,40 +136,27 @@ class PortalsPluginTests: XCTestCase {
         )
         
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
             .assertNoFailure()
-            .sink { results.append($0) }
-            .store(in: &cancellables)
+            .expectOutput(toBe: card)
         
         let jsObject = try JSONEncoder().encodeJSObject(card)
         PortalsPubSub.publish(jsObject, to: topic)
         
-        XCTAssertEqual(results, [card])
+        wait(for: result, timeout: 1)
     }
     
     func test_topicPublisher_decodeData_operator__when_malformed_data_is_received__then_an_error_is_emitted_downstream_and_the_publisher_completes() {
-        var results: [MagicTheGatheringCard] = []
-        var cancellables = Set<AnyCancellable>()
-        var completed = false
         let topic = "test:decoding:malformed"
         
-        let emptyCard = MagicTheGatheringCard(name: "", manaCost: "", convertedManaCost: 0)
-        
         // SUT
-        PortalsPubSub.publisher(for: topic)
+        let result = PortalsPubSub.publisher(for: topic)
             .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
-            .replaceError(with: emptyCard)
-            .sink(
-                receiveCompletion: { _ in completed = true },
-                receiveValue: { results.append($0) }
-            )
-            .store(in: &cancellables)
+            .expectError()
         
         PortalsPubSub.publish(99.82, to: topic)
-        
-        XCTAssertEqual(results, [emptyCard])
-        XCTAssertTrue(completed)
+        wait(for: result, timeout: 1)
     }
     
     func test_subscribeTo__does_not_fire_callback__when_cancellable_is_deallocated() {
