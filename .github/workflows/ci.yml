@@ -20,7 +20,6 @@ jobs:
       - run: |
           set -eo pipefail
           xcodebuild test \
-          -workspace IonicPortals.xcworkspace \
           -scheme IonicPortals \
           -destination 'platform=iOS Simulator,name=iPhone 13' | xcpretty
 

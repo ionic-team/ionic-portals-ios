@@ -25,5 +25,17 @@ let package = Package(
             ],
             path: "IonicPortals/IonicPortals"
         ),
+        .testTarget(
+            name: "IonicPortalsTests",
+            dependencies: [ "IonicPortals" ],
+            path: "IonicPortals/IonicPortalsTests",
+            sources: ["PortalsPluginTests.swift", "Publisher+TestSupport.swift", "IONPortalsPubSubCoersionTests.swift"]
+        ),
+        .testTarget(
+            name: "IonicPortalsObjcTests",
+            dependencies: [ "IonicPortals" ],
+            path: "IonicPortals/IonicPortalsTests",
+            sources: [ "IonicPortalsObjcTests.m" ]
+        )
     ]
 )
