@@ -97,3 +97,6 @@ iOSInjectionProject/
 # Carthage
 Carthage
 IonicPortals.xcframework.zip
+
+# SPM
+.swiftpm

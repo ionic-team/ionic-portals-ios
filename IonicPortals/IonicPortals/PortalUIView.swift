@@ -40,8 +40,7 @@ public class PortalUIView: UIView {
             
             addPinnedSubview(webView)
         } else {
-            let bundle = Bundle(for: UnregisteredView.classForCoder())
-            let nib = UINib(nibName: "UnregisteredView", bundle: bundle)
+            let nib = UINib(nibName: "UnregisteredView", bundle: .module)
             let view = nib.instantiate(withOwner: self, options: nil).first as! UIView
             
             addPinnedSubview(view)
