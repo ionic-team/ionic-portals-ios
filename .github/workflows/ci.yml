@@ -14,9 +14,8 @@ jobs:
     steps:
       - run: sudo xcode-select --switch /Applications/Xcode_13.2.1.app
       - uses: actions/checkout@v2
-      - name: Install Cocoapods
-        run: gem install cocoapods xcpretty
-      - run: pod install
+      - name: Install xcpretty
+        run: gem install xcpretty
       - run: |
           set -eo pipefail
           xcodebuild test \
