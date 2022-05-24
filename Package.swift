@@ -12,8 +12,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm", .exactItem("3.5.1")),
-        .package(url: "https://github.com/ionic-team/ionic-live-updates-releases", .exactItem("0.1.0")),
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm", .upToNextMajor(from: "3.5.1")),
+        .package(url: "https://github.com/ionic-team/ionic-live-updates-releases", .upToNextMinor(from: "0.1.0")),
     ],
     targets: [
         .target(
