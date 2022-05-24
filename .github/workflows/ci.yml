@@ -26,7 +26,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode-13.2.1.app
+      - run: sudo xcode-select --switch /Applications/Xcode_13.2.1.app
       - uses: actions/checkout@v2
       - name: Install cocoapods
         run: gem install cocoapods
