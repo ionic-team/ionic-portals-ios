@@ -22,20 +22,15 @@ let package = Package(
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm"),
                 .product(name: "IonicLiveUpdates", package: "ionic-live-updates-releases")
-            ],
-            path: "IonicPortals/IonicPortals"
+            ]
         ),
         .testTarget(
             name: "IonicPortalsTests",
-            dependencies: [ "IonicPortals" ],
-            path: "IonicPortals/IonicPortalsTests",
-            sources: ["PortalsPluginTests.swift", "Publisher+TestSupport.swift", "IONPortalsPubSubCoersionTests.swift"]
+            dependencies: [ "IonicPortals" ]
         ),
         .testTarget(
             name: "IonicPortalsObjcTests",
-            dependencies: [ "IonicPortals" ],
-            path: "IonicPortals/IonicPortalsTests",
-            sources: [ "IonicPortalsObjcTests.m" ]
+            dependencies: [ "IonicPortals" ]
         )
     ]
 )
