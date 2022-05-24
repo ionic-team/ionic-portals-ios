@@ -172,8 +172,6 @@ private extension Array where Element == Gradient.Stop {
     ]
 }
 
-
-
 struct LogoView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader { proxy in
@@ -181,16 +179,9 @@ struct LogoView_Previews: PreviewProvider {
                 LogoView()
                     .frame(width: 64, height: 64)
             }
+            .edgesIgnoringSafeArea(.all)
             .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
         }
         .background(Color.portalBlue)
     }
-}
-
-extension Color {
-    static let portalBlue = Color(
-        red: 0.0,
-        green: 0.21960784310000001,
-        blue: 0.78823529410000004
-    )
 }
