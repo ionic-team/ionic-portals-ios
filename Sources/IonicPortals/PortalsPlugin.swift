@@ -1,9 +1,28 @@
 import Foundation
 import Capacitor
-import Combine
 
 @objc(IONPortalsPlugin)
-internal class Plugin: CAPPlugin {
+internal class Plugin: CAPPlugin, CAPBridgedPlugin {
+    static func pluginId() -> String {
+        "IONPortalsPlugin"
+    }
+    
+    static func jsName() -> String {
+        "Portals"
+    }
+    
+    static let methods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "publishNative", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "subscribeNative", returnType: CAPPluginReturnCallback),
+        CAPPluginMethod(name: "unsubscribeNative", returnType: CAPPluginReturnPromise)
+    ]
+    
+    static func pluginMethods() -> [Any] { methods }
+    
+    static func getMethod(_ methodName: String) -> CAPPluginMethod? {
+        methods.first { $0.name == methodName }
+    }
+    
     @objc func publishNative(_ call: CAPPluginCall) {
         guard let topic = call.getString("topic") else {
             return call.reject("topic not provided")

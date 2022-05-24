@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "capacitor-swift-pm",
+        "repositoryURL": "https://github.com/ionic-team/capacitor-swift-pm",
+        "state": {
+          "branch": null,
+          "revision": "bc5875bb6331ab3478ed687097f8d2421a2d5d03",
+          "version": "3.5.1"
+        }
+      },
+      {
+        "package": "IonicLiveUpdates",
+        "repositoryURL": "https://github.com/ionic-team/ionic-live-updates-releases",
+        "state": {
+          "branch": null,
+          "revision": "86b4676cf6993b5d14def002b3b507caf67cb96c",
+          "version": "0.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
