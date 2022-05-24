@@ -8,8 +8,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target  = '14.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/ionic-portals-ios.git', :tag => s.version.to_s }
-  s.source_files = 'IonicPortals/IonicPortals/*.{swift,h,m}'
-  s.resources = ['IonicPortals/IonicPortals/**/*.{xib,xcassets,svg}']
+  s.source_files = 'Sources/IonicPortals/*.swift'
   s.dependency 'Capacitor', '~> 3.5'
   s.dependency 'IonicLiveUpdates', '~> 0.1.0'
   s.swift_version = '5.4'

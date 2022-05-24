@@ -3,6 +3,7 @@ import WebKit
 import UIKit
 import Capacitor
 import IonicLiveUpdates
+import SwiftUI
 
 /// A UIKit UIView to display ``Portal`` content
 @objc(IONPortalUIView)
@@ -40,10 +41,14 @@ public class PortalUIView: UIView {
             
             addPinnedSubview(webView)
         } else {
-            let nib = UINib(nibName: "UnregisteredView", bundle: .module)
-            let view = nib.instantiate(withOwner: self, options: nil).first as! UIView
+            let _view = Unregistered()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .edgesIgnoringSafeArea(.all)
+                .background(Color.portalBlue)
             
-            addPinnedSubview(view)
+            let view = UIHostingController(rootView: _view).view
+            
+            addPinnedSubview(view!)
         }
     }
     
