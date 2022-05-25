@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "IonicPortals",
-    platforms: [.iOS(.v14)],
+    platforms: [.iOS(.v13)],
     products: [
         .library(
             name: "IonicPortals",
