@@ -107,7 +107,7 @@ extension IONPortal {
     /// Creates an instance of ``IONPortal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
-    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the `Bundle`.
+    ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
     @objc public convenience init(name: String, startDir: String?, initialContext: [String: Any]?) {
@@ -124,7 +124,7 @@ extension IONPortal {
     /// Creates an instance of ``IONPortal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
-    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the `Bundle`.
+    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - bundle: The `Bundle` that contains the web application.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
