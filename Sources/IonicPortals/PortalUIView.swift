@@ -85,15 +85,15 @@ public class PortalUIView: UIView {
         }
         
         override func instanceDescriptor() -> InstanceDescriptor {
-            let bundleURL = Bundle.main.url(forResource: self.portal.startDir, withExtension: nil)
+            let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
             
-            guard let path = self.liveUpdatePath ?? bundleURL else {
+            guard let path = liveUpdatePath ?? bundleURL else {
                 // DCG this should throw or something else
                 return InstanceDescriptor()
             }
             
-            let capConfigUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-            let cordovaConfigUrl = Bundle.main.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
+            let capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
+            let cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
             
             let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
             
@@ -101,9 +101,11 @@ public class PortalUIView: UIView {
         }
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
-            guard portal.initialContext.isNotEmpty, let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext) else { return }
+            guard portal.initialContext.isNotEmpty,
+                  let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext),
+                  let jsonString = String(data: jsonData, encoding: .utf8)
+            else { return }
                 
-            let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
             let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
             let scriptSource = "window.portalInitialContext = " + portalInitialContext
             
