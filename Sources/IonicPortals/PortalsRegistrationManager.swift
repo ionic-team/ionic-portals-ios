@@ -90,15 +90,7 @@ public class PortalsRegistrationManager: NSObject {
     }
     
     private func registrationError() {
-        print("Error validating key")
-        
-        let alert = UIAlertController(title: nil, message: "Error validating your key for Ionic Portals. Check your key and try again.", preferredStyle: .alert)
-        let okButton = UIAlertAction(title: "OK", style: .default, handler: { action -> Void in alert.dismiss(animated: true) })
-        
-        alert.addAction(okButton)
-        
-        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-        keyWindow?.rootViewController = alert
+        print("Error validating your key for Ionic Portals. Check your key and try again.")
     }
     
     private func unregisteredMessage() {
