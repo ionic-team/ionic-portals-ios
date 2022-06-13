@@ -85,7 +85,7 @@ public struct SubscriptionResult {
     public var topic: String
     /// The value emitted
     public var data: JSValue?
-    /// The reference to the subscription. Used for calling ``PubSub/unsubscribe(from:subscriptionRef:)``
+    /// The reference to the subscription. Used for calling ``PortalsPubSub/unsubscribe(from:subscriptionRef:)``
     public var subscriptionRef: Int
     
     var dictionaryRepresentation: [String: JSValue?] {
@@ -97,7 +97,7 @@ public struct SubscriptionResult {
     }
 }
 
-/// An objective-c interface that enables marshalling data to and from a ``Portal`` over an event bus. If using Swift, ``PortalsPubSub`` is the perferred interface.
+/// An Objective-C interface that enables marshalling data to and from a ``Portal`` over an event bus. If using Swift, ``PortalsPubSub`` is the perferred interface.
 @objc public class IONPortalsPubSub: NSObject {
     private override init() { }
     

@@ -8,8 +8,11 @@ public struct Portal {
     /// The name of the portal
     public let name: String
     
-    /// The root directory of the ``Portal`` relative to root of the `Bundle`
+    /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
     public let startDir: String
+    
+    /// The `Bundle` that contains the web application.
+    public var bundle: Bundle
     
     /// Any initial state required by the web application
     public var initialContext: JSObject
@@ -25,14 +28,16 @@ public struct Portal {
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
-    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``Bundle``.
+    ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
+    ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
-    public init(name: String, startDir: String? = nil, initialContext: JSObject = [:], liveUpdateConfig: LiveUpdate? = nil) {
+    public init(name: String, startDir: String? = nil, bundle: Bundle = .main, initialContext: JSObject = [:], liveUpdateConfig: LiveUpdate? = nil) {
         self.name = name
         self.startDir = startDir ?? name
         self.initialContext = initialContext
+        self.bundle = bundle
         self.liveUpdateConfig = liveUpdateConfig
         if let liveUpdateConfig = liveUpdateConfig {
             try? LiveUpdateManager.shared.add(liveUpdateConfig)
@@ -51,14 +56,20 @@ extension Portal: ExpressibleByStringLiteral {
     }
 }
 
-/// The objective-c representation of ``Portal``. If using Swift, using ``Portal`` is preferred.
+/// The Objective-C representation of ``Portal``. If using Swift, using ``Portal`` is preferred.
 @objc public class IONPortal: NSObject {
     internal var portal: Portal
     
     /// The name of the portal
     @objc public var name: String { portal.name }
     
-    /// The root directory of the ``Portal`` relative to root of the `Bundle`
+    /// The `Bundle` that contains the web application.
+    @objc public var bundle: Bundle {
+        get { portal.bundle }
+        set { portal.bundle = newValue }
+    }
+    
+    /// The root directory of the ``IONPortal`` relative to root of the `Bundle`
     @objc public var startDir: String { portal.startDir }
     
     /// Any initial state required by the web application.
@@ -93,10 +104,10 @@ extension Portal: ExpressibleByStringLiteral {
 }
 
 extension IONPortal {
-    /// Creates an instance of ``Portal``
+    /// Creates an instance of ``IONPortal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
-    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``Bundle``.
+    ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
     @objc public convenience init(name: String, startDir: String?, initialContext: [String: Any]?) {
@@ -108,5 +119,17 @@ extension IONPortal {
         )
         
         self.init(portal: portal)
+    }
+    
+    /// Creates an instance of ``IONPortal``
+    /// - Parameters:
+    ///   - name: The name of the portal, must be unique.
+    ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``bundle``.
+    ///     If `nil`, the portal name is used as the starting directory.
+    ///   - bundle: The `Bundle` that contains the web application.
+    ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    @objc public convenience init(name: String, startDir: String?, bundle: Bundle, initialContext: [String: Any]?) {
+        self.init(name: name, startDir: startDir, initialContext: initialContext)
+        self.bundle = bundle
     }
 }
