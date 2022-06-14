@@ -4,7 +4,7 @@ import UIKit
 /// Manages the registration lifecycle
 @objc(IONPortalsRegistrationManager)
 public class PortalsRegistrationManager: NSObject {
-    enum RegistrationState {
+    enum RegistrationState: Equatable {
         case unregistered(messageShown: Bool)
         case registered
         case error
@@ -15,7 +15,7 @@ public class PortalsRegistrationManager: NSObject {
     /// The default singleton
     @objc public static let shared = PortalsRegistrationManager()
 
-    private var registrationState: RegistrationState = .unregistered(messageShown: false)
+    internal private(set) var registrationState: RegistrationState = .unregistered(messageShown: false)
 
     /// Whether Portals has been registered.
     /// Will be true when ``register(key:)`` has been called with a valid key.

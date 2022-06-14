@@ -41,7 +41,8 @@ public class PortalUIView: UIView {
             
             addPinnedSubview(webView)
         } else {
-            let _view = Unregistered()
+            let showRegistrationError = PortalsRegistrationManager.shared.registrationState == .error
+            let _view = Unregistered(shouldShowRegistrationError: showRegistrationError)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
                 .background(Color.portalBlue)
