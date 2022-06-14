@@ -3,6 +3,12 @@ import UIKit
 import SwiftUI
 
 struct Unregistered: View {
+    @State private var shouldShowRegistrationError: Bool
+    
+    init(shouldShowRegistrationError: Bool) {
+        self.shouldShowRegistrationError = shouldShowRegistrationError
+    }
+    
     var body: some View {
         VStack {
             VStack(spacing: 32) {
@@ -23,6 +29,13 @@ struct Unregistered: View {
                 .foregroundColor(.white)
             }
             .padding()
+            .alert(isPresented: $shouldShowRegistrationError) {
+                Alert(
+                    title: Text("Registration Error"),
+                    message: Text("Error validating your key for Ionic Portals. Check your key and try again."),
+                    dismissButton: Alert.Button.default(Text("OK"))
+                )
+            }
         }
     }
 }
@@ -34,7 +47,7 @@ public class UnregisteredView: UIView {
 struct Unregistered_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            Unregistered()
+            Unregistered(shouldShowRegistrationError: true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.portalBlue)

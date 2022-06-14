@@ -4,7 +4,7 @@ import UIKit
 /// Manages the registration lifecycle
 @objc(IONPortalsRegistrationManager)
 public class PortalsRegistrationManager: NSObject {
-    enum RegistrationState {
+    enum RegistrationState: Equatable {
         case unregistered(messageShown: Bool)
         case registered
         case error
@@ -15,7 +15,7 @@ public class PortalsRegistrationManager: NSObject {
     /// The default singleton
     @objc public static let shared = PortalsRegistrationManager()
 
-    private var registrationState: RegistrationState = .unregistered(messageShown: false)
+    internal private(set) var registrationState: RegistrationState = .unregistered(messageShown: false)
 
     /// Whether Portals has been registered.
     /// Will be true when ``register(key:)`` has been called with a valid key.
@@ -90,15 +90,7 @@ public class PortalsRegistrationManager: NSObject {
     }
     
     private func registrationError() {
-        print("Error validating key")
-        
-        let alert = UIAlertController(title: nil, message: "Error validating your key for Ionic Portals. Check your key and try again.", preferredStyle: .alert)
-        let okButton = UIAlertAction(title: "OK", style: .default, handler: { action -> Void in alert.dismiss(animated: true) })
-        
-        alert.addAction(okButton)
-        
-        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-        keyWindow?.rootViewController = alert
+        print("Error validating your key for Ionic Portals. Check your key and try again.")
     }
     
     private func unregisteredMessage() {
