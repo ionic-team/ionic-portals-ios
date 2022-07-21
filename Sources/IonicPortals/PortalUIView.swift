@@ -36,7 +36,7 @@ public class PortalUIView: UIView {
     func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdateConfig.appId)
+                self.liveUpdatePath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
             }
             
             addPinnedSubview(webView)
@@ -58,7 +58,7 @@ public class PortalUIView: UIView {
         guard
             let liveUpdate = portal.liveUpdateConfig,
             let capViewController = bridge.viewController as? CAPBridgeViewController,
-            let latestAppPath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdate.appId)
+            let latestAppPath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId)
         else { return }
 
         if liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {

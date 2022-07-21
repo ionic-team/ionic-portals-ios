@@ -17,11 +17,14 @@ public struct Portal {
     /// Any initial state required by the web application
     public var initialContext: JSObject
     
+    /// The `LiveUpdateManager` responsible for locating the latest source for the web application
+    public var liveUpdateManager: LiveUpdateManager
+
     /// The `LiveUpdate` configuration used to determine the location of updated application assets.
     public var liveUpdateConfig: LiveUpdate? = nil {
         didSet {
             guard let liveUpdateConfig = liveUpdateConfig else { return }
-            try? LiveUpdateManager.shared.add(liveUpdateConfig)
+            try? liveUpdateManager.add(liveUpdateConfig)
         }
     }
     
@@ -32,15 +35,24 @@ public struct Portal {
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
-    public init(name: String, startDir: String? = nil, bundle: Bundle = .main, initialContext: JSObject = [:], liveUpdateConfig: LiveUpdate? = nil) {
+    public init(
+        name: String,
+        startDir: String? = nil,
+        bundle: Bundle = .main,
+        initialContext: JSObject = [:],
+        liveUpdateManager: LiveUpdateManager = .shared,
+        liveUpdateConfig: LiveUpdate? = nil
+    ) {
         self.name = name
         self.startDir = startDir ?? name
         self.initialContext = initialContext
         self.bundle = bundle
+        self.liveUpdateManager = liveUpdateManager
         self.liveUpdateConfig = liveUpdateConfig
         if let liveUpdateConfig = liveUpdateConfig {
-            try? LiveUpdateManager.shared.add(liveUpdateConfig)
+            try? liveUpdateManager.add(liveUpdateConfig)
         }
     }
 }
