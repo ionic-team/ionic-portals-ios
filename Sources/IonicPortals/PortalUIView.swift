@@ -74,6 +74,8 @@ public class PortalUIView: UIView {
     class InternalCapWebView: CAPWebView {
         var portal: Portal
         var liveUpdatePath: URL? = nil
+        
+        override var router: Router { PortalRouter(index: portal.index) }
 
         init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
@@ -120,6 +122,21 @@ public class PortalUIView: UIView {
         }
     }
     
+}
+
+internal struct PortalRouter: Router {
+    let index: String
+    var basePath: String = ""
+
+    func route(for path: String) -> String {
+        let pathUrl = URL(fileURLWithPath: path)
+        // If there's no path extension it also means the path is empty or a SPA route
+        if pathUrl.pathExtension.isEmpty {
+            return basePath + "/\(index)"
+        }
+
+        return basePath + path
+    }
 }
 
 extension Collection {
