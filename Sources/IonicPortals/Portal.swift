@@ -11,6 +11,9 @@ public struct Portal {
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
     public let startDir: String
     
+    /// The initial file to load in the Portal.
+    public let index: String
+
     /// The `Bundle` that contains the web application.
     public var bundle: Bundle
     
@@ -33,6 +36,7 @@ public struct Portal {
     ///   - name: The name of the portal, must be unique.
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
+    ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
@@ -40,6 +44,7 @@ public struct Portal {
     public init(
         name: String,
         startDir: String? = nil,
+        index: String = "index.html",
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
         liveUpdateManager: LiveUpdateManager = .shared,
@@ -47,6 +52,7 @@ public struct Portal {
     ) {
         self.name = name
         self.startDir = startDir ?? name
+        self.index = index
         self.initialContext = initialContext
         self.bundle = bundle
         self.liveUpdateManager = liveUpdateManager
