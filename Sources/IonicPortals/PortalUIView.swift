@@ -62,7 +62,9 @@ public class PortalUIView: UIView {
             return webView.setServerBasePath(path: latestAppPath.path)
         }
 
-        bridge.webView?.reload()
+        DispatchQueue.main.async { [weak self] in
+            self?.bridge.webView?.reload()
+        }
     }
     
     class InternalCapWebView: CAPWebView {
