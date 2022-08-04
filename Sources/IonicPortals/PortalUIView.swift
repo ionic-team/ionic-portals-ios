@@ -55,20 +55,16 @@ public class PortalUIView: UIView {
     
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
-        guard
-            let liveUpdate = portal.liveUpdateConfig,
-            let capViewController = bridge.viewController as? CAPBridgeViewController,
-            let latestAppPath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId)
-        else { return }
-
-        if liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
+        if let liveUpdate = portal.liveUpdateConfig,
+           let latestAppPath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId),
+           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
-            capViewController.setServerBasePath(path: liveUpdatePath!.path)
-            return
+            return webView.setServerBasePath(path: latestAppPath.path)
         }
 
-        // Reload the bridge to the existing start url
-        bridge.webView?.reload()
+        DispatchQueue.main.async { [weak self] in
+            self?.bridge.webView?.reload()
+        }
     }
     
     class InternalCapWebView: CAPWebView {
