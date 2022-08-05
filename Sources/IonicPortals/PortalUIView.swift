@@ -36,12 +36,13 @@ public class PortalUIView: UIView {
     func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdateConfig.appId)
+                self.liveUpdatePath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
             }
             
             addPinnedSubview(webView)
         } else {
-            let _view = Unregistered()
+            let showRegistrationError = PortalsRegistrationManager.shared.registrationState == .error
+            let _view = Unregistered(shouldShowRegistrationError: showRegistrationError)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
                 .background(Color.portalBlue)
@@ -54,25 +55,23 @@ public class PortalUIView: UIView {
     
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
-        guard
-            let liveUpdate = portal.liveUpdateConfig,
-            let capViewController = bridge.viewController as? CAPBridgeViewController,
-            let latestAppPath = try? LiveUpdateManager.shared.latestAppDirectory(for: liveUpdate.appId)
-        else { return }
-
-        if liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
+        if let liveUpdate = portal.liveUpdateConfig,
+           let latestAppPath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId),
+           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
-            capViewController.setServerBasePath(path: liveUpdatePath!.path)
-            return
+            return webView.setServerBasePath(path: latestAppPath.path)
         }
 
-        // Reload the bridge to the existing start url
-        bridge.webView?.reload()
+        DispatchQueue.main.async { [weak self] in
+            self?.bridge.webView?.reload()
+        }
     }
     
     class InternalCapWebView: CAPWebView {
         var portal: Portal
         var liveUpdatePath: URL? = nil
+        
+        override var router: Router { PortalRouter(index: portal.index) }
 
         init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
@@ -85,15 +84,15 @@ public class PortalUIView: UIView {
         }
         
         override func instanceDescriptor() -> InstanceDescriptor {
-            let bundleURL = Bundle.main.url(forResource: self.portal.startDir, withExtension: nil)
+            let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
             
-            guard let path = self.liveUpdatePath ?? bundleURL else {
+            guard let path = liveUpdatePath ?? bundleURL else {
                 // DCG this should throw or something else
                 return InstanceDescriptor()
             }
             
-            let capConfigUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-            let cordovaConfigUrl = Bundle.main.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
+            let capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
+            let cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
             
             let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
             
@@ -101,9 +100,11 @@ public class PortalUIView: UIView {
         }
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
-            guard portal.initialContext.isNotEmpty, let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext) else { return }
+            guard portal.initialContext.isNotEmpty,
+                  let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext),
+                  let jsonString = String(data: jsonData, encoding: .utf8)
+            else { return }
                 
-            let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
             let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
             let scriptSource = "window.portalInitialContext = " + portalInitialContext
             
@@ -117,6 +118,21 @@ public class PortalUIView: UIView {
         }
     }
     
+}
+
+internal struct PortalRouter: Router {
+    let index: String
+    var basePath: String = ""
+
+    func route(for path: String) -> String {
+        let pathUrl = URL(fileURLWithPath: path)
+        // If there's no path extension it also means the path is empty or a SPA route
+        if pathUrl.pathExtension.isEmpty {
+            return basePath + "/\(index)"
+        }
+
+        return basePath + path
+    }
 }
 
 extension Collection {

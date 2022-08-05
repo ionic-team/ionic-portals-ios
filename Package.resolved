@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/ionic-team/capacitor-swift-pm",
         "state": {
           "branch": null,
-          "revision": "bc5875bb6331ab3478ed687097f8d2421a2d5d03",
-          "version": "3.5.1"
+          "revision": "c108ae317c35e88dc6d639b8f798f76f55b8f2c2",
+          "version": "3.7.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/ionic-team/ionic-live-updates-releases",
         "state": {
           "branch": null,
-          "revision": "86b4676cf6993b5d14def002b3b507caf67cb96c",
-          "version": "0.1.0"
+          "revision": "e5a4f330f62075ab6dc7cfb8848ebab80bffb9f9",
+          "version": "0.1.3"
         }
       }
     ]
