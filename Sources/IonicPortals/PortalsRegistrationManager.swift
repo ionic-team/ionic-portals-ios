@@ -28,7 +28,7 @@ public class PortalsRegistrationManager: NSObject {
         }
     }
     
-    /// Validates that a valid registration key has been procured from http://ionic.io/register-portals
+    /// Validates that a valid registration key has been procured from [http://ionic.io/register-portals](http://ionic.io/register-portals)
     /// - Parameter key: The registration key
     @objc public func register(key: String) {
         registrationState = validate(key)

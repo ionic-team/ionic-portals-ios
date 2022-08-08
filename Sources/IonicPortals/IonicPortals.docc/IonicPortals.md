@@ -16,7 +16,6 @@ IonicPortals provides tools to configure, render, and communicate with embedded 
 ### Creating a Portal
 
 - ``Portal``
-- ``IONPortal``
 
 ### Displaying a Portal
 
@@ -26,5 +25,9 @@ IonicPortals provides tools to configure, render, and communicate with embedded 
 ### Communicating Between Web and Native
 
 - ``PortalsPubSub``
-- ``IONPortalsPubSub``
 - ``SubscriptionResult``
+
+### Objective-C Compatibility
+
+- ``IONPortal``
+- ``IONPortalsPubSub``
