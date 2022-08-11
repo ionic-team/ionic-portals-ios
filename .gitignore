@@ -100,3 +100,9 @@ IonicPortals.xcframework.zip
 
 # SPM
 .swiftpm
+
+# Vercel
+.vercel
+public/
+node_modules
+yarn.lock

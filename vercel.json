@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/docs/portals/reference/iOS/:match*",
+      "destination": "/documentation/ionicportals/:match*"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+name: Publish Docs Preview
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  publish-preview-docs:
+    runs-on: macos-12
+    timeout-minutes: 30
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - run: sudo xcode-select --switch /Applications/Xcode_14.0.app
+      - uses: actions/checkout@v2
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      - name: Pull Build Configuration
+        run: vercel pull --token ${{ secrets.VERCEL_TOKEN }}
+      - name: Build Vercel Package
+        run: vercel build
+      - name: Deploy Preview
+        run: vercel deploy --prebuilt --token ${{ secrets.VERCEL_TOKEN }}

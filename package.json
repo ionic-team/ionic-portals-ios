@@ -1,0 +1,9 @@
+{
+  "name": "ionic-portals-ios-docs",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:docs && npm run build:transform",
+    "build:docs": "xcodebuild docbuild -scheme IonicPortals -derivedDataPath DerivedData -destination 'platform=iOS Simulator,name=iPhone 13'",
+    "build:transform": "mv DerivedData/Build/Products/Debug-iphonesimulator/IonicPortals.doccarchive public"
+  }
+}
