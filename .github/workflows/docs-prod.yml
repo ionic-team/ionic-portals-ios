@@ -25,6 +25,6 @@ jobs:
       - name: Pull Build Configuration
         run: vercel pull --token ${{ secrets.VERCEL_TOKEN }}
       - name: Build Vercel Package
-        run: vercel build
+        run: vercel build --prod
       - name: Deploy
         run: vercel deploy --prod --prebuilt --token ${{ secrets.VERCEL_TOKEN }}
