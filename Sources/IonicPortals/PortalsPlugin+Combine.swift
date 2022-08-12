@@ -66,7 +66,7 @@ extension PortalsPubSub {
 
 extension PortalsPubSub.Publisher {
     
-    /// Error to be thrown when cating from JSValue to concrete value fails
+    /// Error to be thrown when casting from JSValue to concrete value fails
     public struct CastingError<T>: Error, CustomStringConvertible {
         public let description = "Unable to cast JSValue to \(T.self)"
     }
