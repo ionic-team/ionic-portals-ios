@@ -1,4 +1,4 @@
-name: Publish Docs Preview
+name: Publish Docs
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-preview-docs:
+  publish-docs:
     runs-on: macos-12
     timeout-minutes: 30
     env:
@@ -26,5 +26,5 @@ jobs:
         run: vercel pull --token ${{ secrets.VERCEL_TOKEN }}
       - name: Build Vercel Package
         run: vercel build
-      - name: Deploy Preview
+      - name: Deploy
         run: vercel deploy --prod --prebuilt --token ${{ secrets.VERCEL_TOKEN }}
