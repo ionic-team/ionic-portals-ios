@@ -38,7 +38,7 @@ public struct Portal {
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
-    ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
     public init(
@@ -127,7 +127,7 @@ extension IONPortal {
     ///   - name: The name of the portal, must be unique.
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
-    ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     @objc public convenience init(name: String, startDir: String?, initialContext: [String: Any]?) {
         let portal = Portal(
             name: name,
@@ -145,7 +145,7 @@ extension IONPortal {
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of the ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory.
     ///   - bundle: The `Bundle` that contains the web application.
-    ///   - initialContext: Any initial state rqeuired by the web application. Defaults to `[:]`.
+    ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     @objc public convenience init(name: String, startDir: String?, bundle: Bundle, initialContext: [String: Any]?) {
         self.init(name: name, startDir: startDir, initialContext: initialContext)
         self.bundle = bundle
