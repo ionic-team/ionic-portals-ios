@@ -33,7 +33,7 @@ struct Unregistered: View {
                 Alert(
                     title: Text("Registration Error"),
                     message: Text("Error validating your key for Ionic Portals. Check your key and try again."),
-                    dismissButton: Alert.Button.default(Text("OK"))
+                    dismissButton: .default(Text("OK"))
                 )
             }
         }

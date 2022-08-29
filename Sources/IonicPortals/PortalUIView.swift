@@ -8,9 +8,9 @@ import SwiftUI
 /// A UIKit UIView to display ``Portal`` content
 @objc(IONPortalUIView)
 public class PortalUIView: UIView {
-    lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
-    var portal: Portal
-    var liveUpdatePath: URL? = nil
+    private lazy var webView = InternalCapWebView(portal: portal, liveUpdatePath: liveUpdatePath)
+    private let portal: Portal
+    private var liveUpdatePath: URL?
     @objc public var bridge: CAPBridgeProtocol {
         webView.bridge
     }
@@ -67,9 +67,9 @@ public class PortalUIView: UIView {
         }
     }
     
-    class InternalCapWebView: CAPWebView {
-        var portal: Portal
-        var liveUpdatePath: URL? = nil
+    final class InternalCapWebView: CAPWebView {
+        private var portal: Portal
+        private var liveUpdatePath: URL?
         
         override var router: Router { PortalRouter(index: portal.index) }
 
