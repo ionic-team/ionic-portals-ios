@@ -2,7 +2,7 @@ import Foundation
 import Capacitor
 
 @objc(IONPortalsPlugin)
-internal class Plugin: CAPPlugin, CAPBridgedPlugin {
+internal final class Plugin: CAPPlugin, CAPBridgedPlugin {
     static func pluginId() -> String {
         "IONPortalsPlugin"
     }

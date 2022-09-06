@@ -26,9 +26,9 @@ extension PortalsPubSub {
         public typealias Failure = Never
     }
     
-    class Subscription: Combine.Subscription {
+    final class Subscription: Combine.Subscription {
         private var subscriptionReference: Int?
-        private var topic: String
+        private let topic: String
         private let subscriber: AnySubscriber<SubscriptionResult, Never>
         
         init<S>(_ subscriber: S, topic: String)

@@ -10,8 +10,8 @@ import Capacitor
 
 /// A SwiftUI View to display ``Portal`` content
 public struct PortalView: UIViewRepresentable {
-    let portal: Portal
-    var onBridgeAvailable: (CAPBridgeProtocol) -> Void
+    private let portal: Portal
+    private let onBridgeAvailable: (CAPBridgeProtocol) -> Void
     
     /// Creates an instance of ``PortalView``
     /// - Parameters:
