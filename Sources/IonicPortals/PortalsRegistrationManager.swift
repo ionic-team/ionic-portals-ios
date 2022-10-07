@@ -38,10 +38,10 @@ public class PortalsRegistrationManager: NSObject {
         var base64 = base64Url
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
-        
+
         let padding = 4 - base64.count % 4
         guard padding > 0 else { return base64 }
-        
+
         base64 += String(repeating: "=", count: padding)
         return base64
     }
