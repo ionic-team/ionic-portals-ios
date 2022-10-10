@@ -42,7 +42,7 @@ public class PortalsRegistrationManager: NSObject {
         let remainder = base64.count % 4
         guard remainder > 0 else { return base64 }
 
-        let padding = 4 - base64.count % 4
+        let padding = 4 - remainder
         base64 += String(repeating: "=", count: padding)
         return base64
     }
