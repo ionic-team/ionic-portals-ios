@@ -95,7 +95,7 @@ public class PortalUIView: UIView {
             let cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
             
             let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
-            
+            descriptor.handleApplicationNotifications = false
             return descriptor
         }
         
