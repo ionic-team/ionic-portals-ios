@@ -100,12 +100,16 @@ public class PortalUIView: UIView {
         }
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
-            guard portal.initialContext.isNotEmpty,
-                  let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext),
-                  let jsonString = String(data: jsonData, encoding: .utf8)
-            else { return }
+            let portalInitialContext: String
+            
+            if portal.initialContext.isNotEmpty,
+                let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext),
+                let jsonString = String(data: jsonData, encoding: .utf8) {
+                portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
+            } else {
+                portalInitialContext = #"{ "name": "\#(portal.name)" }"#
+            }
                 
-            let portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
             let scriptSource = "window.portalInitialContext = " + portalInitialContext
             
             let userScript = WKUserScript(
