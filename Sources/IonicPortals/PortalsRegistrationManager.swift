@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 /// Manages the registration lifecycle
 @objc(IONPortalsRegistrationManager)

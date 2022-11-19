@@ -5,8 +5,8 @@
 //  Created by Dan Giralté on 1/24/22.
 //
 
-import SwiftUI
 import Capacitor
+import SwiftUI
 
 /// A SwiftUI View to display ``Portal`` content
 public struct PortalView: UIViewRepresentable {

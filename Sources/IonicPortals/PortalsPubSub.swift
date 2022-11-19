@@ -5,9 +5,9 @@
 //  Created by Steven Sherry on 5/12/22.
 //
 
-import Foundation
-import Combine
 import Capacitor
+import Combine
+import Foundation
 
 /// An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public enum PortalsPubSub {

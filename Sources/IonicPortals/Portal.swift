@@ -1,5 +1,5 @@
-import Foundation
 import Capacitor
+import Foundation
 import IonicLiveUpdates
 
 /// The configuration of a web application to be embedded in an iOS application

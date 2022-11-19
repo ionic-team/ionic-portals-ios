@@ -5,10 +5,10 @@
 //  Created by Thomas Vidas on 7/13/21.
 //
 
-import XCTest
-import IonicPortals
 import Capacitor
 import Combine
+import IonicPortals
+import XCTest
 
 class PortalsPluginTests: XCTestCase {
     func test_topicPublisher__when_SubscriptionResults_are_published__they_are_emitted_to_downstream_subscribers() {

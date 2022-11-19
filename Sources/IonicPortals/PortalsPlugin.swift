@@ -1,5 +1,5 @@
-import Foundation
 import Capacitor
+import Foundation
 
 @objc(IONPortalsPlugin)
 internal final class Plugin: CAPPlugin, CAPBridgedPlugin {

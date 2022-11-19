@@ -5,8 +5,8 @@
 //  Created by Steven Sherry on 3/3/22.
 //
 
-import Foundation
 import Capacitor
+import Foundation
 
 public extension JSONDecoder {
     func decodeJSObject<T: Decodable>(_ type: T.Type, from object: JSObject) throws -> T {

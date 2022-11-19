@@ -5,9 +5,9 @@
 //  Created by Steven Sherry on 3/2/22.
 //
 
-import Foundation
-import Combine
 import Capacitor
+import Combine
+import Foundation
 
 extension PortalsPubSub {
     public struct Publisher: Combine.Publisher {

@@ -1,5 +1,3 @@
-import Foundation
-import UIKit
 import SwiftUI
 
 struct Unregistered: View {

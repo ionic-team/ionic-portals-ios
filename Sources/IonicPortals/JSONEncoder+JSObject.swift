@@ -5,10 +5,8 @@
 //  Created by Steven Sherry on 3/3/22.
 //
 
-import Foundation
 import Capacitor
-import Combine
-
+import Foundation
 
 public extension JSONEncoder {
     func encodeJSObject<T: Encodable>(_ value: T) throws -> JSValue {
