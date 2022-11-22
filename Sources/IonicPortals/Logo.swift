@@ -12,7 +12,7 @@ struct LogoView: View {
         ZStack {
             Background()
                 .fill(.white.opacity(0.3))
-            
+
             RightPost()
                 .fill(
                     LinearGradient(
@@ -21,7 +21,7 @@ struct LogoView: View {
                         endPoint: .bottom
                     )
                 )
-            
+
             LeftPost()
                 .fill(
                     LinearGradient(
@@ -30,21 +30,23 @@ struct LogoView: View {
                         endPoint: .top
                     )
                 )
-            
+
             TopOval()
                 .fill(.white, style: FillStyle(eoFill: true))
-            
+
             BottomOval()
                 .fill(.white, style: FillStyle(eoFill: true))
         }
     }
 }
 
+// The majority of the code below was generated with an SVG to SwiftUI Path tool
+// swiftlint:disable line_length
 private struct Background: Shape {
     func path(in rect: CGRect) -> Path {
         let width = rect.size.width
         let height = rect.size.height
-        
+
         return Path { path in
             path.move(to: CGPoint(x: 0, y: 0.23077*height))
             path.addCurve(to: CGPoint(x: 0.5*width, y: 0.03846*height), control1: CGPoint(x: 0, y: 0.23077*height), control2: CGPoint(x: 0.15385*width, y: 0.03846*height))
@@ -61,7 +63,7 @@ private struct RightPost: Shape {
     func path(in rect: CGRect) -> Path {
         let width = rect.size.width
         let height = rect.size.height
-        
+
         return Path { path in
             path.move(to: CGPoint(x: 0.96154*width, y: 0.80769*height))
             path.addCurve(to: CGPoint(x: 0.92308*width, y: 0.76923*height), control1: CGPoint(x: 0.9403*width, y: 0.80769*height), control2: CGPoint(x: 0.92308*width, y: 0.79047*height))
@@ -78,7 +80,7 @@ private struct LeftPost: Shape {
     func path(in rect: CGRect) -> Path {
         let width = rect.size.width
         let height = rect.size.height
-        
+
         return Path { path in
             path.move(to: CGPoint(x: 0.03846*width, y: 0.19232*height))
             path.addCurve(to: CGPoint(x: 0, y: 0.23078*height), control1: CGPoint(x: 0.01722*width, y: 0.19232*height), control2: CGPoint(x: 0, y: 0.20954*height))
@@ -95,7 +97,7 @@ private struct TopOval: Shape {
     func path(in rect: CGRect) -> Path {
         let width = rect.size.width
         let height = rect.size.height
-        
+
         return Path { path in
             path.move(to: CGPoint(x: 0.10174*width, y: 0.18331*height))
             path.addCurve(to: CGPoint(x: 0.07694*width, y: 0.23077*height), control1: CGPoint(x: 0.08317*width, y: 0.2016*height), control2: CGPoint(x: 0.07694*width, y: 0.21762*height))
@@ -132,7 +134,7 @@ private struct BottomOval: Shape {
     func path(in rect: CGRect) -> Path {
         let width = rect.size.width
         let height = rect.size.height
-        
+
         return Path { path in
             path.move(to: CGPoint(x: 0.10172*width, y: 0.72177*height))
             path.addCurve(to: CGPoint(x: 0.07692*width, y: 0.76923*height), control1: CGPoint(x: 0.08316*width, y: 0.74006*height), control2: CGPoint(x: 0.07692*width, y: 0.75607*height))

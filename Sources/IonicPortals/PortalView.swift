@@ -5,14 +5,14 @@
 //  Created by Dan Giralté on 1/24/22.
 //
 
-import SwiftUI
 import Capacitor
+import SwiftUI
 
 /// A SwiftUI View to display ``Portal`` content
 public struct PortalView: UIViewRepresentable {
     private let portal: Portal
     private let onBridgeAvailable: (CAPBridgeProtocol) -> Void
-    
+
     /// Creates an instance of ``PortalView``
     /// - Parameters:
     ///   - portal: The ``Portal`` to render.
@@ -21,13 +21,13 @@ public struct PortalView: UIViewRepresentable {
         self.portal = portal
         self.onBridgeAvailable = onBridgeAvailable
     }
-    
+
     public func makeUIView(context: Context) -> PortalUIView {
         let webView = PortalUIView(portal: portal)
         onBridgeAvailable(webView.bridge)
         return webView
     }
-    
+
     // Nothing to do here since there is no state to manage
     public func updateUIView(_ uiView: PortalUIView, context: Context) {}
 }

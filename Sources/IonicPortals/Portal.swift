@@ -1,36 +1,34 @@
-import Foundation
 import Capacitor
 import IonicLiveUpdates
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
-    
     /// The name of the portal
     public let name: String
-    
+
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
     public let startDir: String
-    
+
     /// The initial file to load in the Portal.
     public let index: String
 
     /// The `Bundle` that contains the web application.
     public var bundle: Bundle
-    
+
     /// Any initial state required by the web application
     public var initialContext: JSObject
-    
+
     /// The `LiveUpdateManager` responsible for locating the latest source for the web application
     public var liveUpdateManager: LiveUpdateManager
 
     /// The `LiveUpdate` configuration used to determine the location of updated application assets.
-    public var liveUpdateConfig: LiveUpdate? = nil {
+    public var liveUpdateConfig: LiveUpdate? {
         didSet {
             guard let liveUpdateConfig = liveUpdateConfig else { return }
             try? liveUpdateManager.add(liveUpdateConfig)
         }
     }
-    
+
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
@@ -64,7 +62,6 @@ public struct Portal {
 }
 
 extension Portal: ExpressibleByStringLiteral {
-    
     /// ExpressibleByStringLiteral conformance for ``Portal``.
     /// - Parameter value: The name of the portal
     ///
@@ -77,19 +74,19 @@ extension Portal: ExpressibleByStringLiteral {
 /// The Objective-C representation of ``Portal``. If using Swift, using ``Portal`` is preferred.
 @objc public class IONPortal: NSObject {
     internal var portal: Portal
-    
+
     /// The name of the portal
     @objc public var name: String { portal.name }
-    
+
     /// The `Bundle` that contains the web application.
     @objc public var bundle: Bundle {
         get { portal.bundle }
         set { portal.bundle = newValue }
     }
-    
+
     /// The root directory of the ``IONPortal`` relative to root of the `Bundle`
     @objc public var startDir: String { portal.startDir }
-    
+
     /// Any initial state required by the web application.
     ///
     /// The following types are valid values:
@@ -106,11 +103,11 @@ extension Portal: ExpressibleByStringLiteral {
             portal.initialContext = newValue
         }
     }
-    
+
     internal init(portal: Portal) {
         self.portal = portal
     }
-    
+
     /// Configures the `LiveUpdate` configuration
     /// - Parameters:
     ///   - appId: The AppFlow id of the web application associated with the ``IONPortal``
@@ -135,10 +132,10 @@ extension IONPortal {
             initialContext: initialContext.flatMap { JSTypes.coerceDictionaryToJSObject($0) } ?? [:],
             liveUpdateConfig: nil
         )
-        
+
         self.init(portal: portal)
     }
-    
+
     /// Creates an instance of ``IONPortal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.

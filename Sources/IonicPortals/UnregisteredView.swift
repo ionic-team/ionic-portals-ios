@@ -1,28 +1,28 @@
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 struct Unregistered: View {
     @State private var shouldShowRegistrationError: Bool
-    
+
     init(shouldShowRegistrationError: Bool) {
         self.shouldShowRegistrationError = shouldShowRegistrationError
     }
-    
+
     var body: some View {
         VStack {
             VStack(spacing: 32) {
                 LogoView()
                     .frame(width: 64, height: 64, alignment: .center)
-                
+
                 VStack(spacing: 18) {
                     Text("Register Product")
                         .font(.system(size: 24.0, weight: .bold, design: .default))
-                    
+
                     Text("Please register in order to use Ionic Portals. You can do so at:")
                         .multilineTextAlignment(.center)
                         .font(.system(size: 18))
-                    
+
                     Text("ionic.io/register-portals")
                 }
                 .frame(width: 279)

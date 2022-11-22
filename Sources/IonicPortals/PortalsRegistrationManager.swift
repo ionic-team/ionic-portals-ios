@@ -9,9 +9,9 @@ public class PortalsRegistrationManager: NSObject {
         case registered
         case error
     }
-    
-    private override init() {}
-    
+
+    override private init() {}
+
     /// The default singleton
     @objc public static let shared = PortalsRegistrationManager()
 
@@ -23,17 +23,18 @@ public class PortalsRegistrationManager: NSObject {
         switch registrationState {
         case .unregistered, .error:
             return false
+
         case .registered:
             return true
         }
     }
-    
+
     /// Validates that a valid registration key has been procured from [http://ionic.io/register-portals](http://ionic.io/register-portals)
     /// - Parameter key: The registration key
     @objc public func register(key: String) {
         registrationState = validate(key)
     }
-    
+
     private func base64(from base64Url: String) -> String {
         var base64 = base64Url
             .replacingOccurrences(of: "-", with: "+")
@@ -46,7 +47,7 @@ public class PortalsRegistrationManager: NSObject {
         base64 += String(repeating: "=", count: padding)
         return base64
     }
-    
+
     private func validate(_ token: String) -> RegistrationState {
         let publicKeyBase64 =
         "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1+gMC3aJVGX4ha5asmEF" +
@@ -56,14 +57,14 @@ public class PortalsRegistrationManager: NSObject {
         "jv6h9ES27mi5BUqhoHsetS4u3/pCbsV2U3z255gtjANtdIX/c5inepLuAjyc1aPz" +
         "2eu4TbzabvJnmNStje82NW36Qij1mupc4e7dYaq0aMNQyHSWk1/CuIcqEYlnK1mb" +
         "kQIDAQAB"
-        
+
         let pubKeyData = Data(base64Encoded: publicKeyBase64)
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
             kSecAttrKeyClass as String: kSecAttrKeyClassPublic
         ]
         let publicKey = SecKeyCreateWithData(pubKeyData! as NSData, attributes as NSDictionary, nil)!
-        
+
         let parts = token.split(separator: ".")
         if parts.count != 3 {
             registrationError()
@@ -71,12 +72,12 @@ public class PortalsRegistrationManager: NSObject {
         }
         let headerAndPayload = "\(parts[0]).\(parts[1])"
         let signature = String(parts[2])
-        
+
         let headersAndPayloadData = headerAndPayload.data(using: .ascii)! as CFData
         let signatureData = Data(base64Encoded: base64(from: signature))! as CFData
-        
+
         var error: Unmanaged<CFError>?
-        
+
         let result = SecKeyVerifySignature(
             publicKey,
             .rsaSignatureMessagePKCS1v15SHA256,
@@ -84,20 +85,20 @@ public class PortalsRegistrationManager: NSObject {
             signatureData,
             &error
         )
-        
+
         let state: RegistrationState = result ? .registered : .error
-        
+
         if case .error = state {
             registrationError()
         }
-        
+
         return state
     }
-    
+
     private func registrationError() {
         print("Error validating your key for Ionic Portals. Check your key and try again.")
     }
-    
+
     private func unregisteredMessage() {
         if case .unregistered(messageShown: false) = registrationState {
             print("Don't forget to register your copy of portals! Register at: ionic.io/register-portals")
@@ -105,4 +106,3 @@ public class PortalsRegistrationManager: NSObject {
         }
     }
 }
-

@@ -17,7 +17,7 @@ extension PortalsPubSub {
             let ref = PortalsPubSub.subscribe(topic) { result in
                 continuation.yield(result)
             }
-            
+
             continuation.onTermination = { @Sendable _ in
                 PortalsPubSub.unsubscribe(from: topic, subscriptionRef: ref)
             }
