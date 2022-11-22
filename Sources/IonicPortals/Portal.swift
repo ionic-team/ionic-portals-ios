@@ -31,6 +31,8 @@ public struct Portal {
         }
     }
     
+    var pluginRegistrationMode: PluginRegistrationMode
+    
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
@@ -47,6 +49,7 @@ public struct Portal {
         index: String = "index.html",
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
+        pluginRegistrationMode: PluginRegistrationMode = .automatic,
         liveUpdateManager: LiveUpdateManager = .shared,
         liveUpdateConfig: LiveUpdate? = nil
     ) {
@@ -55,11 +58,46 @@ public struct Portal {
         self.index = index
         self.initialContext = initialContext
         self.bundle = bundle
+        self.pluginRegistrationMode = pluginRegistrationMode
         self.liveUpdateManager = liveUpdateManager
         self.liveUpdateConfig = liveUpdateConfig
         if let liveUpdateConfig = liveUpdateConfig {
             try? liveUpdateManager.add(liveUpdateConfig)
         }
+    }
+}
+
+extension Portal {
+    public func adding(_ plugins: [Plugin]) -> Portal {
+        var copy = self
+        switch copy.pluginRegistrationMode {
+        case .automatic:
+            copy.pluginRegistrationMode = .manual(plugins)
+        case .manual(var existingPlugins):
+            existingPlugins.append(contentsOf: plugins)
+            copy.pluginRegistrationMode = .manual(existingPlugins)
+        }
+        return copy
+    }
+    
+    public func adding(_ plugin: Plugin) -> Portal {
+        adding([plugin])
+    }
+    
+    public func adding(_ plugin: CAPPlugin) -> Portal {
+        adding([.instance(plugin)])
+    }
+    
+    public func adding(_ pluginType: CAPPlugin.Type) -> Portal {
+        adding([.type(pluginType)])
+    }
+    
+    public func adding(_ plugins: [CAPPlugin]) -> Portal {
+        adding(plugins.map(Plugin.instance))
+    }
+    
+    public func adding(_ pluginTypes: [CAPPlugin.Type]) -> Portal {
+        adding(pluginTypes.map(Plugin.type))
     }
 }
 
@@ -71,6 +109,29 @@ extension Portal: ExpressibleByStringLiteral {
     /// Creates a ``Portal`` as if being called with the initializer as `Portal(name: "stringliteral")`
     public init(stringLiteral value: StringLiteralType) {
         self.init(name: value)
+    }
+}
+
+extension Portal {
+    public enum PluginRegistrationMode {
+        case automatic
+        case manual([Plugin])
+    }
+    
+    public enum Plugin {
+        case type(CAPPlugin.Type)
+        case instance(CAPPlugin)
+    }
+}
+
+extension Portal.PluginRegistrationMode {
+    var isAutomatic: Bool {
+        switch self {
+        case .automatic:
+            return true
+        default:
+            return false
+        }
     }
 }
 
