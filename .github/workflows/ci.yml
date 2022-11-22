@@ -23,7 +23,7 @@ jobs:
             -scheme IonicPortals \
             -destination 'platform=iOS Simulator,name=iPhone 13' | xcpretty
         env:
-          SWIFTPM_ENABLE_PLUGINS=1
+          SWIFTPM_ENABLE_PLUGINS: 1
   validate-podspec:
     runs-on: macos-11
     timeout-minutes: 30
