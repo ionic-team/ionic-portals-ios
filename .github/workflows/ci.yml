@@ -22,6 +22,8 @@ jobs:
           xcodebuild test \
             -scheme IonicPortals \
             -destination 'platform=iOS Simulator,name=iPhone 13' | xcpretty
+        env:
+          SWIFTPM_ENABLE_PLUGINS=1
   validate-podspec:
     runs-on: macos-11
     timeout-minutes: 30
@@ -38,4 +40,4 @@ jobs:
       - run: sudo xcode-select --switch /Applications/Xcode_14.1.app
       - uses: actions/checkout@v2
       - name: Run Swiftlint
-        run: swift run swiftlint
+        run: swift run swiftlint --strict
