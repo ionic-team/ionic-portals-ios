@@ -20,6 +20,9 @@ public struct Portal {
     /// Any initial state required by the web application
     public var initialContext: JSObject
     
+    /// Dictates how Capacitor loads plugins when the ``Portal`` loads.
+    public var pluginRegistrationMode: PluginRegistrationMode
+    
     /// The `LiveUpdateManager` responsible for locating the latest source for the web application
     public var liveUpdateManager: LiveUpdateManager
 
@@ -31,8 +34,6 @@ public struct Portal {
         }
     }
     
-    var pluginRegistrationMode: PluginRegistrationMode
-    
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
@@ -40,6 +41,7 @@ public struct Portal {
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
+    ///   - pluginRegistrationMode: Dictates how Capacitor loads plugins. Defaults to ``PluginRegistrationMode-swift.enum/automatic``.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
@@ -68,8 +70,17 @@ public struct Portal {
 }
 
 extension Portal {
+    
+    /// Returns a new ``Portal`` with the plugins added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugins
+    /// passed to this method are appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter plugins: The plugins to manually register
+    /// - Returns: A new ``Portal`` with the plugins added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ plugins: [Plugin]) -> Portal {
         var copy = self
+
         switch copy.pluginRegistrationMode {
         case .automatic:
             copy.pluginRegistrationMode = .manual(plugins)
@@ -77,25 +88,61 @@ extension Portal {
             existingPlugins.append(contentsOf: plugins)
             copy.pluginRegistrationMode = .manual(existingPlugins)
         }
+
         return copy
     }
     
+    /// Returns a new ``Portal`` with the plugin added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugin
+    /// passed to this method is appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter plugin: The plugin to manually register
+    /// - Returns: A new ``Portal`` with the plugin added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ plugin: Plugin) -> Portal {
         adding([plugin])
     }
     
+    /// Returns a new ``Portal`` with the plugin instance added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugin
+    /// passed to this method is appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter plugin: The plugin instance to manually register
+    /// - Returns: A new ``Portal`` with the plugin instance added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ plugin: CAPPlugin) -> Portal {
         adding([.instance(plugin)])
     }
     
+    /// Returns a new ``Portal`` with the plugin type added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugin
+    /// passed to this method is appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter pluginType: The plugin type to manually register
+    /// - Returns: A new ``Portal`` with the plugin type added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ pluginType: CAPPlugin.Type) -> Portal {
         adding([.type(pluginType)])
     }
     
+    /// Returns a new ``Portal`` with the plugin instances added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugins
+    /// passed to this method are appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter plugins: The plugin instances to manually register
+    /// - Returns: A new ``Portal`` with the plugin instances added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ plugins: [CAPPlugin]) -> Portal {
         adding(plugins.map(Plugin.instance))
     }
     
+    /// Returns a new ``Portal`` with the plugin types added to the registration mode.
+    /// > Important: This sets ``Portal/pluginRegistrationMode-swift.property`` to ``PluginRegistrationMode-swift.enum/manual(_:)``.
+    /// If the ``Portal/pluginRegistrationMode-swift.property`` is already ``PluginRegistrationMode-swift.enum/manual(_:)``, the plugins
+    /// passed to this method are appended to the existing plugins. Any duplicated plugins will be overridden, with the last plugin taking
+    /// precedence.
+    /// - Parameter pluginTypes: The plugins types to manually register
+    /// - Returns: A new ``Portal`` with the plugin instances added to ``Portal/pluginRegistrationMode-swift.property``
     public func adding(_ pluginTypes: [CAPPlugin.Type]) -> Portal {
         adding(pluginTypes.map(Plugin.type))
     }
@@ -113,13 +160,21 @@ extension Portal: ExpressibleByStringLiteral {
 }
 
 extension Portal {
+    
+    /// The method of registering plugins with the Capacitor runtime when a ``Portal`` loads.
     public enum PluginRegistrationMode {
+        /// Automatically registers all eligible plugins.
         case automatic
+        /// Only registers the plugins provided
         case manual([Plugin])
     }
     
+    ///
     public enum Plugin {
+        /// Allow the Capacitor runtime to initialize the plugin on your behalf.
+        /// Plugins registered in this manner are effectively singletons.
         case type(CAPPlugin.Type)
+        /// Registers the instance with the Capacitor runtime.
         case instance(CAPPlugin)
     }
 }
