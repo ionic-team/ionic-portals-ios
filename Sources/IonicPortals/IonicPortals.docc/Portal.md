@@ -4,7 +4,7 @@
 
 ### Create a Portal
 
-- ``init(name:startDir:index:bundle:initialContext:liveUpdateManager:liveUpdateConfig:)``
+- ``init(name:startDir:index:bundle:initialContext:pluginRegistrationMode:liveUpdateManager:liveUpdateConfig:)``
 - ``init(stringLiteral:)``
 
 ### Web App Location 
@@ -12,6 +12,18 @@
 - ``startDir``
 - ``index``
 - ``bundle``
+
+### Plugin Management
+
+- ``pluginRegistrationMode-swift.property``
+- ``adding(_:)-72o29``
+- ``adding(_:)-9sqqz``
+- ``adding(_:)-868wl``
+- ``adding(_:)-9lavd``
+- ``adding(_:)-3kt0j``
+- ``adding(_:)-9utyy``
+- ``PluginRegistrationMode-swift.enum``
+- ``Plugin``
 
 ### Live Updates
 

@@ -76,7 +76,22 @@ public class PortalUIView: UIView {
         init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
             self.liveUpdatePath = liveUpdatePath
-            super.init()
+            super.init(autoRegisterPlugins: portal.pluginRegistrationMode.isAutomatic)
+        }
+        
+        override func capacitorDidLoad() {
+            if case let .manual(plugins) = portal.pluginRegistrationMode {
+                bridge.registerPluginType(Plugin.self)
+
+                plugins.forEach { plugin in
+                    switch plugin {
+                    case .instance(let instance):
+                        bridge.registerPluginInstance(instance)
+                    case .type(let pluginType):
+                        bridge.registerPluginType(pluginType)
+                    }
+                }
+            }
         }
         
         required init?(coder: NSCoder) {
@@ -159,6 +174,3 @@ extension UIView {
         NSLayoutConstraint.activate(view.constraintsPinned(to: self))
     }
 }
-
-
-
