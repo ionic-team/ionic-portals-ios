@@ -106,9 +106,19 @@ public class PortalUIView: UIView {
                 return InstanceDescriptor()
             }
             
-            let capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-            let cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
-            
+            var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
+            var cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
+
+            if let updatedCapConfig = liveUpdatePath?.appendingPathComponent("capacitor.config.json"),
+                FileManager.default.fileExists(atPath: updatedCapConfig.path) {
+                capConfigUrl = updatedCapConfig
+            }
+
+            if let updatedCordovaConfig = liveUpdatePath?.appendingPathComponent("config.xml"),
+               FileManager.default.fileExists(atPath: updatedCordovaConfig.path) {
+                cordovaConfigUrl = updatedCordovaConfig
+            }
+
             let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
             descriptor.handleApplicationNotifications = false
             return descriptor

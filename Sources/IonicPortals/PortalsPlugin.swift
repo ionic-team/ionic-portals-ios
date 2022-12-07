@@ -60,4 +60,3 @@ internal final class Plugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 }
-
