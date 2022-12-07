@@ -141,7 +141,7 @@ class PortalsPluginTests: XCTestCase {
             .assertNoFailure()
             .expectOutput(toBe: card)
         
-        let jsObject = try JSONEncoder().encodeJSObject(card)
+        let jsObject = try JSONEncoder().encodeJsObject(card)
         PortalsPubSub.publish(jsObject, to: topic)
         
         wait(for: result, timeout: 1)
