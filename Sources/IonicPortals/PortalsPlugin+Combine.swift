@@ -104,7 +104,7 @@ extension PortalsPubSub.Publisher {
     /// - Returns: A publisher emitting the decoded value or a decoding error.
     public func decodeData<T>(_ type: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, Error> where T: Decodable {
         tryData(as: JSObject.self)
-            .tryMap { try decoder.decodeJSObject(T.self, from: $0) }
+            .tryMap { try decoder.decodeJsObject(T.self, from: $0) }
             .eraseToAnyPublisher()
     }
 }
