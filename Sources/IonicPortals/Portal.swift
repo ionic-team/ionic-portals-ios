@@ -2,6 +2,7 @@ import Foundation
 import Capacitor
 import IonicLiveUpdates
 
+
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
     
@@ -34,6 +35,9 @@ public struct Portal {
         }
     }
     
+    /// The ``WebPerformanceReporter`` to handle metric events from the web application
+    public var performanceReporter: WebPerformanceReporter?
+
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
@@ -45,6 +49,7 @@ public struct Portal {
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
+    ///   - performanceReport: The ``WebPerformanceReporter`` to handle metric events from the web application. Defaults to `nil`.
     public init(
         name: String,
         startDir: String? = nil,
@@ -53,7 +58,8 @@ public struct Portal {
         initialContext: JSObject = [:],
         pluginRegistrationMode: PluginRegistrationMode = .automatic,
         liveUpdateManager: LiveUpdateManager = .shared,
-        liveUpdateConfig: LiveUpdate? = nil
+        liveUpdateConfig: LiveUpdate? = nil,
+        performanceReporter: WebPerformanceReporter? = nil
     ) {
         self.name = name
         self.startDir = startDir ?? name
@@ -63,6 +69,7 @@ public struct Portal {
         self.pluginRegistrationMode = pluginRegistrationMode
         self.liveUpdateManager = liveUpdateManager
         self.liveUpdateConfig = liveUpdateConfig
+        self.performanceReporter = performanceReporter
         if let liveUpdateConfig = liveUpdateConfig {
             try? liveUpdateManager.add(liveUpdateConfig)
         }

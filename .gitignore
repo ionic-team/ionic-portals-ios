@@ -106,3 +106,6 @@ IonicPortals.xcframework.zip
 public/
 node_modules
 yarn.lock
+
+# Vitals
+vitals/dist
