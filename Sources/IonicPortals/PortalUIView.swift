@@ -71,7 +71,7 @@ public class PortalUIView: UIView {
         private var portal: Portal
         private var liveUpdatePath: URL?
         
-        override var router: Router { PortalRouter(index: portal.index) }
+        override var router: Router { PortalRouter(portal: portal) }
 
         init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
@@ -126,17 +126,28 @@ public class PortalUIView: UIView {
         
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
             let portalInitialContext: String
-            
-            if portal.initialContext.isNotEmpty,
-                let jsonData = try? JSONSerialization.data(withJSONObject: portal.initialContext),
-                let jsonString = String(data: jsonData, encoding: .utf8) {
-                portalInitialContext = #"{ "name": "\#(portal.name)", "value": \#(jsonString) }"#
+
+            var initialContext: [String: Any] = ["name": portal.name]
+
+            if portal.initialContext.isNotEmpty {
+                initialContext["value"] = portal.initialContext
+            }
+
+            if portal.assetMaps.isNotEmpty {
+                initialContext["assets"] = portal.assetMaps.reduce(into: [:]) { acc, next in
+                    acc[next.name] = next.virtualPath
+                }
+            }
+
+            if let jsonData = try? JSONSerialization.data(withJSONObject: initialContext),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                portalInitialContext = jsonString
             } else {
                 portalInitialContext = #"{ "name": "\#(portal.name)" }"#
             }
-                
+ 
             let scriptSource = "window.portalInitialContext = " + portalInitialContext
-            
+
             let userScript = WKUserScript(
                 source: scriptSource,
                 injectionTime: .atDocumentStart,
@@ -201,14 +212,22 @@ private class PerformanceHandler: NSObject, WKScriptMessageHandler {
 }
 
 internal struct PortalRouter: Router {
-    let index: String
+    var portal: Portal
     var basePath: String = ""
 
     func route(for path: String) -> String {
         let pathUrl = URL(fileURLWithPath: path)
         // If there's no path extension it also means the path is empty or a SPA route
         if pathUrl.pathExtension.isEmpty {
-            return basePath + "/\(index)"
+            return basePath + "/\(portal.index)"
+        }
+
+        if let assetPath = portal
+            .assetMaps
+            .compactMap({ $0.path(for: path, with: portal.liveUpdateManager )})
+            .first {
+
+            return assetPath
         }
 
         return basePath + path
@@ -235,3 +254,4 @@ extension UIView {
         NSLayoutConstraint.activate(view.constraintsPinned(to: self))
     }
 }
+

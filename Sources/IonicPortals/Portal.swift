@@ -34,7 +34,9 @@ public struct Portal {
             try? liveUpdateManager.add(liveUpdateConfig)
         }
     }
-    
+
+    public var assetMaps: [AssetMap]
+
     /// The ``WebPerformanceReporter`` to handle metric events from the web application
     public var performanceReporter: WebPerformanceReporter?
 
@@ -56,6 +58,7 @@ public struct Portal {
         index: String = "index.html",
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
+        assetMaps: [AssetMap] = [],
         pluginRegistrationMode: PluginRegistrationMode = .automatic,
         liveUpdateManager: LiveUpdateManager = .shared,
         liveUpdateConfig: LiveUpdate? = nil,
@@ -73,6 +76,7 @@ public struct Portal {
         if let liveUpdateConfig = liveUpdateConfig {
             try? liveUpdateManager.add(liveUpdateConfig)
         }
+        self.assetMaps = assetMaps
     }
 }
 
