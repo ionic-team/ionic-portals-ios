@@ -51,29 +51,27 @@ extension AssetMap {
         guard virtualPath.hasPrefix(self.virtualPath) else { return nil }
         let prefix = virtualPath.prefix(self.virtualPath.count)
         let relativeAssetPath = String(virtualPath[prefix.endIndex...])
-        return path(forApplicationAsset: relativeAssetPath, with: liveUpdateManager)
+        return url(forApplicationAsset: relativeAssetPath, with: liveUpdateManager)?.relativePath
     }
 
-    private func path(
+    private func url(
         forApplicationAsset path: String,
         with liveUpdateManager: LiveUpdateManager
-    ) -> String? {
-        let assetPath: String
+    ) -> URL? {
+        let assetPath: URL
 
         if let liveUpdateConfig = liveUpdateConfig,
             let lastestAppDir = try? liveUpdateManager.latestAppDirectory(for: liveUpdateConfig) {
              assetPath = lastestAppDir
                 .appending(startDir)
-                .appendingPathComponent(path.cleaned)
-                .relativePath
+                .appending(path.cleaned)
         } else {
             assetPath = bundle.bundleURL
                 .appending(startDir)
-                .appendingPathComponent(path.cleaned)
-                .relativePath
+                .appending(path.cleaned)
         }
 
-        guard FileManager.default.fileExists(atPath: assetPath) else { return nil }
+        guard FileManager.default.fileExists(atPath: assetPath.relativePath) else { return nil }
         return assetPath
     }
 }
