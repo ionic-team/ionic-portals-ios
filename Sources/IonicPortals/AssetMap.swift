@@ -28,6 +28,13 @@ public struct AssetMap {
     /// The liveUpdateConfig associated with the AssetMap so they can be updated.
     public var liveUpdateConfig: LiveUpdate?
 
+
+    /// - Parameters:
+    ///   - name: The name to index the asset map by
+    ///   - virtualPath: The path to match via the web, e.g. /virtual/path. If nil, it defaults to /``name``.
+    ///   - bundle: The root `Bundle` the assets are located in. Defaults to Bundle.main.
+    ///   - startDir: The startDir relative to the ``bundle`` the assets are located in. Similar to ``Portal/startDir``.
+    ///   - liveUpdateConfig: A `LiveUpdate` configuration if remote updates are needed. Defaults to `nil`.
     public init(
         name: String,
         virtualPath: String? = nil,

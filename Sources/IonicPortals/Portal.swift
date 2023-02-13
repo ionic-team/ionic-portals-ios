@@ -35,6 +35,7 @@ public struct Portal {
         }
     }
 
+    /// Assets needed to be shared between web and native
     public var assetMaps: [AssetMap]
 
     /// The ``WebPerformanceReporter`` to handle metric events from the web application
@@ -49,6 +50,7 @@ public struct Portal {
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - pluginRegistrationMode: Dictates how Capacitor loads plugins. Defaults to ``PluginRegistrationMode-swift.enum/automatic``.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
+    ///   - assetMaps: Any ``AssetMap``s needed to share assets with the ``Portal``. Defaults to `[]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
     ///   - performanceReport: The ``WebPerformanceReporter`` to handle metric events from the web application. Defaults to `nil`.
