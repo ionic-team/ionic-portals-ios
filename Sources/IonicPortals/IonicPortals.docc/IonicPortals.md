@@ -27,6 +27,10 @@ IonicPortals provides tools to configure, render, and communicate with embedded 
 - ``PortalsPubSub``
 - ``SubscriptionResult``
 
+### Assets
+
+- ``AssetMap``
+
 ### Web Performance
 
 - ``WebPerformanceReporter``
