@@ -224,7 +224,7 @@ internal struct PortalRouter: Router {
 
         if let assetPath = portal
             .assetMaps
-            .compactMap({ $0.path(for: path, with: portal.liveUpdateManager )})
+            .compactMap({ $0.path(for: path) })
             .first {
 
             return assetPath
