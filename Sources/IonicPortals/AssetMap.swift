@@ -25,58 +25,37 @@ public struct AssetMap {
 
     internal var startDirComponents: [Substring]
 
-    /// The liveUpdateConfig associated with the AssetMap so they can be updated.
-    public var liveUpdateConfig: LiveUpdate?
-
 
     /// - Parameters:
     ///   - name: The name to index the asset map by
     ///   - virtualPath: The path to match via the web, e.g. /virtual/path. If nil, it defaults to /``name``.
     ///   - bundle: The root `Bundle` the assets are located in. Defaults to Bundle.main.
     ///   - startDir: The startDir relative to the ``bundle`` the assets are located in. Similar to ``Portal/startDir``.
-    ///   - liveUpdateConfig: A `LiveUpdate` configuration if remote updates are needed. Defaults to `nil`.
     public init(
         name: String,
         virtualPath: String? = nil,
         bundle: Bundle = .main,
-        startDir: String,
-        liveUpdateConfig: LiveUpdate? = nil
+        startDir: String
     ) {
         self.name = name
         self.virtualPath = virtualPath ?? "/\(name)"
         self.bundle = bundle
         self.startDirComponents = startDir.split(separator: "/")
-        self.liveUpdateConfig = liveUpdateConfig
     }
 }
 
 extension AssetMap {
-    func path(
-        for virtualPath: String,
-        with liveUpdateManager: LiveUpdateManager
-    ) -> String? {
+    func path(for virtualPath: String) -> String? {
         guard virtualPath.hasPrefix(self.virtualPath) else { return nil }
         let prefix = virtualPath.prefix(self.virtualPath.count)
         let relativeAssetPath = String(virtualPath[prefix.endIndex...])
-        return url(forApplicationAsset: relativeAssetPath, with: liveUpdateManager)?.relativePath
+        return url(for: relativeAssetPath)?.relativePath
     }
 
-    private func url(
-        forApplicationAsset path: String,
-        with liveUpdateManager: LiveUpdateManager
-    ) -> URL? {
-        let assetPath: URL
-
-        if let liveUpdateConfig = liveUpdateConfig,
-            let lastestAppDir = try? liveUpdateManager.latestAppDirectory(for: liveUpdateConfig) {
-             assetPath = lastestAppDir
-                .appending(startDir)
-                .appending(path.cleaned)
-        } else {
-            assetPath = bundle.bundleURL
-                .appending(startDir)
-                .appending(path.cleaned)
-        }
+    private func url(for path: String) -> URL? {
+        let assetPath = bundle.bundleURL
+            .appending(startDir)
+            .appending(path.cleaned)
 
         guard FileManager.default.fileExists(atPath: assetPath.relativePath) else { return nil }
         return assetPath
