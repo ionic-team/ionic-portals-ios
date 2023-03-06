@@ -27,7 +27,7 @@ jobs:
       - name: Build Docs
         run: xcodebuild docbuild -scheme IonicPortals -derivedDataPath DerivedData -destination 'platform=iOS Simulator,name=iPhone 14'
       - name: Transform Docs
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting DerivedData/Build/Products/Debug-iphonesimulator/IonicPortals.doccarchive --hosting-base-path $SLUG --output-path docs
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting DerivedData/Build/Products/Debug-iphonesimulator/IonicPortals.doccarchive --hosting-base-path docs/portals-ios-api-ref --output-path docs
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::319312831725:role/github-docs
