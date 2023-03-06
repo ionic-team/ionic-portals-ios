@@ -37,5 +37,5 @@ jobs:
           aws-region: us-east-1
       - name: Deploy
         run: |
-          aws s3 sync docs 3://ionic-docs/preview/${{ env.SLUG }}/ --exclude '*.html' --cache-control max-age=31536000 --only-show-errors
+          aws s3 sync docs s3://ionic-docs/preview/${{ env.SLUG }}/ --exclude '*.html' --cache-control max-age=31536000 --only-show-errors
           aws s3 sync docs s3://ionic-docs/preview/${{ env.SLUG }}/ --exclude '*' --include '*.html' --cache-control max-age=60 --only-show-errors
