@@ -4,14 +4,21 @@ on:
   push:
     branches:
       - '**'
+permissions:
+  contents: read
+  deployments: write
+  id-token: write
+
+env:
+  SLUG: portals-ios-api-ref-${{ github.event.number }}-${{ github.run_id }}
 
 jobs:
   publish-preview-docs:
     runs-on: macos-12
     timeout-minutes: 30
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    environment:
+      name: preview-${{ github.event.number }}
+      url: https://${{ env.SLUG }}.ionicpreview.com
     steps:
       - name: Setup Node
         uses: actions/setup-node@v1
@@ -19,11 +26,13 @@ jobs:
           node-version: 16.x
       - run: sudo xcode-select --switch /Applications/Xcode_14.0.app
       - uses: actions/checkout@v2
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-      - name: Pull Build Configuration
-        run: vercel pull --token ${{ secrets.VERCEL_TOKEN }}
-      - name: Build Vercel Package
-        run: vercel build
-      - name: Deploy Preview
-        run: vercel deploy --prebuilt --token ${{ secrets.VERCEL_TOKEN }}
+      - name: Vercel CLI
+        run: npm run build
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::319312831725:role/github-docs
+          aws-region: us-east-1
+      - name: Deploy
+        run: |
+          aws s3 sync public s3://ionic-docs/preview/${{ env.SLUG }}/ --exclude '*.html' --cache-control max-age=31536000 --only-show-errors
+          aws s3 sync public s3://ionic-docs/preview/${{ env.SLUG }}/ --exclude '*' --include '*.html' --cache-control max-age=60 --only-show-errors
