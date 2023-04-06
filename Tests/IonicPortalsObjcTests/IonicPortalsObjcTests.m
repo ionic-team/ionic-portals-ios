@@ -17,7 +17,7 @@
 - (void)testIONPubSub__when_provided_a_simple_json_compatible_value__it_can_be_coerced_correctly {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback should have fired"];
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         BOOL aBool = dict[@"data"];
         XCTAssertTrue(aBool);
         [expectation fulfill];
@@ -26,14 +26,13 @@
     [IONPortalsPubSub publishMessage:@YES toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPubSub__when_provided_a_non_json_compatible_value__it_cannot_be_coerced_correctly {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback should not have fired"];
     [expectation setInverted:YES];
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         [expectation fulfill];
     }];
     
@@ -41,7 +40,6 @@
     [IONPortalsPubSub publishMessage:nonJsonCompatible toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPubSub__when_provided_a_json_compatible_nsdictionary__it_correctly_coerces_it {
@@ -58,7 +56,7 @@
         }
     };
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         NSDictionary *publishedDict = dict[@"data"];
         XCTAssertTrue([publishedDict isEqualToDictionary:aDict]);
         [expectation fulfill];
@@ -67,7 +65,6 @@
     [IONPortalsPubSub publishMessage:aDict toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPubSub__when_provided_an_nsdictionary_with_objects_incompatible_with_json__it_only_coerces_valid_data {
@@ -85,7 +82,7 @@
         }
     };
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         NSDictionary *publishedDict = dict[@"data"];
         NSDictionary *expectedDict = @{
             @"number": @1,
@@ -105,7 +102,6 @@
     [IONPortalsPubSub publishMessage:aDictToPublish toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPubSub__when_provided_a_json_compatible_nsarray__it_correctly_coerces_it {
@@ -113,7 +109,7 @@
     
     NSArray *anArray = @[@"hello", @43, @45.5, [NSNull null]];
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         NSArray *publishedArray = dict[@"data"];
         XCTAssertTrue([publishedArray isEqualToArray:anArray]);
         [expectation fulfill];
@@ -122,7 +118,6 @@
     [IONPortalsPubSub publishMessage:anArray toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPubSub__when_provided_an_nsarray_with_incompatible_elements__incompatible_elements_are_ignored {
@@ -130,7 +125,7 @@
     
     NSArray *anArray = @[@"hello", [[NSError alloc] initWithDomain:NSCocoaErrorDomain code:1 userInfo:nil], @43, @45.5, [NSNull null], [[NSPredicate alloc] init]];
     
-    NSInteger subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
+    id subRef = [IONPortalsPubSub subscribeToTopic:@"test" callback:^(NSDictionary<NSString *,id> * _Nonnull dict) {
         NSArray *publishedArray = dict[@"data"];
         NSArray *expectedArray = @[@"hello", @43, @45.5, [NSNull null]];
         XCTAssertTrue([publishedArray isEqualToArray:expectedArray]);
@@ -140,7 +135,6 @@
     [IONPortalsPubSub publishMessage:anArray toTopic:@"test"];
     
     [self waitForExpectations:@[expectation] timeout:1.0];
-    [IONPortalsPubSub unsubscribeFromTopic:@"test" subscriptionRef:subRef];
 }
 
 - (void)testIONPortal_init__when_provided_a_valid_json_representable_nsdictionary__it_is_correctly_coerced {

@@ -11,61 +11,36 @@ import Capacitor
 
 extension PortalsPubSub {
     public struct Publisher: Combine.Publisher {
-        let topic: String
-        
-        init(topic: String) {
-            self.topic = topic
-        }
-        
-        public func receive<S>(subscriber: S) where S : Subscriber, Never == S.Failure, SubscriptionResult == S.Input {
-            let subscription = Subscription(subscriber, topic: topic)
-            subscriber.receive(subscription: subscription)
-        }
-        
         public typealias Output = SubscriptionResult
         public typealias Failure = Never
-    }
-    
-    final class Subscription: Combine.Subscription {
-        private var subscriptionReference: Int?
-        private let topic: String
-        private let subscriber: AnySubscriber<SubscriptionResult, Never>
+
+        let subject: PassthroughSubject<SubscriptionResult, Never>
         
-        init<S>(_ subscriber: S, topic: String)
-        where S: Subscriber, S.Input == SubscriptionResult, S.Failure == Never {
-            self.subscriber = AnySubscriber(subscriber)
-            self.topic = topic
-            subscriptionReference = PortalsPubSub.subscribe(topic) { [weak self] result in
-                _ = self?.subscriber.receive(result)
-            }
+        init(topic: String, pubsub: PortalsPubSub) {
+            subject = pubsub.subject(for: topic)
         }
         
-        // We'll do a no-op here. For users to apply back-pressure they have to create
-        // a custom Subscriber implementation. The built-in Apple subscribers of
-        // Subscribers.Sink and Subscribers.Assign request unlimited elements and
-        // I haven't seen any custom Subscriber usage in the wild. We can always
-        // revist this if someone says they need to apply backpressure. As it stands
-        // with the callback-based API, it's not as if there is any backpressure
-        // that can be done there anyway.
-        func request(_ demand: Subscribers.Demand) {
-        }
-        
-        func cancel() {
-            guard let ref = subscriptionReference else { return }
-            PortalsPubSub.unsubscribe(from: topic, subscriptionRef: ref)
+        public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
+            subject.receive(subscriber: subscriber)
         }
     }
     
     /// Subscribes to a topic and publishes a ``SubscriptionResult`` downstream
     /// - Parameter topic: The topic to subscribe to
     /// - Returns: A ``Publisher``
+    public func publisher(for topic: String) -> Publisher {
+        Publisher(topic: topic, pubsub: self)
+    }
+    
+    /// Subscribes to a topic and publishes a ``SubscriptionResult`` downstream
+    /// - Parameter topic: The topic to subscribe to
+    /// - Returns: A ``Publisher``
     public static func publisher(for topic: String) -> Publisher {
-        Publisher(topic: topic)
+        Publisher(topic: topic, pubsub: shared)
     }
 }
 
 extension PortalsPubSub.Publisher {
-    
     /// Error to be thrown when casting from JSValue to concrete value fails
     public struct CastingError<T>: Error, CustomStringConvertible {
         public let description = "Unable to cast JSValue to \(T.self)"

@@ -163,11 +163,11 @@ class PortalsPluginTests: XCTestCase {
         let expectation = self.expectation(description: "Callback should not have fired")
         expectation.isInverted = true
         
-        var cancellable: AnyCancellable? = PortalsPubSub.subscribe(to: "test:cancellable") { _ in
+        var cancellable: AnyCancellable = PortalsPubSub.subscribe(to: "test:cancellable") { _ in
             expectation.fulfill()
         }
         
-        cancellable = nil
+        cancellable.cancel()
         
         PortalsPubSub.publish(to: "test:cancellable")
         wait(for: [expectation], timeout: 1.0)
@@ -182,22 +182,20 @@ class PortalsPluginTests: XCTestCase {
                 .prefix(2)
                 .first { _ in true }
         }
-        
+
         Task {
-            // For whatever reason, the publish method is consistently
-            // being called first. In practice, it is extremely unlikely that
-            // subscribers and publishers will be racing at the level of nanoseconds
-            // to actually register and publish.
-            try await Task.sleep(nanoseconds: 1)
+            // Wait some time so the result of `sut` can be awaited before any
+            // values have been published.
+            try await Task.sleep(nanoseconds: NSEC_PER_SEC / 4)
             PortalsPubSub.publish(1, to: "test:asyncstream")
             PortalsPubSub.publish(2, to: "test:asyncstream")
         }
-        
+
         guard let firstValue = await sut.value as? Int else {
             XCTFail("Awaited task value was not able to be cast as an Int")
             return
         }
-        
+
         XCTAssertEqual(firstValue, 1)
     }
     #endif
