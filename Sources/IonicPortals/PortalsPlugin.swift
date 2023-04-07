@@ -22,7 +22,7 @@ public final class PortalsPlugin: CAPPlugin, CAPBridgedPlugin {
         methods.first { $0.name == methodName }
     }
     
-    private var publishers: [String: AnyCancellable] = [:]
+    private var publishers = ConcurrentDictionary(label: "io.ionic.portalsplugin", dict: [String: AnyCancellable]())
     private var pubsub: PortalsPubSub = .shared
     
     public convenience init(pubsub: PortalsPubSub) {
