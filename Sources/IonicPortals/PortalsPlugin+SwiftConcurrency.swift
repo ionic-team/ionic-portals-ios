@@ -14,12 +14,12 @@ extension PortalsPubSub {
     /// - Returns: An AsyncStream emitting ``SubscriptionResult``
     public static func subscribe(to topic: String) -> AsyncStream<SubscriptionResult> {
         AsyncStream { continuation in
-            let ref = PortalsPubSub.subscribe(topic) { result in
+            let cancellable = PortalsPubSub.subscribe(to: topic) { result in
                 continuation.yield(result)
             }
             
-            continuation.onTermination = { @Sendable _ in
-                PortalsPubSub.unsubscribe(from: topic, subscriptionRef: ref)
+            continuation.onTermination = { @Sendable [cancellable] _ in
+                cancellable.cancel()
             }
         }
     }

@@ -81,7 +81,7 @@ public class PortalUIView: UIView {
         
         override func capacitorDidLoad() {
             if case let .manual(plugins) = portal.pluginRegistrationMode {
-                bridge.registerPluginType(Plugin.self)
+                bridge.registerPluginType(PortalsPlugin.self)
 
                 plugins.forEach { plugin in
                     switch plugin {
