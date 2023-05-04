@@ -7,11 +7,11 @@ on:
 
 jobs:
   publish-to-cocoapods:
-    runs-on: macos-11
+    runs-on: macos-12
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_13.2.1.app
-      - uses: actions/checkout@v2
+      - run: sudo xcode-select --switch /Applications/Xcode_14.1.app
+      - uses: actions/checkout@v3
       - name: Install build dependencies
         run: gem install cocoapods
       - name: Validate podspec
