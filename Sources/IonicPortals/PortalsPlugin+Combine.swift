@@ -32,7 +32,7 @@ extension PortalsPubSub {
         Publisher(topic: topic, pubsub: self)
     }
     
-    /// Subscribes to a topic and publishes a ``SubscriptionResult`` downstream
+    /// Subscribes to a topic and publishes a ``SubscriptionResult`` downstream. Uses ``shared`` to subscribe.
     /// - Parameter topic: The topic to subscribe to
     /// - Returns: A ``Publisher``
     public static func publisher(for topic: String) -> Publisher {

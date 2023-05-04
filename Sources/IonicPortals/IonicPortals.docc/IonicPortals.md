@@ -11,7 +11,6 @@ IonicPortals provides tools to configure, render, and communicate with embedded 
 ### Registration
 
 - ``PortalsRegistrationManager``
-- ``UnregisteredView``
 
 ### Creating a Portal
 

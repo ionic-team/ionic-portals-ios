@@ -4,16 +4,13 @@
 
 ### Subscribing to Messages
 
-- ``publisher(for:)``
-- ``subscribe(to:)``
-- ``subscribe(to:_:)``
-- ``subscribe(_:_:)``
+- ``publisher(for:)-swift.type.method``
+- ``publisher(for:)-swift.method``
+- ``subscribe(to:_:)-swift.method``
+- ``subscribe(to:_:)-swift.type.method``
 
 
 ### Publishing Messages
 
-- ``publish(_:to:)``
-
-### Unsubscribing
-
-- ``unsubscribe(from:subscriptionRef:)``
+- ``publish(_:to:)-swift.method``
+- ``publish(_:to:)-swift.type.method``
