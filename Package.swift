@@ -12,7 +12,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm", .upToNextMajor(from: "4.6.0")),
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm", .upToNextMajor(from: "5.0.0")),
         .package(url: "https://github.com/ionic-team/ionic-live-updates-releases", "0.1.2"..<"0.5.0"),
     ],
     targets: [

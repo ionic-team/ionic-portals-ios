@@ -4,7 +4,7 @@
 
 ### Create a Portal
 
-- ``init(name:startDir:index:bundle:initialContext:pluginRegistrationMode:liveUpdateManager:liveUpdateConfig:)``
+- ``init(name:startDir:index:bundle:initialContext:assetMaps:pluginRegistrationMode:liveUpdateManager:liveUpdateConfig:performanceReporter:)``
 - ``init(stringLiteral:)``
 
 ### Web App Location 

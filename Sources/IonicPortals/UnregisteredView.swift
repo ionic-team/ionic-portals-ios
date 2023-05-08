@@ -40,10 +40,6 @@ struct Unregistered: View {
     }
 }
 
-@available(*, deprecated, message: "I don't know why you would have ever used this to begin with 😉")
-public class UnregisteredView: UIView {
-}
-
 struct Unregistered_Previews: PreviewProvider {
     static var previews: some View {
         HStack {

@@ -4,23 +4,11 @@ import Combine
 
 @objc(IONPortalsPlugin)
 public final class PortalsPlugin: CAPPlugin, CAPBridgedPlugin {
-    public static func pluginId() -> String {
-        "IONPortalsPlugin"
-    }
-    
-    public static func jsName() -> String {
-        "Portals"
-    }
-    
-    static let methods: [CAPPluginMethod] = [
+    public let identifier = "IONPortalsPlugin"
+    public let jsName = "Portals"
+    public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "publishNative", returnType: CAPPluginReturnPromise)
     ]
-    
-    public static func pluginMethods() -> [Any] { methods }
-    
-    public static func getMethod(_ methodName: String) -> CAPPluginMethod? {
-        methods.first { $0.name == methodName }
-    }
     
     private var publishers = ConcurrentDictionary(label: "io.ionic.portalsplugin", dict: [String: AnyCancellable]())
     private var pubsub: PortalsPubSub = .shared
