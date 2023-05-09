@@ -76,20 +76,18 @@ public class PortalUIView: UIView {
         init(portal: Portal, liveUpdatePath: URL?) {
             self.portal = portal
             self.liveUpdatePath = liveUpdatePath
-            super.init(autoRegisterPlugins: portal.pluginRegistrationMode.isAutomatic)
+            super.init(autoRegisterPlugins: false)
         }
         
         override func capacitorDidLoad() {
-            if case let .manual(plugins) = portal.pluginRegistrationMode {
-                bridge.registerPluginType(PortalsPlugin.self)
+            bridge.registerPluginInstance(PortalsPlugin())
 
-                plugins.forEach { plugin in
-                    switch plugin {
-                    case .instance(let instance):
-                        bridge.registerPluginInstance(instance)
-                    case .type(let pluginType):
-                        bridge.registerPluginType(pluginType)
-                    }
+            portal.plugins.forEach { plugin in
+                switch plugin {
+                case .instance(let instance):
+                    bridge.registerPluginInstance(instance)
+                case .type(let pluginType):
+                    bridge.registerPluginType(pluginType)
                 }
             }
         }
