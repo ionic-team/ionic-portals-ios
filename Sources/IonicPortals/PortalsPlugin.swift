@@ -3,19 +3,19 @@ import Capacitor
 import Combine
 
 @objc(IONPortalsPlugin)
-public final class PortalsPlugin: CAPPlugin, CAPBridgedPlugin {
+public final class PortalsPlugin: CAPInstancePlugin, CAPBridgedPlugin {
     public let identifier = "IONPortalsPlugin"
     public let jsName = "Portals"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "publishNative", returnType: CAPPluginReturnPromise)
     ]
     
-    private var publishers = ConcurrentDictionary(label: "io.ionic.portalsplugin", dict: [String: AnyCancellable]())
-    private var pubsub: PortalsPubSub = .shared
+    private let publishers = ConcurrentDictionary(label: "io.ionic.portalsplugin", dict: [String: AnyCancellable]())
+    private let pubsub: PortalsPubSub
     
-    public convenience init(pubsub: PortalsPubSub) {
-        self.init()
+    public init(pubsub: PortalsPubSub = .shared) {
         self.pubsub = pubsub
+        super.init()
     }
     
     @objc func publishNative(_ call: CAPPluginCall) {
