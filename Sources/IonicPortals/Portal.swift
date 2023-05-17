@@ -38,9 +38,6 @@ public struct Portal {
     /// Assets needed to be shared between web and native
     public var assetMaps: [AssetMap]
 
-    /// The ``WebPerformanceReporter`` to handle metric events from the web application
-    public var performanceReporter: WebPerformanceReporter?
-
     /// Creates an instance of ``Portal``
     /// - Parameters:
     ///   - name: The name of the portal, must be unique.
@@ -63,8 +60,7 @@ public struct Portal {
         assetMaps: [AssetMap] = [],
         plugins: [Plugin] = [],
         liveUpdateManager: LiveUpdateManager = .shared,
-        liveUpdateConfig: LiveUpdate? = nil,
-        performanceReporter: WebPerformanceReporter? = nil
+        liveUpdateConfig: LiveUpdate? = nil
     ) {
         self.name = name
         self.startDir = startDir ?? name
@@ -74,7 +70,6 @@ public struct Portal {
         self.plugins = plugins
         self.liveUpdateManager = liveUpdateManager
         self.liveUpdateConfig = liveUpdateConfig
-        self.performanceReporter = performanceReporter
         if let liveUpdateConfig = liveUpdateConfig {
             try? liveUpdateManager.add(liveUpdateConfig)
         }
