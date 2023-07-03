@@ -4,7 +4,7 @@
 
 ### Create a Portal
 
-- ``init(name:startDir:index:bundle:initialContext:assetMaps:plugins:liveUpdateManager:liveUpdateConfig:performanceReporter:)``
+- ``init(name:startDir:index:bundle:initialContext:assetMaps:plugins:liveUpdateManager:liveUpdateConfig:)``
 - ``init(stringLiteral:)``
 
 ### Web App Location 
@@ -31,6 +31,10 @@
 ### Initial Application State
 
 - ``initialContext``
+
+### Configuring Capacitor
+
+- ``configuring(_:_:)``
 
 ### Name
 

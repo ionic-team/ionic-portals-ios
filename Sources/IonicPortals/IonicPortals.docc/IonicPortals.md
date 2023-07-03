@@ -33,7 +33,7 @@ IonicPortals provides tools to configure, render, and communicate with embedded 
 
 ### Web Performance
 
-- ``WebPerformanceReporter``
+- ``WebVitalsPlugin``
 
 ### Objective-C Compatibility
 
