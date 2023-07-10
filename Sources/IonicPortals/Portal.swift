@@ -5,8 +5,10 @@ import IonicLiveUpdates
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
-    
-    /// The name of the portal
+    /// The name of the portal.
+    ///
+    /// This is always provided to the web application
+    /// so it can determine if it is in a Portals context.
     public let name: String
     
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
@@ -38,9 +40,11 @@ public struct Portal {
     /// Assets needed to be shared between web and native
     public var assetMaps: [AssetMap]
 
+    internal private(set) var descriptorConfiguration: [(InstanceDescriptor) -> Void] = []
+
     /// Creates an instance of ``Portal``
     /// - Parameters:
-    ///   - name: The name of the portal, must be unique.
+    ///   - name: The name of the portal.
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
@@ -50,7 +54,6 @@ public struct Portal {
     ///   - assetMaps: Any ``AssetMap``s needed to share assets with the ``Portal``. Defaults to `[]`.
     ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
     ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
-    ///   - performanceReport: The ``WebPerformanceReporter`` to handle metric events from the web application. Defaults to `nil`.
     public init(
         name: String,
         startDir: String? = nil,
@@ -78,7 +81,6 @@ public struct Portal {
 }
 
 extension Portal {
-    
     /// Returns a new ``Portal`` with the plugins added to ``plugins``.
     /// - Parameter plugins: The plugins to manually register
     /// - Returns: A new ``Portal`` with the plugins added to ``plugins``
@@ -125,7 +127,6 @@ extension Portal {
 }
 
 extension Portal: ExpressibleByStringLiteral {
-    
     /// ExpressibleByStringLiteral conformance for ``Portal``.
     /// - Parameter value: The name of the portal
     ///
@@ -152,6 +153,23 @@ extension Portal {
         /// before providing it to the capacitor bridge. The ``PortalsPlugin`` ``PortalsPlugin/init(pubsub:)``
         /// initializer is an example of a scenario where you would need to use ``instance(_:)``.
         case instance(CAPPlugin)
+    }
+}
+
+extension Portal {
+    /// Enables configuring the capacitor runtime from a subset of values available
+    /// through the [Capacitor configuration](https://capacitorjs.com/docs/config).
+    /// Any values set here will _override_ any value set in the `capacitor.config.json`
+    /// bundled with the Portal.
+    ///
+    /// - Parameters:
+    ///   - keyPath: The target keypath to write to
+    ///   - value: The value to write
+    /// - Returns: A Portal with the configuration added
+    public func configuring<Value>(_ keyPath: ReferenceWritableKeyPath<InstanceDescriptor, Value>, _ value: Value) -> Portal {
+        var copy = self
+        copy.descriptorConfiguration.append { $0[keyPath: keyPath] = value }
+        return copy
     }
 }
 

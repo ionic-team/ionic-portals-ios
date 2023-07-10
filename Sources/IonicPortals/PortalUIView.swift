@@ -95,15 +95,21 @@ public class PortalUIView: UIView {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         override func instanceDescriptor() -> InstanceDescriptor {
+            let descriptor = createInstanceDescriptor()
+            portal.descriptorConfiguration.forEach { $0(descriptor) }
+            return descriptor
+        }
+
+        private func createInstanceDescriptor() -> InstanceDescriptor {
             let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
             
             guard let path = liveUpdatePath ?? bundleURL else {
                 // DCG this should throw or something else
                 return InstanceDescriptor()
             }
-            
+
             var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
             var cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
 
@@ -121,7 +127,8 @@ public class PortalUIView: UIView {
             descriptor.handleApplicationNotifications = false
             return descriptor
         }
-        
+
+
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
             let portalInitialContext: String
 
