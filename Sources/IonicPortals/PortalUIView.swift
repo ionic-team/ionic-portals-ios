@@ -128,7 +128,7 @@ public class PortalUIView: UIView {
             descriptor.handleApplicationNotifications = false
             return descriptor
         }
-        
+
         override func instanceDescriptor() -> InstanceDescriptor {
             let descriptor = createInstanceDescriptor()
             portal.descriptorConfiguration.forEach { $0(descriptor) }
