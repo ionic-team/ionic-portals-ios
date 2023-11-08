@@ -7,7 +7,7 @@ struct EnvironmentValue {
     }
 }
 
-struct DevelopmentConfiguration {
+struct DevConfiguration {
     var server: EnvironmentValue
     var capacitorConfig: EnvironmentValue
 
@@ -17,13 +17,13 @@ struct DevelopmentConfiguration {
     }
 }
 
-extension DevelopmentConfiguration {
-    init(baseEnvironmentVariable: String) {
-        server = .init(variableName: "\(baseEnvironmentVariable.uppercased())_SERVER") 
-        capacitorConfig = .init(variableName: "\(baseEnvironmentVariable.uppercased())_CONFIG")
+extension DevConfiguration {
+    init(baseName: String) {
+        server = .init(variableName: "\(baseName.uppercased())_SERVER") 
+        capacitorConfig = .init(variableName: "\(baseName.uppercased())_CONFIG")
     }
 }
 
-extension DevelopmentConfiguration {
-    static var `default` = DevelopmentConfiguration(baseEnvironmentVariable: "PORTAL")
+extension DevConfiguration {
+    static var `default` = DevConfiguration(baseName: "PORTAL")
 }
