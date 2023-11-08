@@ -50,6 +50,7 @@ public struct Portal {
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
+    ///   - devModeEnabled: Enables web developers to override the Portal content in debug builds. Defaults to `true`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
@@ -59,8 +60,8 @@ public struct Portal {
     public init(
         name: String,
         startDir: String? = nil,
-        devModeEnabled: Bool = true,
         index: String = "index.html",
+        devModeEnabled: Bool = true,
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
         assetMaps: [AssetMap] = [],
