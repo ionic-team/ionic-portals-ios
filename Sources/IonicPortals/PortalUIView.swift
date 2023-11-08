@@ -71,6 +71,10 @@ public class PortalUIView: UIView {
         private var portal: Portal
         private var liveUpdatePath: URL?
 
+        #if DEBUG
+        private lazy var devConfiguration = DevelopmentConfiguration(baseEnvironmentVariable: portal.name)
+        #endif
+
         override var router: Router { PortalRouter(portal: portal) }
 
         init(portal: Portal, liveUpdatePath: URL?) {
@@ -100,7 +104,7 @@ public class PortalUIView: UIView {
             let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
 
             #if DEBUG
-            if let debugConfigUrl = portal.devConfig?.capacitorConfig.url {
+            if portal.devModeEnabled, let debugConfigUrl = devConfiguration.capacitorConfig.url ?? DevelopmentConfiguration.default.capacitorConfig.url {
                 return InstanceDescriptor(at: Bundle.main.bundleURL, configuration: debugConfigUrl, cordovaConfiguration: nil)
             }
             #endif
@@ -133,8 +137,8 @@ public class PortalUIView: UIView {
             let descriptor = createInstanceDescriptor()
             portal.descriptorConfiguration.forEach { $0(descriptor) }
             #if DEBUG
-            if portal.devConfig?.server.url != nil {
-                descriptor.serverURL = portal.devConfig?.server.url?.absoluteString
+            if portal.devModeEnabled, let serverUrl = devConfiguration.server.url ?? DevelopmentConfiguration.default.server.url {
+                descriptor.serverURL = serverUrl.absoluteString
                 // This allows for not having any files on disk during dev
                 if !FileManager.default.fileExists(atPath: descriptor.appLocation.path) {
                     descriptor.appLocation = Bundle.main.bundleURL

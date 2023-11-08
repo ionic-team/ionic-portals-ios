@@ -2,57 +2,6 @@ import Foundation
 import Capacitor
 import IonicLiveUpdates
 
-public enum ConfigUrl {
-    case url(URL)
-    case environment(String)
-
-    public var url: URL? {
-        switch self {
-        case let .url(url):
-            return url
-        case let .environment(envVar):
-            return ProcessInfo.processInfo.environment[envVar].flatMap(URL.init)
-        }
-    }
-}
-
-public struct DevelopmentConfiguration {
-    public var server: ConfigUrl
-    public var capacitorConfig: ConfigUrl
-
-    public init(server: ConfigUrl, capacitorConfig: ConfigUrl) {
-        self.server = server
-        self.capacitorConfig = capacitorConfig
-    }
-}
-
-extension DevelopmentConfiguration {
-    public init(baseEnvironmentVariable: String) {
-        server = .environment("\(baseEnvironmentVariable)_SERVER")
-        capacitorConfig = .environment("\(baseEnvironmentVariable)_CONFIG")
-    }
-}
-
-extension DevelopmentConfiguration: ExpressibleByStringLiteral {
-    public init(stringLiteral value: StringLiteralType) {
-        self.init(baseEnvironmentVariable: value)
-    }
-}
-
-public enum DevUrl {
-    case url(URL)
-    case environment(String)
-
-    var url: URL? {
-        switch self {
-        case let .url(url):
-            return url
-        case let .environment(envVar):
-            return ProcessInfo.processInfo.environment[envVar].flatMap(URL.init)
-        }
-    }
-}
-
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
     /// The name of the portal.
@@ -64,8 +13,9 @@ public struct Portal {
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
     public let startDir: String
 
-    public var devConfig: DevelopmentConfiguration?
-    
+    /// Enables web developers to override Portal content in debug builds.
+    public var devModeEnabled: Bool
+
     /// The initial file to load in the Portal.
     public let index: String
 
@@ -109,7 +59,7 @@ public struct Portal {
     public init(
         name: String,
         startDir: String? = nil,
-        devConfig: DevelopmentConfiguration? = nil,
+        devModeEnabled: Bool = true,
         index: String = "index.html",
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
@@ -120,7 +70,7 @@ public struct Portal {
     ) {
         self.name = name
         self.startDir = startDir ?? name
-        self.devConfig = devConfig
+        self.devModeEnabled = devModeEnabled
         self.index = index
         self.initialContext = initialContext
         self.bundle = bundle
