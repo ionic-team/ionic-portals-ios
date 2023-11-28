@@ -12,7 +12,7 @@ import Capacitor
 public struct PortalView: UIViewRepresentable {
     private let portal: Portal
     private let onBridgeAvailable: (CAPBridgeProtocol) -> Void
-    
+
     /// Creates an instance of ``PortalView``
     /// - Parameters:
     ///   - portal: The ``Portal`` to render.

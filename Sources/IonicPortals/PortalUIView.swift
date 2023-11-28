@@ -22,7 +22,7 @@ public class PortalUIView: UIView {
         super.init(frame: .zero)
         initView()
     }
-    
+
     /// Creates an instance of ``PortalUIView``
     /// - Parameter portal: The ``IONPortal`` to render.
     @objc public convenience init(portal: IONPortal) {
@@ -32,7 +32,7 @@ public class PortalUIView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
@@ -70,7 +70,11 @@ public class PortalUIView: UIView {
     final class InternalCapWebView: CAPWebView {
         private var portal: Portal
         private var liveUpdatePath: URL?
-        
+
+        #if DEBUG
+        private lazy var devConfiguration = DevConfiguration(baseName: portal.name)
+        #endif
+
         override var router: Router { PortalRouter(portal: portal) }
 
         init(portal: Portal, liveUpdatePath: URL?) {
@@ -78,7 +82,7 @@ public class PortalUIView: UIView {
             self.liveUpdatePath = liveUpdatePath
             super.init(autoRegisterPlugins: false)
         }
-        
+
         override func capacitorDidLoad() {
             bridge.registerPluginInstance(PortalsPlugin())
 
@@ -96,15 +100,15 @@ public class PortalUIView: UIView {
             fatalError("init(coder:) has not been implemented")
         }
 
-        override func instanceDescriptor() -> InstanceDescriptor {
-            let descriptor = createInstanceDescriptor()
-            portal.descriptorConfiguration.forEach { $0(descriptor) }
-            return descriptor
-        }
-
         private func createInstanceDescriptor() -> InstanceDescriptor {
             let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
-            
+
+            #if DEBUG
+            if portal.devModeEnabled, let debugConfigUrl = devConfiguration.capacitorConfig.url ?? DevConfiguration.default.capacitorConfig.url {
+                return InstanceDescriptor(at: Bundle.main.bundleURL, configuration: debugConfigUrl, cordovaConfiguration: nil)
+            }
+            #endif
+
             guard let path = liveUpdatePath ?? bundleURL else {
                 // DCG this should throw or something else
                 return InstanceDescriptor()
@@ -123,12 +127,27 @@ public class PortalUIView: UIView {
                 cordovaConfigUrl = updatedCordovaConfig
             }
 
+
             let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
             descriptor.handleApplicationNotifications = false
             return descriptor
         }
 
-
+        override func instanceDescriptor() -> InstanceDescriptor {
+            let descriptor = createInstanceDescriptor()
+            portal.descriptorConfiguration.forEach { $0(descriptor) }
+            #if DEBUG
+            if portal.devModeEnabled, let serverUrl = devConfiguration.server.url ?? DevConfiguration.default.server.url {
+                descriptor.serverURL = serverUrl.absoluteString
+                // This allows for not having any files on disk during dev
+                if !FileManager.default.fileExists(atPath: descriptor.appLocation.path) {
+                    descriptor.appLocation = Bundle.main.bundleURL
+                }
+            }
+            #endif
+            return descriptor
+        }
+        
         override func loadInitialContext(_ userContentViewController: WKUserContentController) {
             let portalInitialContext: String
 

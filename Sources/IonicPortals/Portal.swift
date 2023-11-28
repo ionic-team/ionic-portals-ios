@@ -2,7 +2,6 @@ import Foundation
 import Capacitor
 import IonicLiveUpdates
 
-
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
     /// The name of the portal.
@@ -13,7 +12,10 @@ public struct Portal {
     
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
     public let startDir: String
-    
+
+    /// Enables web developers to override Portal content in debug builds.
+    public var devModeEnabled: Bool
+
     /// The initial file to load in the Portal.
     public let index: String
 
@@ -48,6 +50,7 @@ public struct Portal {
     ///   - startDir: The starting directory of the ``Portal`` relative to the root of ``bundle``.
     ///     If `nil`, the portal name is used as the starting directory. Defaults to `nil`.
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
+    ///   - devModeEnabled: Enables web developers to override the Portal content in debug builds. Defaults to `true`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
     ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
@@ -58,6 +61,7 @@ public struct Portal {
         name: String,
         startDir: String? = nil,
         index: String = "index.html",
+        devModeEnabled: Bool = true,
         bundle: Bundle = .main,
         initialContext: JSObject = [:],
         assetMaps: [AssetMap] = [],
@@ -67,6 +71,7 @@ public struct Portal {
     ) {
         self.name = name
         self.startDir = startDir ?? name
+        self.devModeEnabled = devModeEnabled
         self.index = index
         self.initialContext = initialContext
         self.bundle = bundle

@@ -4,7 +4,7 @@
 
 ### Create a Portal
 
-- ``init(name:startDir:index:bundle:initialContext:assetMaps:plugins:liveUpdateManager:liveUpdateConfig:)``
+- ``init(name:startDir:index:devModeEnabled:bundle:initialContext:assetMaps:plugins:liveUpdateManager:liveUpdateConfig:)``
 - ``init(stringLiteral:)``
 
 ### Web App Location 
@@ -15,6 +15,7 @@
 
 ### Plugin Management
 
+- ``plugins``
 - ``adding(_:)-72o29``
 - ``adding(_:)-9sqqz``
 - ``adding(_:)-868wl``
@@ -39,3 +40,11 @@
 ### Name
 
 - ``name``
+
+### DevMode
+
+- ``devModeEnabled``
+
+### Assets
+
+- ``assetMaps``
