@@ -48,5 +48,5 @@ extension DevConfiguration {
 }
 
 extension DevConfiguration {
-    static var `default` = DevConfiguration(baseName: "PORTAL")
+    static let `default` = DevConfiguration(baseName: "PORTAL")
 }
