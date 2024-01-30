@@ -109,3 +109,5 @@ yarn.lock
 
 # Vitals
 vitals/dist
+
+docs/
