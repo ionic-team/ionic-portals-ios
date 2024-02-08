@@ -35,7 +35,10 @@ public struct Portal {
     public var liveUpdateConfig: LiveUpdate? = nil {
         didSet {
             guard let liveUpdateConfig = liveUpdateConfig else { return }
-            try? liveUpdateManager.add(liveUpdateConfig)
+            try? liveUpdateManager.add(
+                liveUpdateConfig,
+                existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
+            )
         }
     }
 
@@ -79,7 +82,10 @@ public struct Portal {
         self.liveUpdateManager = liveUpdateManager
         self.liveUpdateConfig = liveUpdateConfig
         if let liveUpdateConfig = liveUpdateConfig {
-            try? liveUpdateManager.add(liveUpdateConfig)
+            try? liveUpdateManager.add(
+                liveUpdateConfig,
+                existingCacheUrl: bundle.url(forResource: self.startDir, withExtension: nil)
+            )
         }
         self.assetMaps = assetMaps
     }
