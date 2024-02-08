@@ -36,7 +36,7 @@ public class PortalUIView: UIView {
     func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
             if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
+                self.liveUpdatePath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
             }
             
             addPinnedSubview(webView)
@@ -56,7 +56,7 @@ public class PortalUIView: UIView {
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
         if let liveUpdate = portal.liveUpdateConfig,
-           let latestAppPath = try? portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId),
+           let latestAppPath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId),
            liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
             return webView.setServerBasePath(path: latestAppPath.path)
