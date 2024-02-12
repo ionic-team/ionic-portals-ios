@@ -3,23 +3,23 @@ name: Publish Docs
 on:
   push:
     tags:
-      - '*'
+      - "*"
   workflow_dispatch:
 
 jobs:
   publish-docs:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - run: sudo xcode-select --switch /Applications/Xcode_14.1.app
-      - uses: actions/checkout@v3
+      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+      - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install -g vercel
       - name: Pull Build Configuration
