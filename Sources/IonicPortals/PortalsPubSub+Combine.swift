@@ -14,8 +14,8 @@ extension PortalsPubSub {
         public typealias Output = SubscriptionResult
         public typealias Failure = Never
 
-        let subject: PassthroughSubject<SubscriptionResult, Never>
-        
+        private let subject: PassthroughSubject<SubscriptionResult, Never>
+
         init(topic: String, pubsub: PortalsPubSub) {
             subject = pubsub.subject(for: topic)
         }
@@ -56,7 +56,7 @@ extension PortalsPubSub.Publisher {
     /// Attempts to cast the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult``
     /// - Parameter type: The concrete `JSValue` to cast ``SubscriptionResult/data`` to
     /// - Returns: A publisher emitting the an optional value after attempting to cast the ``SubscriptionResult/data`` value to a concrete type
-    public func data<T>(as type: T.Type) -> AnyPublisher<T?, Never> where T: JSValue {
+    public func data<T>(as type: T.Type = T.self) -> AnyPublisher<T?, Never> where T: JSValue {
         map { $0.data as? T }
             .eraseToAnyPublisher()
     }
@@ -64,7 +64,7 @@ extension PortalsPubSub.Publisher {
     /// Attempts to cast the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult`` and throws an error if unsuccessful
     /// - Parameter type: The concrete `JSValue` to cast ``SubscriptionResult/data`` to
     /// - Returns: A publisher emitting the cast value or a ``CastingError``
-    public func tryData<T>(as type: T.Type) -> AnyPublisher<T, Error> where T: JSValue {
+    public func tryData<T>(as type: T.Type = T.self) -> AnyPublisher<T, Error> where T: JSValue {
         tryMap { result in
             guard let data = result.data as? T else { throw CastingError<T>() }
             return data
@@ -75,11 +75,10 @@ extension PortalsPubSub.Publisher {
     /// Attempts to decode the ``SubscriptionResult/data`` value of the upstream ``SubscriptionResult`` to any type that conforms to `Decodable`.
     /// - Parameters:
     ///   - type: The type to decode the ``SubscriptionResult/data`` value of ``SubscriptionResult`` to.
-    ///   - decoder: A `JSONDecoder` to perform decoding.
+    ///   - decoder: A `JSValueDecoder` to perform decoding.
     /// - Returns: A publisher emitting the decoded value or a decoding error.
-    public func decodeData<T>(_ type: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, Error> where T: Decodable {
-        tryData(as: JSObject.self)
-            .tryMap { try decoder.decodeJsObject(T.self, from: $0) }
+    public func decodeData<T>(_ type: T.Type = T.self, decoder: JSValueDecoder = JSValueDecoder()) -> AnyPublisher<T, Error> where T: Decodable {
+        tryCompactMap { try $0.decodeData(with: decoder) }
             .eraseToAnyPublisher()
     }
 }

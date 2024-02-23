@@ -137,13 +137,13 @@ class PortalsPluginTests: XCTestCase {
         
         // SUT
         let result = PortalsPubSub.publisher(for: topic)
-            .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
+            .decodeData(MagicTheGatheringCard.self, decoder: JSValueDecoder())
             .assertNoFailure()
             .expectOutput(toBe: card)
         
-        let jsObject = try JSONEncoder().encodeJsObject(card)
-        PortalsPubSub.publish(jsObject, to: topic)
-        
+        let jsValue = try JSValueEncoder().encode(card)
+        PortalsPubSub.publish(jsValue, to: topic)
+
         wait(for: result, timeout: 1)
     }
     
@@ -152,7 +152,7 @@ class PortalsPluginTests: XCTestCase {
         
         // SUT
         let result = PortalsPubSub.publisher(for: topic)
-            .decodeData(MagicTheGatheringCard.self, decoder: JSONDecoder())
+            .decodeData(MagicTheGatheringCard.self, decoder: JSValueDecoder())
             .expectError()
         
         PortalsPubSub.publish(99.82, to: topic)
@@ -163,7 +163,7 @@ class PortalsPluginTests: XCTestCase {
         let expectation = self.expectation(description: "Callback should not have fired")
         expectation.isInverted = true
         
-        var cancellable: AnyCancellable = PortalsPubSub.subscribe(to: "test:cancellable") { _ in
+        let cancellable: AnyCancellable = PortalsPubSub.subscribe(to: "test:cancellable") { _ in
             expectation.fulfill()
         }
         
