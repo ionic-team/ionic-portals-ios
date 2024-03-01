@@ -6,10 +6,10 @@ Pod::Spec.new do |s|
   s.license = 'Commercial'
   s.homepage = 'https://ionic.io/portals'
   s.ios.deployment_target = '13.0'
+  s.visionos.deployment_target = '1.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { git: 'https://github.com/ionic-team/ionic-portals-ios.git', tag: s.version.to_s }
   s.source_files = 'Sources/IonicPortals/*.swift'
   s.dependency 'Capacitor', '~> 5.0'
-  s.dependency 'IonicLiveUpdates', '>= 0.5.0', '< 0.6.0'
-  s.swift_version = '5.7'
+  s.swift_version = '5.9'
 end
