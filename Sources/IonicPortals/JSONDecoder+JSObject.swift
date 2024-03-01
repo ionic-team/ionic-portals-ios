@@ -14,6 +14,7 @@ public extension JSONDecoder {
         try decodeJsObject(type, from: object)
     }
 
+    @available(*, deprecated, message: "Use JSValueDecoder from Capacitor. This will be removed in the next release.")
     func decodeJsObject<T: Decodable>(_ type: T.Type, from object: JSObject) throws -> T {
         let data = try JSONSerialization.data(withJSONObject: object, options: [])
         return try decode(T.self, from: data)

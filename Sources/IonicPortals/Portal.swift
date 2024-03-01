@@ -8,16 +8,16 @@ public struct Portal {
     ///
     /// This is always provided to the web application
     /// so it can determine if it is in a Portals context.
-    public let name: String
-    
+    public var name: String
+
     /// The root directory of the ``Portal`` web application relative to the root of ``bundle``
-    public let startDir: String
+    public var startDir: String
 
     /// Enables web developers to override Portal content in debug builds.
     public var devModeEnabled: Bool
 
     /// The initial file to load in the Portal.
-    public let index: String
+    public var index: String
 
     /// The `Bundle` that contains the web application.
     public var bundle: Bundle
@@ -179,8 +179,20 @@ extension Portal {
     /// - Returns: A Portal with the configuration added
     public func configuring<Value>(_ keyPath: ReferenceWritableKeyPath<InstanceDescriptor, Value>, _ value: Value) -> Portal {
         var copy = self
-        copy.descriptorConfiguration.append { $0[keyPath: keyPath] = value }
+        copy.configure(keyPath, value)
         return copy
+    }
+
+    /// Enables configuring the capacitor runtime from a subset of values available
+    /// through the [Capacitor configuration](https://capacitorjs.com/docs/config).
+    /// Any values set here will _override_ any value set in the `capacitor.config.json`
+    /// bundled with the Portal.
+    ///
+    /// - Parameters:
+    ///   - keyPath: The target keypath to write to
+    ///   - value: The value to write
+    public mutating func configure<Value>(_ keyPath: ReferenceWritableKeyPath<InstanceDescriptor, Value>, _ value: Value) {
+        descriptorConfiguration.append { $0[keyPath: keyPath] = value }
     }
 }
 

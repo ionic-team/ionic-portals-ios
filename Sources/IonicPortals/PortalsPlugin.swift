@@ -10,7 +10,7 @@ public final class PortalsPlugin: CAPInstancePlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "publishNative", returnType: CAPPluginReturnPromise)
     ]
     
-    private let publishers = ConcurrentDictionary(label: "io.ionic.portalsplugin", dict: [String: AnyCancellable]())
+    private let publishers = ConcurrentDictionary<AnyCancellable>()
     private let pubsub: PortalsPubSub
     
     public init(pubsub: PortalsPubSub = .shared) {

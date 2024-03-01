@@ -23,7 +23,7 @@ public struct AssetMap {
         startDirComponents.joined(separator: "/")
     }
 
-    internal var startDirComponents: [Substring]
+    private var startDirComponents: [Substring]
 
 
     /// - Parameters:

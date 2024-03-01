@@ -11,8 +11,8 @@ import Capacitor
 
 // An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public class PortalsPubSub {
-    private var publishers = ConcurrentDictionary<String, PassthroughSubject<SubscriptionResult, Never>>(label: "io.ionic.portals.subjects")
-    
+    private var publishers = ConcurrentDictionary<PassthroughSubject<SubscriptionResult, Never>>()
+
     public init() {}
 
     /// Subscribe to a topic and execute the provided callback when the event is received.
@@ -45,7 +45,17 @@ public class PortalsPubSub {
     public func publish(_ message: JSValue? = nil, to topic: String) {
         publishers[topic]?.send(SubscriptionResult(topic: topic, data: message))
     }
-    
+
+    /// Publish event to all listeners of a topic
+    /// - Parameters:
+    ///   - message: The encodable data to deliver to all subscribers.
+    ///   - topic: The topic to publish to
+    ///  - Throws: An `EncodingError` if encoding failed
+    public func publish<Message>(_ message: Message, to topic: String) throws where Message: Encodable {
+        let jsValue = try JSValueEncoder().encode(message)
+        publish(jsValue, to: topic)
+    }
+
     /// Shared PubSub instance to publish events globally amongst subscribers
     public static let shared = PortalsPubSub()
     
@@ -67,39 +77,17 @@ public class PortalsPubSub {
     }
 }
 
-class ConcurrentDictionary<Key: Hashable, Value> {
-    private var _dict: Dictionary<Key, Value>
-    var dict: Dictionary<Key, Value> {
-        queue.sync { _dict }
-    }
-    private let queue: DispatchQueue
-    
-    init(label: String, dict: [Key: Value] = [:]) {
-        queue = DispatchQueue(label: label, qos: .userInitiated, attributes: .concurrent)
-        self._dict = dict
-    }
-    
-    subscript(_ key: Key) -> Value? {
-        get { queue.sync { _dict[key] } }
-        set {
-            queue.async(flags: .barrier) { [weak self] in
-                self?._dict[key] = newValue
-            }
-        }
-    }
-}
+class ConcurrentDictionary<Value> {
+    private var dict: [String: Value]
+    private let lock = NSLock()
 
-extension ConcurrentDictionary: Collection {
-    var startIndex: Dictionary<Key, Value>.Index { dict.startIndex }
-    var endIndex: Dictionary<Key, Value>.Index { dict.endIndex }
-    func index(after i: Dictionary<Key, Value>.Index) -> Dictionary<Key, Value>.Index {
-        dict.index(after: i)
+    init(dict: [String: Value] = [:]) {
+        self.dict = dict
     }
     
-    subscript(position: Dictionary<Key, Value>.Index) -> Dictionary<Key, Value>.Element {
-        get {
-            dict[position]
-        }
+    subscript(_ key: String) -> Value? {
+        get { lock.withLock { dict[key] } }
+        set { lock.withLock { dict[key] = newValue } }
     }
 }
 
@@ -108,13 +96,18 @@ public struct SubscriptionResult {
     /// The topic the ``SubscriptionResult`` was emitted on
     public var topic: String
     /// The value emitted
-    public var data: JSValue?
-    
-    var dictionaryRepresentation: [String: JSValue?] {
+    public var data: (any JSValue)?
+
+    var dictionaryRepresentation: [String: (any JSValue)?] {
         return [
             "topic": topic,
             "data": data
         ]
+    }
+
+    public func decodeData<T>(as type: T.Type = T.self, with decoder: JSValueDecoder = JSValueDecoder()) throws -> T? where T: Decodable {
+        guard let data else { return nil }
+        return try decoder.decode(type, from: data)
     }
 }
 
