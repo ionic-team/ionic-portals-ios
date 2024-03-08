@@ -52,6 +52,7 @@ public class PortalUIView: UIView {
         self.portal = portal
         super.init(frame: .zero)
         initView()
+        setup()
     }
 
     /// Creates an instance of ``PortalUIView``
