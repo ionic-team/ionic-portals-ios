@@ -16,6 +16,7 @@ public extension JSONEncoder {
         try encodeJsObject(value)
     }
 
+    @available(*, deprecated, message: "Use JSValueEncoder from Capacitor. This will be removed in the next release.")
     func encodeJsObject<T: Encodable>(_ value: T) throws -> JSObject {
         let data = try encode(value)
         let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary

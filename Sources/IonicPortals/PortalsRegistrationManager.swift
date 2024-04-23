@@ -66,7 +66,7 @@ public class PortalsRegistrationManager: NSObject {
         
         let parts = token.split(separator: ".")
         if parts.count != 3 {
-            registrationError()
+            printRegistrationErrorMessage()
             return .error
         }
         let headerAndPayload = "\(parts[0]).\(parts[1])"
@@ -88,13 +88,13 @@ public class PortalsRegistrationManager: NSObject {
         let state: RegistrationState = result ? .registered : .error
         
         if case .error = state {
-            registrationError()
+            printRegistrationErrorMessage()
         }
         
         return state
     }
     
-    private func registrationError() {
+    private func printRegistrationErrorMessage() {
         print("Error validating your key for Ionic Portals. Check your key and try again.")
     }
     

@@ -1,5 +1,6 @@
 import Foundation
 
+#if DEBUG
 struct ServerUrl {
     var variableName: String
     var url: URL? {
@@ -50,3 +51,4 @@ extension DevConfiguration {
 extension DevConfiguration {
     static let `default` = DevConfiguration(baseName: "PORTAL")
 }
+#endif
