@@ -74,7 +74,7 @@ public class PortalUIView: UIView {
             return
         }
 
-        addPinnedSubview(webView)
+        initView()
         registerPlugins()
 
         let url = bridge.config.appStartServerURL
