@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "npm run build:docs && npm run build:transform",
-    "build:docs": "xcodebuild docbuild -scheme IonicPortals -derivedDataPath DerivedData -destination 'platform=iOS Simulator,name=iPhone 15'",
+    "build:docs": "xcodebuild docbuild -scheme IonicPortals -derivedDataPath DerivedData -destination 'platform=iOS Simulator,name=iPhone 16 Pro'",
     "build:transform": "mv DerivedData/Build/Products/Debug-iphonesimulator/IonicPortals.doccarchive public"
   }
 }
