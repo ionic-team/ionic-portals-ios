@@ -1,7 +1,8 @@
 # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+> This changelog is no longer actively maintained.  
+> Current release notes are published on the [Ionic Portals iOS Changelog](https://ionic.io/docs/portals/for-ios/changelog).  
+> Historical entries are preserved below for reference.
 
 ## [0.5.1](https://github.com/ionic-team/ionic-portals/compare/0.5.0...0.5.1) (2022-03-09)
 
