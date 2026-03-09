@@ -9,10 +9,11 @@ on:
       - "**"
 jobs:
   test:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+      - name: Show Xcode version
+        run: xcodebuild -version
       - uses: actions/checkout@v4
       - name: Install xcpretty
         run: gem install xcpretty
@@ -21,12 +22,13 @@ jobs:
           set -eo pipefail
           xcodebuild test \
             -scheme IonicPortals \
-            -destination 'platform=iOS Simulator,name=iPhone 15' | xcpretty
+            -destination 'platform=iOS Simulator,name=iPhone 17' | xcpretty
   validate-podspec:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+      - name: Show Xcode version
+        run: xcodebuild -version
       - uses: actions/checkout@v4
       - name: Install cocoapods
         run: gem install cocoapods

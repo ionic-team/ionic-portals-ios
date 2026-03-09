@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish-docs:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -17,8 +17,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+          node-version: 22.x
+      - name: Show Xcode version
+        run: xcodebuild -version
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install -g vercel

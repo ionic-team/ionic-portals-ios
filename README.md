@@ -9,7 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/cocoapods/v/IonicPortals?style=flat-square" />
   <img src="https://img.shields.io/badge/spm-Compatible-orange?style=flat-square" alt="SPM Compatible"/>
-  <img src="https://img.shields.io/badge/platform-iOS%2013%2B-lightgrey?style=flat-square" alt="Supports iOS 13 and up" />
+  <img src="https://img.shields.io/badge/platform-iOS%2015%2B-lightgrey?style=flat-square" alt="Supports iOS 15 and up" />
 </p>
 <p align="center">
   <a href="https://github.com/ionic-team/ionic-portals-ios/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/ionic-team/ionic-portals-ios/ci.yml?branch=main&style=flat-square" /></a>

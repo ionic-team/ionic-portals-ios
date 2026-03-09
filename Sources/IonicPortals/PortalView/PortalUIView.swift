@@ -159,10 +159,7 @@ public class PortalUIView: UIView {
         webViewConfiguration.suppressesIncrementalRendering = false
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
-
-        if #available(iOS 14.0, *) {
-            webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
-        }
+        webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
 
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
@@ -385,4 +382,3 @@ extension UIView {
         NSLayoutConstraint.activate(view.constraintsPinned(to: self))
     }
 }
-
