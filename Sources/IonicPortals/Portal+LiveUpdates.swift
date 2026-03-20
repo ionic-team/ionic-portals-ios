@@ -1,17 +1,22 @@
+import Foundation
 import IonicLiveUpdates
+import LiveUpdateProvider
 
 extension Portal {
     /// Error thrown if a ``liveUpdateConfig`` is not present on a ``Portal`` when ``sync()`` is called.
     public struct LiveUpdateNotConfigured: Error {}
 
-    /// Syncs the ``liveUpdateConfig`` if present
-    /// - Returns: The result of the synchronization operation
-    /// - Throws: If the portal has no ``liveUpdateConfig``, a ``LiveUpdateNotConfigured`` error will be thrown.
-    ///   Any errors thrown from ``liveUpdateManager`` will be propogated.
-    public func sync() async throws -> LiveUpdateManager.SyncResult {
-        if let liveUpdateConfig {
-            return try await liveUpdateManager.sync(appId: liveUpdateConfig.appId)
-        } else {
+    /// Syncs the live update provider if configured.
+    /// - Returns: The result of the synchronization operation.
+    /// - Throws: ``LiveUpdateNotConfigured`` if no live update provider is configured.
+    ///   Any errors thrown from the live update provider will be propagated.
+    public func sync() async throws -> any SyncResult {
+        switch liveUpdateProvider {
+        case .ionic(let manager, let config):
+            return IonicSyncResult(try await manager.sync(appId: config.appId))
+        case .custom(let manager):
+            return try await manager.sync()
+        case .none:
             throw LiveUpdateNotConfigured()
         }
     }
@@ -30,7 +35,34 @@ extension Portal {
     public static func sync(_ portals: [Portal]) -> ParallelLiveUpdateSyncGroup {
         .init(portals)
     }
+    
+    /// The directory of the latest synced web application assets for this portal.
+    /// Returns `nil` if no live update provider is configured or no sync has occurred.
+    public var latestAppDirectory: URL? {
+        switch liveUpdateProvider {
+        case .ionic(let manager, let config):
+            return manager.latestAppDirectory(for: config.appId)
+        case .custom(let manager):
+            return manager.latestAppDirectory
+        case .none:
+            return nil
+        }
+    }
 }
+
+/// The result of a sync operation performed by the Ionic live update provider.
+/// Contains the outcome of the sync and the underlying `LiveUpdateManager.SyncResult` for ionic-specific details.
+public struct IonicSyncResult: SyncResult {
+    public let didUpdate: Bool
+    public let ionicSyncResult: LiveUpdateManager.SyncResult
+    
+    public init(_ ionicSyncResult: LiveUpdateManager.SyncResult) {
+        self.didUpdate = ionicSyncResult.source != .cache(latestAppDirectoryChanged: false)
+        self.ionicSyncResult = ionicSyncResult
+    }
+}
+
+
 
 extension Array where Element == Portal {
     /// Synchronizes the ``Portal/liveUpdateConfig`` for the elements in the array
@@ -49,7 +81,7 @@ extension Array where Element == Portal {
 }
 
 /// Alias for a parallel sequence of Live Update synchronization results
-public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<LiveUpdateManager.SyncResult, any Error>>
+public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<any SyncResult, any Error>>
 
 extension ParallelLiveUpdateSyncGroup {
     init(_ portals: [Portal]) {
