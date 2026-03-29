@@ -8,7 +8,7 @@ public struct Portal {
     /// The live update provider for a ``Portal``.
     public enum LiveUpdateProvider {
         /// Uses IonicLiveUpdates to sync and locate the latest web application assets.
-        case ionic(
+        case appflow(
             /// The `LiveUpdateManager` responsible for locating the latest source for the web application.
             liveUpdateManager: LiveUpdateManager = .shared,
             /// The `LiveUpdate` configuration used to determine the location of updated application assets.
@@ -43,7 +43,7 @@ public struct Portal {
     /// The live update provider responsible for locating and syncing the latest web application assets
     public var liveUpdateProvider: LiveUpdateProvider? {
         didSet {
-            if case .ionic(let manager, let config) = liveUpdateProvider {
+            if case .appflow(let manager, let config) = liveUpdateProvider {
                 try? manager.add(
                     config,
                     existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
@@ -90,7 +90,7 @@ public struct Portal {
         self.plugins = plugins
         self.liveUpdateProvider = liveUpdateProvider
         
-        if case .ionic(let manager, let config) = liveUpdateProvider {
+        if case .appflow(let manager, let config) = liveUpdateProvider {
             try? manager.add(
                 config,
                 existingCacheUrl: bundle.url(forResource: self.startDir, withExtension: nil)
@@ -251,10 +251,10 @@ extension Portal {
         if case .custom = portal.liveUpdateProvider { return }
         
         let config = LiveUpdate(appId: appId, channel: channel, syncOnAdd: syncImmediately)
-        if case .ionic(let manager, _) = portal.liveUpdateProvider {
-            portal.liveUpdateProvider = .ionic(liveUpdateManager: manager, liveUpdateConfig: config)
+        if case .appflow(let manager, _) = portal.liveUpdateProvider {
+            portal.liveUpdateProvider = .appflow(liveUpdateManager: manager, liveUpdateConfig: config)
         } else {
-            portal.liveUpdateProvider = .ionic(liveUpdateConfig: config)
+            portal.liveUpdateProvider = .appflow(liveUpdateConfig: config)
         }
     }
 }

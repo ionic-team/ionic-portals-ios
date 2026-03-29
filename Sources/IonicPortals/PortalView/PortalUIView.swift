@@ -86,7 +86,6 @@ public class PortalUIView: UIView {
     private func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
             self.liveUpdatePath = portal.latestAppDirectory
-
             addPinnedSubview(webView)
         } else {
             let showRegistrationError = PortalsRegistrationManager.shared.registrationState == .error
