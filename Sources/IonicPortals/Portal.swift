@@ -5,16 +5,20 @@ import LiveUpdateProvider
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
-    /// The live update provider for a ``Portal``.
+    /// The live update behavior for a ``Portal``.
     public enum LiveUpdateProvider {
-        /// Uses IonicLiveUpdates to sync and locate the latest web application assets.
-        case appflow(
+        /// Uses Ionic Live Updates to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/sync()``.
+        case ionic(
             /// The `LiveUpdateManager` responsible for locating the latest source for the web application.
             liveUpdateManager: LiveUpdateManager = .shared,
             /// The `LiveUpdate` configuration used to determine the location of updated application assets.
             liveUpdateConfig: LiveUpdate)
-        /// Uses a custom live update provider to sync and locate the latest web application assets.
-        case custom(liveUpdateManager: any LiveUpdateManaging)
+        /// Uses an external live update provider to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/syncProvider()``.
+        case provider(liveUpdateManager: any LiveUpdateManaging)
     }
     /// The name of the portal.
     ///
@@ -40,10 +44,13 @@ public struct Portal {
     /// Any Capacitor plugins to load on the ``Portal``
     public var plugins: [Plugin]
     
-    /// The live update provider responsible for locating and syncing the latest web application assets
+    /// The live update behavior responsible for locating and syncing the latest web application assets.
+    ///
+    /// Use ``LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` for Ionic Live Updates and
+    /// ``LiveUpdateProvider/provider(liveUpdateManager:)`` for an external live update provider.
     public var liveUpdateProvider: LiveUpdateProvider? {
         didSet {
-            if case .appflow(let manager, let config) = liveUpdateProvider {
+            if case .ionic(let manager, let config) = liveUpdateProvider {
                 try? manager.add(
                     config,
                     existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
@@ -90,7 +97,7 @@ public struct Portal {
         self.plugins = plugins
         self.liveUpdateProvider = liveUpdateProvider
         
-        if case .appflow(let manager, let config) = liveUpdateProvider {
+        if case .ionic(let manager, let config) = liveUpdateProvider {
             try? manager.add(
                 config,
                 existingCacheUrl: bundle.url(forResource: self.startDir, withExtension: nil)
@@ -241,20 +248,20 @@ extension Portal {
         self.portal = portal
     }
     
-    /// Configures the Ionic live update provider for this portal.
+    /// Configures the Ionic Live Updates provider for this portal.
     /// - Parameters:
-    ///   - appId: The AppFlow id of the web application associated with the ``IONPortal``
-    ///   - channel: The AppFlow channel to check for updates from.
-    ///   - syncImmediately: Whether to immediately sync with AppFlow to check for updates.
-    /// - Note: This method has no effect if a custom live update provider is already configured.
+    ///   - appId: The Ionic app id of the web application associated with the ``IONPortal``
+    ///   - channel: The Ionic Live Updates channel to check for updates from.
+    ///   - syncImmediately: Whether to immediately sync with Ionic Live Updates to check for updates.
+    /// - Note: This method has no effect if an external live update provider is already configured.
     @objc public func setLiveUpdateConfiguration(appId: String, channel: String, syncImmediately: Bool) {
-        if case .custom = portal.liveUpdateProvider { return }
+        if case .provider = portal.liveUpdateProvider { return }
         
         let config = LiveUpdate(appId: appId, channel: channel, syncOnAdd: syncImmediately)
-        if case .appflow(let manager, _) = portal.liveUpdateProvider {
-            portal.liveUpdateProvider = .appflow(liveUpdateManager: manager, liveUpdateConfig: config)
+        if case .ionic(let manager, _) = portal.liveUpdateProvider {
+            portal.liveUpdateProvider = .ionic(liveUpdateManager: manager, liveUpdateConfig: config)
         } else {
-            portal.liveUpdateProvider = .appflow(liveUpdateConfig: config)
+            portal.liveUpdateProvider = .ionic(liveUpdateConfig: config)
         }
     }
 }
