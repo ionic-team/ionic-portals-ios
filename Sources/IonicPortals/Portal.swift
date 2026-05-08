@@ -1,7 +1,6 @@
 import Foundation
 import Capacitor
 import IonicLiveUpdates
-import LiveUpdateProvider
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {

@@ -2,7 +2,6 @@ import Foundation
 import WebKit
 import UIKit
 import Capacitor
-import IonicLiveUpdates
 import SwiftUI
 
 /// A UIKit UIView to display ``Portal`` content
