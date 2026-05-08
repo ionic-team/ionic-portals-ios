@@ -5,7 +5,7 @@ import LiveUpdateProvider
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
-    /// The live update behavior for a ``Portal``.
+    /// The live update provider for a ``Portal``.
     public enum LiveUpdateProvider {
         /// Uses Ionic Live Updates to sync and locate the latest web application assets.
         ///
@@ -44,10 +44,7 @@ public struct Portal {
     /// Any Capacitor plugins to load on the ``Portal``
     public var plugins: [Plugin]
     
-    /// The live update behavior responsible for locating and syncing the latest web application assets.
-    ///
-    /// Use ``LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` for Ionic Live Updates and
-    /// ``LiveUpdateProvider/provider(liveUpdateManager:)`` for an external live update provider.
+    /// The `LiveUpdateProvider` responsible for locating the latest source for the web application
     public var liveUpdateProvider: LiveUpdateProvider? {
         didSet {
             if case .ionic(let manager, let config) = liveUpdateProvider {
@@ -72,9 +69,9 @@ public struct Portal {
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
     ///   - devModeEnabled: Enables web developers to override the Portal content in debug builds. Defaults to `true`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
-    ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - assetMaps: Any ``AssetMap``s needed to share assets with the ``Portal``. Defaults to `[]`.
+    ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
     ///   - liveUpdateProvider: The live update provider responsible for locating and syncing the latest web application assets. Defaults to `nil`.
     public init(
         name: String,
@@ -89,10 +86,10 @@ public struct Portal {
     ) {
         self.name = name
         self.startDir = startDir ?? name
-        self.devModeEnabled = devModeEnabled
         self.index = index
-        self.initialContext = initialContext
+        self.devModeEnabled = devModeEnabled
         self.bundle = bundle
+        self.initialContext = initialContext
         self.assetMaps = assetMaps
         self.plugins = plugins
         self.liveUpdateProvider = liveUpdateProvider
@@ -248,7 +245,7 @@ extension Portal {
         self.portal = portal
     }
     
-    /// Configures the Ionic Live Updates provider for this portal.
+    /// Configures the ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` for this portal.
     /// - Parameters:
     ///   - appId: The Appflow id of the web application associated with the ``IONPortal``
     ///   - channel: The Appflow channel to check for updates from.
