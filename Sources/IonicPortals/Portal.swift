@@ -250,9 +250,9 @@ extension Portal {
     
     /// Configures the Ionic Live Updates provider for this portal.
     /// - Parameters:
-    ///   - appId: The Ionic app id of the web application associated with the ``IONPortal``
-    ///   - channel: The Ionic Live Updates channel to check for updates from.
-    ///   - syncImmediately: Whether to immediately sync with Ionic Live Updates to check for updates.
+    ///   - appId: The Appflow id of the web application associated with the ``IONPortal``
+    ///   - channel: The Appflow channel to check for updates from.
+    ///   - syncImmediately: Whether to immediately sync with Appflow to check for updates.
     /// - Note: This method has no effect if an external live update provider is already configured.
     @objc public func setLiveUpdateConfiguration(appId: String, channel: String, syncImmediately: Bool) {
         if case .provider = portal.liveUpdateProvider { return }
