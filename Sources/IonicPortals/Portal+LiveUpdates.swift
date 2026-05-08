@@ -3,6 +3,23 @@ import IonicLiveUpdates
 import LiveUpdateProvider
 
 extension Portal {
+    /// The live update provider for a ``Portal``.
+    public enum LiveUpdateProvider {
+        /// Uses Ionic Live Updates to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/sync()``.
+        case ionic(
+            /// The `LiveUpdateManager` responsible for locating the latest source for the web application.
+            liveUpdateManager: LiveUpdateManager = .shared,
+            /// The `LiveUpdate` configuration used to determine the location of updated application assets.
+            liveUpdateConfig: LiveUpdate)
+
+        /// Uses an external live update provider to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/syncProvider()``.
+        case provider(liveUpdateManager: any LiveUpdateManaging)
+    }
+
     /// Error thrown when a portal is not configured with the live update provider type required by the sync method.
     public struct LiveUpdateNotConfigured: Error {}
 

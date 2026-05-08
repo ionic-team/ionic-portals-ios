@@ -5,21 +5,6 @@ import LiveUpdateProvider
 
 /// The configuration of a web application to be embedded in an iOS application
 public struct Portal {
-    /// The live update provider for a ``Portal``.
-    public enum LiveUpdateProvider {
-        /// Uses Ionic Live Updates to sync and locate the latest web application assets.
-        ///
-        /// Portals configured with this case are synchronized with ``Portal/sync()``.
-        case ionic(
-            /// The `LiveUpdateManager` responsible for locating the latest source for the web application.
-            liveUpdateManager: LiveUpdateManager = .shared,
-            /// The `LiveUpdate` configuration used to determine the location of updated application assets.
-            liveUpdateConfig: LiveUpdate)
-        /// Uses an external live update provider to sync and locate the latest web application assets.
-        ///
-        /// Portals configured with this case are synchronized with ``Portal/syncProvider()``.
-        case provider(liveUpdateManager: any LiveUpdateManaging)
-    }
     /// The name of the portal.
     ///
     /// This is always provided to the web application
@@ -44,7 +29,7 @@ public struct Portal {
     /// Any Capacitor plugins to load on the ``Portal``
     public var plugins: [Plugin]
     
-    /// The `LiveUpdateProvider` responsible for locating the latest source for the web application
+    /// The ``Portal/LiveUpdateProvider`` responsible for locating the latest source for the web application.
     public var liveUpdateProvider: LiveUpdateProvider? {
         didSet {
             if case .ionic(let manager, let config) = liveUpdateProvider {
@@ -72,7 +57,7 @@ public struct Portal {
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - assetMaps: Any ``AssetMap``s needed to share assets with the ``Portal``. Defaults to `[]`.
     ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
-    ///   - liveUpdateProvider: The live update provider responsible for locating and syncing the latest web application assets. Defaults to `nil`.
+    ///   - liveUpdateProvider: The ``Portal/LiveUpdateProvider`` responsible for locating and syncing the latest web application assets. Defaults to `nil`.
     public init(
         name: String,
         startDir: String? = nil,
@@ -245,7 +230,7 @@ extension Portal {
         self.portal = portal
     }
     
-    /// Configures the ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` for this portal.
+    /// Sets the ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` configuration for this portal.
     /// - Parameters:
     ///   - appId: The Appflow id of the web application associated with the ``IONPortal``
     ///   - channel: The Appflow channel to check for updates from.
