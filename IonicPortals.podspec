@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'IonicPortals'
-  s.version = '0.13.0'
+  s.version = '0.14.0-rc.0'
   s.summary = 'Ionic Portals'
   s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'Commercial'
