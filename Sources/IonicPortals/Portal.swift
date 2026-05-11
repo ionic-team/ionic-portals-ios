@@ -28,17 +28,15 @@ public struct Portal {
     /// Any Capacitor plugins to load on the ``Portal``
     public var plugins: [Plugin]
     
-    /// The `LiveUpdateManager` responsible for locating the latest source for the web application
-    public var liveUpdateManager: LiveUpdateManager
-
-    /// The `LiveUpdate` configuration used to determine the location of updated application assets.
-    public var liveUpdateConfig: LiveUpdate? = nil {
+    /// The ``Portal/LiveUpdateProvider`` responsible for locating the latest source for the web application.
+    public var liveUpdateProvider: LiveUpdateProvider? {
         didSet {
-            guard let liveUpdateConfig = liveUpdateConfig else { return }
-            try? liveUpdateManager.add(
-                liveUpdateConfig,
-                existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
-            )
+            if case .ionic(let manager, let config) = liveUpdateProvider {
+                try? manager.add(
+                    config,
+                    existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
+                )
+            }
         }
     }
 
@@ -55,11 +53,10 @@ public struct Portal {
     ///   - index: The initial file to load in the Portal. Defaults to `index.html`.
     ///   - devModeEnabled: Enables web developers to override the Portal content in debug builds. Defaults to `true`.
     ///   - bundle: The `Bundle` that contains the web application. Defaults to `Bundle.main`.
-    ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
     ///   - initialContext: Any initial state required by the web application. Defaults to `[:]`.
     ///   - assetMaps: Any ``AssetMap``s needed to share assets with the ``Portal``. Defaults to `[]`.
-    ///   - liveUpdateManager: The `LiveUpdateManager` responsible for locating the source source for the web application. Defaults to `LiveUpdateManager.shared`.
-    ///   - liveUpdateConfig: The `LiveUpdate` configuration used to determine to location of updated application assets. Defaults to `nil`.
+    ///   - plugins: Any ``Plugin``s to load. Defautls to `[]`.
+    ///   - liveUpdateProvider: The ``Portal/LiveUpdateProvider`` responsible for locating and syncing the latest web application assets. Defaults to `nil`.
     public init(
         name: String,
         startDir: String? = nil,
@@ -69,25 +66,24 @@ public struct Portal {
         initialContext: JSObject = [:],
         assetMaps: [AssetMap] = [],
         plugins: [Plugin] = [],
-        liveUpdateManager: LiveUpdateManager = .shared,
-        liveUpdateConfig: LiveUpdate? = nil
+        liveUpdateProvider: LiveUpdateProvider? = nil
     ) {
         self.name = name
         self.startDir = startDir ?? name
-        self.devModeEnabled = devModeEnabled
         self.index = index
-        self.initialContext = initialContext
+        self.devModeEnabled = devModeEnabled
         self.bundle = bundle
+        self.initialContext = initialContext
+        self.assetMaps = assetMaps
         self.plugins = plugins
-        self.liveUpdateManager = liveUpdateManager
-        self.liveUpdateConfig = liveUpdateConfig
-        if let liveUpdateConfig = liveUpdateConfig {
-            try? liveUpdateManager.add(
-                liveUpdateConfig,
+        self.liveUpdateProvider = liveUpdateProvider
+        
+        if case .ionic(let manager, let config) = liveUpdateProvider {
+            try? manager.add(
+                config,
                 existingCacheUrl: bundle.url(forResource: self.startDir, withExtension: nil)
             )
         }
-        self.assetMaps = assetMaps
     }
 }
 
@@ -233,13 +229,21 @@ extension Portal {
         self.portal = portal
     }
     
-    /// Configures the `LiveUpdate` configuration
+    /// Sets the ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)`` configuration for this portal.
     /// - Parameters:
-    ///   - appId: The AppFlow id of the web application associated with the ``IONPortal``
-    ///   - channel: The AppFlow channel to check for updates from.
-    ///   - syncImmediately: Whether to immediately sync with AppFlow to check for updates.
+    ///   - appId: The Appflow id of the web application associated with the ``IONPortal``
+    ///   - channel: The Appflow channel to check for updates from.
+    ///   - syncImmediately: Whether to immediately sync with Appflow to check for updates.
+    /// - Note: This method has no effect if an external live update provider is already configured.
     @objc public func setLiveUpdateConfiguration(appId: String, channel: String, syncImmediately: Bool) {
-        portal.liveUpdateConfig = LiveUpdate(appId: appId, channel: channel, syncOnAdd: syncImmediately)
+        if case .provider = portal.liveUpdateProvider { return }
+        
+        let config = LiveUpdate(appId: appId, channel: channel, syncOnAdd: syncImmediately)
+        if case .ionic(let manager, _) = portal.liveUpdateProvider {
+            portal.liveUpdateProvider = .ionic(liveUpdateManager: manager, liveUpdateConfig: config)
+        } else {
+            portal.liveUpdateProvider = .ionic(liveUpdateConfig: config)
+        }
     }
 }
 
@@ -254,8 +258,7 @@ extension IONPortal {
         let portal = Portal(
             name: name,
             startDir: startDir,
-            initialContext: initialContext.flatMap { JSTypes.coerceDictionaryToJSObject($0) } ?? [:],
-            liveUpdateConfig: nil
+            initialContext: initialContext.flatMap { JSTypes.coerceDictionaryToJSObject($0) } ?? [:]
         )
         
         self.init(portal: portal)

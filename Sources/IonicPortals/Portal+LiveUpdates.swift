@@ -1,23 +1,64 @@
+import Foundation
 import IonicLiveUpdates
+import LiveUpdateProvider
 
 extension Portal {
-    /// Error thrown if a ``liveUpdateConfig`` is not present on a ``Portal`` when ``sync()`` is called.
-    public struct LiveUpdateNotConfigured: Error {}
+    /// The live update provider for a ``Portal``.
+    public enum LiveUpdateProvider {
+        /// Uses Ionic Live Updates to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/sync()``.
+        case ionic(
+            /// The `LiveUpdateManager` responsible for locating the latest source for the web application.
+            liveUpdateManager: LiveUpdateManager = .shared,
+            /// The `LiveUpdate` configuration used to determine the location of updated application assets.
+            liveUpdateConfig: LiveUpdate)
 
-    /// Syncs the ``liveUpdateConfig`` if present
-    /// - Returns: The result of the synchronization operation
-    /// - Throws: If the portal has no ``liveUpdateConfig``, a ``LiveUpdateNotConfigured`` error will be thrown.
-    ///   Any errors thrown from ``liveUpdateManager`` will be propogated.
-    public func sync() async throws -> LiveUpdateManager.SyncResult {
-        if let liveUpdateConfig {
-            return try await liveUpdateManager.sync(appId: liveUpdateConfig.appId)
-        } else {
-            throw LiveUpdateNotConfigured()
-        }
+        /// Uses an external live update provider to sync and locate the latest web application assets.
+        ///
+        /// Portals configured with this case are synchronized with ``Portal/syncProvider()``.
+        case provider(liveUpdateManager: any LiveUpdateManaging)
     }
 
-    /// Synchronizes the ``liveUpdateConfig``s of the provided ``Portal``s in parallel
-    /// - Parameter portals: The ``Portal``s to ``sync()``
+    /// Error thrown when a portal is not configured with the live update provider type required by the sync method.
+    public struct LiveUpdateNotConfigured: Error {}
+
+    /// Syncs a portal configured with ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)``.
+    ///
+    /// Use this method for Ionic Live Updates. To sync a portal configured with
+    /// ``Portal/LiveUpdateProvider/provider(liveUpdateManager:)``, call ``syncProvider()``.
+    /// - Returns: The Ionic Live Updates synchronization result.
+    /// - Throws: ``LiveUpdateNotConfigured`` if the portal is not configured with the Ionic Live Updates provider.
+    ///   Any errors thrown from Ionic Live Updates will be propagated.
+    public func sync() async throws -> LiveUpdateManager.SyncResult {
+        guard case .ionic(let manager, let config) = liveUpdateProvider else {
+            throw LiveUpdateNotConfigured()
+        }
+
+        return try await manager.sync(appId: config.appId)
+    }
+
+    /// Syncs a portal configured with ``Portal/LiveUpdateProvider/provider(liveUpdateManager:)``.
+    ///
+    /// Use this method for external live update providers. To sync a portal configured with
+    /// ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)``, call ``sync()``.
+    /// - Returns: The external provider's synchronization result.
+    /// - Throws: ``LiveUpdateNotConfigured`` if the portal is not configured with an external live update provider.
+    ///   Any errors thrown from the live update provider will be propagated.
+    public func syncProvider() async throws -> any SyncResult {
+        guard case .provider(let manager) = liveUpdateProvider else {
+            throw LiveUpdateNotConfigured()
+        }
+
+        return try await manager.sync()
+    }
+
+    /// Synchronizes portals configured with Ionic Live Updates in parallel.
+    ///
+    /// Each portal must be configured with
+    /// ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)``.
+    /// Use ``syncProvider(_:)`` for portals configured with external live update providers.
+    /// - Parameter portals: The ``Portal``s to synchronize with ``Portal/sync()``
     /// - Returns: A ``ParallelLiveUpdateSyncGroup`` of the results of each call to ``Portal/sync()``
     ///
     /// Usage
@@ -30,10 +71,37 @@ extension Portal {
     public static func sync(_ portals: [Portal]) -> ParallelLiveUpdateSyncGroup {
         .init(portals)
     }
+
+    /// Synchronizes portals configured with external live update providers in parallel.
+    ///
+    /// Each portal must be configured with ``Portal/LiveUpdateProvider/provider(liveUpdateManager:)``.
+    /// Use ``sync(_:)`` for portals configured with Ionic Live Updates.
+    /// - Parameter portals: The ``Portal``s to synchronize with ``Portal/syncProvider()``
+    /// - Returns: A ``ParallelLiveUpdateProviderSyncGroup`` of the results of each call to ``Portal/syncProvider()``
+    public static func syncProvider(_ portals: [Portal]) -> ParallelLiveUpdateProviderSyncGroup {
+        .init(portals)
+    }
+    
+    /// The directory of the latest synced web application assets for this portal.
+    /// Returns `nil` if no live update provider is configured or no sync has occurred.
+    public var latestAppDirectory: URL? {
+        switch liveUpdateProvider {
+        case .ionic(let manager, let config):
+            return manager.latestAppDirectory(for: config.appId)
+        case .provider(let manager):
+            return manager.latestAppDirectory
+        case .none:
+            return nil
+        }
+    }
 }
 
 extension Array where Element == Portal {
-    /// Synchronizes the ``Portal/liveUpdateConfig`` for the elements in the array
+    /// Synchronizes portals configured with Ionic Live Updates in parallel.
+    ///
+    /// Each portal must be configured with
+    /// ``Portal/LiveUpdateProvider/ionic(liveUpdateManager:liveUpdateConfig:)``.
+    /// Use ``syncProvider()`` for portals configured with external live update providers.
     /// - Returns: A ``ParallelLiveUpdateSyncGroup`` of the results of each call to ``Portal/sync()``
     ///
     /// Usage
@@ -46,15 +114,35 @@ extension Array where Element == Portal {
     public func sync() -> ParallelLiveUpdateSyncGroup {
         .init(self)
     }
+
+    /// Synchronizes portals configured with external live update providers in parallel.
+    ///
+    /// Each portal must be configured with ``Portal/LiveUpdateProvider/provider(liveUpdateManager:)``.
+    /// Use ``sync()`` for portals configured with Ionic Live Updates.
+    /// - Returns: A ``ParallelLiveUpdateProviderSyncGroup`` of the results of each call to ``Portal/syncProvider()``
+    public func syncProvider() -> ParallelLiveUpdateProviderSyncGroup {
+        .init(self)
+    }
 }
 
-/// Alias for a parallel sequence of Live Update synchronization results
+/// Alias for a parallel sequence of Ionic Live Updates synchronization results
 public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<LiveUpdateManager.SyncResult, any Error>>
+
+/// Alias for a parallel sequence of external Live Update provider synchronization results
+public typealias ParallelLiveUpdateProviderSyncGroup = ParallelAsyncSequence<Result<any SyncResult, any Error>>
 
 extension ParallelLiveUpdateSyncGroup {
     init(_ portals: [Portal]) {
         work = portals.map { portal in
             { await Result(catching: portal.sync) }
+        }
+    }
+}
+
+extension ParallelLiveUpdateProviderSyncGroup {
+    init(_ portals: [Portal]) {
+        work = portals.map { portal in
+            { await Result(catching: portal.syncProvider) }
         }
     }
 }

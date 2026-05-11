@@ -2,7 +2,6 @@ import Foundation
 import WebKit
 import UIKit
 import Capacitor
-import IonicLiveUpdates
 import SwiftUI
 
 /// A UIKit UIView to display ``Portal`` content
@@ -85,10 +84,7 @@ public class PortalUIView: UIView {
 
     private func initView () {
         if PortalsRegistrationManager.shared.isRegistered {
-            if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
-            }
-
+            self.liveUpdatePath = portal.latestAppDirectory
             addPinnedSubview(webView)
         } else {
             let showRegistrationError = PortalsRegistrationManager.shared.registrationState == .error
@@ -310,8 +306,7 @@ extension PortalUIView {
     }
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
-        if let liveUpdate = portal.liveUpdateConfig,
-           let latestAppPath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdate.appId),
+        if let latestAppPath = portal.latestAppDirectory,
            liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
             liveUpdatePath = latestAppPath
             return setServerBasePath(path: latestAppPath.path)
