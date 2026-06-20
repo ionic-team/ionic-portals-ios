@@ -28,9 +28,9 @@ Ionic Portals is a supercharged native Web View component for iOS and Android th
 
 See our docs to [get started with Portals](https://ionic.io/docs/portals/getting-started/guide).
 
-## Registration
+## License
 
-The Ionic Portals library for Android and iOS requires a license key to use. Once you have integrated Portals into your project, login to your ionic account to get a key. See our doc on [how to register and get your Portals license key](https://ionic.io/docs/portals/how-to/get-a-product-key) and refer to the [Android](https://ionic.io/docs/portals/getting-started/android) or [iOS](https://ionic.io/docs/portals/getting-started/iOS) getting started guides to see where to add your key.
+Use of Ionic Portals requires a valid and active commercial agreement with Ionic.
 
 ## FAQ
 
