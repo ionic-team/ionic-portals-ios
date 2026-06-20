@@ -3,7 +3,6 @@ import WebKit
 import UIKit
 import Capacitor
 import IonicLiveUpdates
-import SwiftUI
 
 /// A UIKit UIView to display ``Portal`` content
 @objc(IONPortalUIView)
@@ -84,23 +83,11 @@ public class PortalUIView: UIView {
     }
 
     private func initView () {
-        if PortalsRegistrationManager.shared.isRegistered {
-            if let liveUpdateConfig = portal.liveUpdateConfig {
-                self.liveUpdatePath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
-            }
-
-            addPinnedSubview(webView)
-        } else {
-            let showRegistrationError = PortalsRegistrationManager.shared.registrationState == .error
-            let _view = Unregistered(shouldShowRegistrationError: showRegistrationError)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
-                .background(Color.portalBlue)
-
-            let view = UIHostingController(rootView: _view).view
-
-            addPinnedSubview(view!)
+        if let liveUpdateConfig = portal.liveUpdateConfig {
+            self.liveUpdatePath = portal.liveUpdateManager.latestAppDirectory(for: liveUpdateConfig.appId)
         }
+
+        addPinnedSubview(webView)
     }
 
     private func registerPlugins() {
