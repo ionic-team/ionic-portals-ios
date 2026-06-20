@@ -12,7 +12,14 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - name: Verify release tag
+        run: |
+          PODSPEC_VERSION="$(ruby -e "puts File.read('IonicPortals.podspec').match(/s\.version\s*=\s*'([^']+)'/)[1]")"
+          if [ "$GITHUB_REF_NAME" != "$PODSPEC_VERSION" ]; then
+            echo "Tag '$GITHUB_REF_NAME' does not match podspec version '$PODSPEC_VERSION'."
+            exit 1
+          fi
       - name: Install build dependencies
         run: gem install cocoapods
       - name: Validate podspec

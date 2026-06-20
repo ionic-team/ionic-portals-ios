@@ -19,7 +19,7 @@ jobs:
           node-version: 22.x
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install Vercel CLI
         run: npm install -g vercel
       - name: Pull Build Configuration

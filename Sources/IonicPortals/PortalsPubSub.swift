@@ -111,7 +111,7 @@ public struct SubscriptionResult {
     }
 }
 
-/// An Objective-C interface that enables marshalling data to and from a ``Portal`` over an event bus. If using Swift, ``PortalsPubSub`` is the perferred interface.
+/// An Objective-C interface that enables marshalling data to and from a ``Portal`` over an event bus. If using Swift, ``PortalsPubSub`` is the preferred interface.
 @objc public class IONPortalsPubSub: NSObject {
     class Cancellable: NSObject {
         var cancellable: AnyCancellable
@@ -128,7 +128,7 @@ public struct SubscriptionResult {
     ///   - topic: The topic to listen for events on
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: A subscription reference to use for unsubscribing
-    /// > Tip: You must retain a reference to the returned to keep the subscription alive. To unsubscribe, set the the reference to nil.
+    /// > Tip: You must retain the returned reference to keep the subscription alive. To unsubscribe, set the reference to nil.
     @objc(subscribeToTopic:callback:) public static func subscribe(topic: String, callback: @escaping ([String: Any]) -> Void) -> Any {
         let cancellable = PortalsPubSub.subscribe(to: topic) { result in
             callback(result.dictionaryRepresentation as [String: Any])
