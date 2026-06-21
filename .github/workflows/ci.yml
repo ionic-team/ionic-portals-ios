@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install xcpretty
         run: gem install xcpretty
       - name: Run Tests
@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install cocoapods
         run: gem install cocoapods
       - name: Lint Podspec

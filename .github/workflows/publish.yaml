@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Verify release tag
         run: |
           PODSPEC_VERSION="$(ruby -e "puts File.read('IonicPortals.podspec').match(/s\.version\s*=\s*'([^']+)'/)[1]")"

@@ -14,12 +14,12 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22.x
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install Vercel CLI
         run: npm install -g vercel
       - name: Pull Build Configuration
