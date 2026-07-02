@@ -103,7 +103,7 @@ extension Portal {
         /// Uses an external live update provider to sync and locate the latest web application assets.
         ///
         /// Portals configured with this case are synchronized with ``Portal/syncProvider()``.
-        case provider(manager: any LiveUpdateProviderManager)
+        case provider(manager: any ProviderManager)
     }
 }
 

@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm", .upToNextMajor(from: "8.0.0")),
         .package(url: "https://github.com/ionic-team/ionic-live-updates-releases", "0.5.0"..<"0.6.0"),
         .package(url: "https://github.com/pointfreeco/swift-clocks", .upToNextMajor(from: "1.0.2")),
-        .package(url: "https://github.com/ionic-team/live-update-provider-sdk", "0.1.0"..<"0.2.0")
+        .package(path: "../live-update-provider-sdk")
     ],
     targets: [
         .target(

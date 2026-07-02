@@ -19,10 +19,10 @@ extension Portal {
     }
 
     /// Syncs the external live update provider source if present.
-    /// - Returns: The result of the synchronization operation.
+    /// - Returns: The result of the synchronization operation, or `nil` when no update is available.
     /// - Throws: If the portal has no external live update provider source, a ``LiveUpdateNotConfigured`` error will be thrown.
     ///   Any errors thrown from the live update provider will be propagated.
-    public func syncProvider() async throws -> any LiveUpdateProviderSyncResult {
+    public func syncProvider() async throws -> (any ProviderSyncResult)? {
         guard case .provider(let manager) = liveUpdateSource else {
             throw LiveUpdateNotConfigured()
         }
@@ -91,7 +91,7 @@ extension Array where Element == Portal {
 public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<LiveUpdateManager.SyncResult, any Error>>
 
 /// Alias for a parallel sequence of external live update provider synchronization results.
-public typealias ParallelLiveUpdateProviderSyncGroup = ParallelAsyncSequence<Result<any LiveUpdateProviderSyncResult, any Error>>
+public typealias ParallelLiveUpdateProviderSyncGroup = ParallelAsyncSequence<Result<(any ProviderSyncResult)?, any Error>>
 
 extension ParallelLiveUpdateSyncGroup {
     init(_ portals: [Portal]) {

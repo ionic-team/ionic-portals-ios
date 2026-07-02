@@ -5,7 +5,7 @@ import LiveUpdateProvider
 
 final class PortalLiveUpdateSourceTests: XCTestCase {
     func testSyncProvider_returnsProviderSyncResult() async throws {
-        let manager = MockLiveUpdateProviderManager(result: MockSyncResult())
+        let manager = MockProviderManager(result: MockSyncResult())
         let portal = Portal(name: "test", liveUpdateSource: .provider(manager: manager))
 
         let result = try await portal.syncProvider()
@@ -14,8 +14,18 @@ final class PortalLiveUpdateSourceTests: XCTestCase {
         XCTAssertTrue(result is MockSyncResult)
     }
 
+    func testSyncProvider_returnsNilWhenNoUpdateAvailable() async throws {
+        let manager = MockProviderManager(result: nil)
+        let portal = Portal(name: "test", liveUpdateSource: .provider(manager: manager))
+
+        let result = try await portal.syncProvider()
+
+        XCTAssertEqual(manager.syncCallCount, 1)
+        XCTAssertNil(result)
+    }
+
     func testSetLiveUpdateConfiguration_doesNotReplaceExternalProvider() {
-        let manager = MockLiveUpdateProviderManager()
+        let manager = MockProviderManager()
         let portal = IONPortal(portal: Portal(name: "test", liveUpdateSource: .provider(manager: manager)))
 
         portal.setLiveUpdateConfiguration(appId: "app-id", channel: "production", syncImmediately: false)
@@ -27,23 +37,23 @@ final class PortalLiveUpdateSourceTests: XCTestCase {
     }
 }
 
-private struct MockSyncResult: LiveUpdateProviderSyncResult {}
+private struct MockSyncResult: ProviderSyncResult {}
 
-private final class MockLiveUpdateProviderManager: LiveUpdateProviderManager {
+private final class MockProviderManager: ProviderManager {
     var latestAppDirectory: URL?
     var syncCallCount = 0
 
-    private let result: any LiveUpdateProviderSyncResult
+    private let result: (any ProviderSyncResult)?
 
     init(
         latestAppDirectory: URL? = nil,
-        result: any LiveUpdateProviderSyncResult = MockSyncResult()
+        result: (any ProviderSyncResult)? = MockSyncResult()
     ) {
         self.latestAppDirectory = latestAppDirectory
         self.result = result
     }
 
-    func sync() async throws -> any LiveUpdateProviderSyncResult {
+    func sync() async throws -> (any ProviderSyncResult)? {
         syncCallCount += 1
         return result
     }
