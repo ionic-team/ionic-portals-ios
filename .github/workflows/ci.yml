@@ -1,12 +1,10 @@
 name: CI
 
 on:
+  pull_request:
   push:
     branches:
-      - "**"
-  pull_request:
-    branches:
-      - "**"
+      - main
 jobs:
   test:
     runs-on: macos-latest
@@ -14,7 +12,7 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install xcpretty
         run: gem install xcpretty
       - name: Run Tests
@@ -29,7 +27,7 @@ jobs:
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install cocoapods
         run: gem install cocoapods
       - name: Lint Podspec
