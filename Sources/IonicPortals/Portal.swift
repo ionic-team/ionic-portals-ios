@@ -254,8 +254,13 @@ extension Portal {
     ///   - appId: The Appflow id of the web application associated with the ``IONPortal``
     ///   - channel: The Appflow channel to check for updates from.
     ///   - syncImmediately: Whether to immediately sync with Appflow to check for updates.
+    ///
+    /// > Note: No-op if an external live update provider (``Portal/LiveUpdateSource/provider(manager:)``) is already configured.
     @objc public func setLiveUpdateConfiguration(appId: String, channel: String, syncImmediately: Bool) {
-        if case .provider = portal.liveUpdateSource { return }
+        if case .provider = portal.liveUpdateSource {
+            CAPLog.print("⚡️  \"\(portal.name)\" already has an external live update provider configured; ignoring Appflow live update configuration.")
+            return
+        }
 
         let config = LiveUpdate(appId: appId, channel: channel, syncOnAdd: syncImmediately)
         if case .ionic(let manager, _) = portal.liveUpdateSource {

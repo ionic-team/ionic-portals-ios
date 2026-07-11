@@ -93,19 +93,27 @@ public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<Live
 /// Alias for a parallel sequence of external live update provider synchronization results.
 public typealias ParallelLiveUpdateProviderSyncGroup = ParallelAsyncSequence<Result<(any ProviderSyncResult)?, any Error>>
 
+extension ParallelAsyncSequence {
+    /// Builds the sequence's work list by running `operation` for each portal in parallel.
+    init<Success>(
+        _ portals: [Portal],
+        operation: @escaping (Portal) async throws -> Success
+    ) where T == Result<Success, any Error> {
+        work = portals.map { portal in
+            { await Result(catching: { try await operation(portal) }) }
+        }
+    }
+}
+
 extension ParallelLiveUpdateSyncGroup {
     init(_ portals: [Portal]) {
-        work = portals.map { portal in
-            { await Result(catching: portal.sync) }
-        }
+        self.init(portals) { try await $0.sync() }
     }
 }
 
 extension ParallelLiveUpdateProviderSyncGroup {
     init(_ portals: [Portal]) {
-        work = portals.map { portal in
-            { await Result(catching: portal.syncProvider) }
-        }
+        self.init(portals) { try await $0.syncProvider() }
     }
 }
 
