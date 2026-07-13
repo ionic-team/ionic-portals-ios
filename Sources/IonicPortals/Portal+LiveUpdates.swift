@@ -19,7 +19,7 @@ extension Portal {
     }
 
     /// Syncs the external live update provider source if present.
-    /// - Returns: The result of the synchronization operation, or `nil` when no update is available.
+    /// - Returns: The result of the synchronization operation.
     /// - Throws: If the portal has no external live update provider source, a ``LiveUpdateNotConfigured`` error will be thrown.
     ///   Any errors thrown from the live update provider will be propagated.
     public func syncProvider() async throws -> (any ProviderSyncResult)? {
