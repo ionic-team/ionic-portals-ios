@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import IonicLiveUpdates
 
 public struct AssetMap {
     /// The name to index the asset map by.
