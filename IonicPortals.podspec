@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'IonicPortals'
-  s.version = '0.14.0'
+  s.version = '0.14.1'
   s.summary = 'Ionic Portals'
   s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'Commercial'
@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { git: 'https://github.com/ionic-team/ionic-portals-ios.git', tag: s.version.to_s }
   s.source_files = 'Sources/IonicPortals/**/*.swift'
-  s.dependency 'Capacitor', '~> 8.0.0'
+  s.dependency 'Capacitor', '~> 8.0'
   s.dependency 'IonicLiveUpdates', '>= 0.5.0', '< 0.6.0'
   s.dependency 'LiveUpdateProvider', '~> 1.0.0'
   s.swift_version = '5.7'
