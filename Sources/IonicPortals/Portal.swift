@@ -31,14 +31,7 @@ public struct Portal {
     
     /// The ``Portal/LiveUpdateSource`` responsible for locating the latest source for the web application
     public var liveUpdateSource: LiveUpdateSource? {
-        didSet {
-            if case .ionic(let manager, let config) = liveUpdateSource {
-                try? manager.add(
-                    config,
-                    existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
-                )
-            }
-        }
+        didSet { registerIonicLiveUpdate() }
     }
 
     /// Assets needed to be shared between web and native
@@ -78,12 +71,20 @@ public struct Portal {
         self.assetMaps = assetMaps
         self.plugins = plugins
         self.liveUpdateSource = liveUpdateSource
+        // didSet is not called during init
+        registerIonicLiveUpdate()
+    }
 
-        if case .ionic(let manager, let config) = liveUpdateSource {
-            try? manager.add(
+    private func registerIonicLiveUpdate() {
+        guard case .ionic(let manager, let config) = liveUpdateSource else { return }
+
+        do {
+            try manager.add(
                 config,
-                existingCacheUrl: bundle.url(forResource: self.startDir, withExtension: nil)
+                existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
             )
+        } catch {
+            CAPLog.print("⚡️  ERROR: Unable to register live update \"\(config.appId)\" for \"\(name)\": \(error)")
         }
     }
 }
