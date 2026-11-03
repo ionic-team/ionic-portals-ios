@@ -216,38 +216,15 @@ public class PortalUIView: UIView {
     }
 
     private func loadInitialContext(_ userContentViewController: WKUserContentController) {
-        let portalInitialContext: String
-
-        var initialContext: [String: Any] = ["name": portal.name]
-
-        if portal.initialContext.isNotEmpty {
-            initialContext["value"] = portal.initialContext
-        }
-
-        if portal.assetMaps.isNotEmpty {
-            initialContext["assets"] = portal.assetMaps.reduce(into: [:]) { acc, next in
-                acc[next.name] = next.virtualPath
-            }
-        }
-
-        if let jsonData = try? JSONSerialization.data(withJSONObject: initialContext),
-           let jsonString = String(data: jsonData, encoding: .utf8) {
-            portalInitialContext = jsonString
-        } else {
-            portalInitialContext = #"{ "name": "\#(portal.name)" }"#
-        }
-
-        let scriptSource = "window.portalInitialContext = " + portalInitialContext
-
         let userScript = WKUserScript(
-            source: scriptSource,
+            source: portal.initialContextScript,
             injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         )
 
         userContentViewController.addUserScript(userScript)
     }
-    
+
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
@@ -318,6 +295,35 @@ extension PortalUIView: CAPBridgeDelegate {
             object = object?.next
         }
         return object as? UIViewController
+    }
+}
+
+extension Portal {
+    /// The script that exposes `window.portalInitialContext` to the web application
+    var initialContextScript: String {
+        var context: [String: Any] = ["name": name]
+
+        if initialContext.isNotEmpty {
+            // Dates are valid JSValues but not valid JSON, so they are converted to ISO 8601 strings
+            context["value"] = JSTypes.coerceDictionaryToJSObject(initialContext, formattingDatesAsStrings: true)
+        }
+
+        if assetMaps.isNotEmpty {
+            context["assets"] = assetMaps.reduce(into: [:]) { acc, next in
+                acc[next.name] = next.virtualPath
+            }
+        }
+
+        // JSONSerialization raises an uncatchable exception on invalid input (e.g. NaN), so check first
+        if !JSONSerialization.isValidJSONObject(context) {
+            CAPLog.print("⚡️  WARNING: initialContext for \"\(name)\" is not valid JSON; only the portal name will be provided.")
+            context = ["name": name]
+        }
+
+        let json = (try? JSONSerialization.data(withJSONObject: context))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+
+        return "window.portalInitialContext = " + json
     }
 }
 
