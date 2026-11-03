@@ -332,7 +332,9 @@ internal struct PortalRouter: Router {
     var basePath: String = ""
 
     func route(for path: String) -> String {
-        let pathUrl = URL(fileURLWithPath: path)
+        // Resolve any "." and ".." segments so a request cannot escape basePath or an asset map's directory
+        let pathUrl = URL(fileURLWithPath: path).standardized
+        let path = pathUrl.path
         // If there's no path extension it also means the path is empty or a SPA route
         if pathUrl.pathExtension.isEmpty {
             return basePath + "/\(portal.index)"

@@ -46,8 +46,12 @@ public struct AssetMap {
 extension AssetMap {
     func path(for virtualPath: String) -> String? {
         guard virtualPath.hasPrefix(self.virtualPath) else { return nil }
-        let prefix = virtualPath.prefix(self.virtualPath.count)
-        let relativeAssetPath = String(virtualPath[prefix.endIndex...])
+        let relativeAssetPath = String(virtualPath.dropFirst(self.virtualPath.count))
+        // Only match whole path segments, e.g. /img must not match /imgs/logo.png
+        guard relativeAssetPath.isEmpty
+                || relativeAssetPath.hasPrefix("/")
+                || self.virtualPath.hasSuffix("/")
+        else { return nil }
         return url(for: relativeAssetPath)?.relativePath
     }
 
