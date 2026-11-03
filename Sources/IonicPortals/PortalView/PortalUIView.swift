@@ -49,7 +49,6 @@ public class PortalUIView: UIView {
     required public init(portal: Portal) {
         self.portal = portal
         super.init(frame: .zero)
-        initView()
         setup()
     }
 
@@ -64,6 +63,8 @@ public class PortalUIView: UIView {
     }
 
     private func setup() {
+        // Must run before anything touches `configuration`, which reads `liveUpdatePath`
+        initView()
         CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
         
@@ -72,7 +73,6 @@ public class PortalUIView: UIView {
             return
         }
 
-        initView()
         registerPlugins()
 
         let url = bridge.config.appStartServerURL
