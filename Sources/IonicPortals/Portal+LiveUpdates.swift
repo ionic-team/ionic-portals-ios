@@ -135,49 +135,30 @@ public struct ParallelAsyncSequence<T>: AsyncSequence {
 extension ParallelAsyncSequence {
     /// An iterator that executes its tasks in parallel and yields their results as they complete
     public struct Iterator: AsyncIteratorProtocol {
-        private let storage: Storage
-        private let tasks: [Task<Void, Never>]
-        private var currentIndex = 0
+        private var results: AsyncStream<T>.Iterator
+        private let workTask: Task<Void, Never>
 
         fileprivate init(_ work: [() async -> T]) {
-            let storage = Storage(anticipatedSize: work.count)
-            self.storage = storage
-            tasks = work.map { run in
-                Task { [storage] in
-                    await storage.append(await run())
+            let (stream, continuation) = AsyncStream.makeStream(of: T.self)
+            results = stream.makeAsyncIterator()
+            workTask = Task {
+                await withTaskGroup(of: Void.self) { group in
+                    for run in work {
+                        group.addTask { continuation.yield(await run()) }
+                    }
                 }
+                continuation.finish()
             }
         }
 
         /// Advances the iterator and returns the next value, or `nil` if there are no more values
         mutating public func next() async -> T? {
-            defer { currentIndex += 1 }
-            guard currentIndex < tasks.endIndex else { return nil }
-
-            while currentIndex >= (await storage.results.count) {
-                await Task.yield()
-                if Task.isCancelled {
-                    for task in tasks {
-                        task.cancel()
-                    }
-                    return nil
-                }
+            // Only cancellation of the consuming task cancels the work; ending iteration early does not
+            await withTaskCancellationHandler {
+                await results.next()
+            } onCancel: { [workTask] in
+                workTask.cancel()
             }
-
-            return await storage.results[currentIndex]
-        }
-    }
-
-    private actor Storage {
-        var results: [T]
-
-        init(anticipatedSize: Int) {
-            results = []
-            results.reserveCapacity(anticipatedSize)
-        }
-
-        func append(_ element: T) {
-            results.append(element)
         }
     }
 }
