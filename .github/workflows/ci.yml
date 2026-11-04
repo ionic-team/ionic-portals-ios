@@ -7,7 +7,7 @@ on:
       - main
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 30
     steps:
       - name: Show Xcode version
@@ -22,7 +22,7 @@ jobs:
             -scheme IonicPortals \
             -destination 'platform=iOS Simulator,name=iPhone 17' | xcpretty
   validate-podspec:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 30
     steps:
       - name: Show Xcode version

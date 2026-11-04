@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish-preview-docs:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 30
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
