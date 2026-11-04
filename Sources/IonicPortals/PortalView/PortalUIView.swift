@@ -127,6 +127,7 @@ public class PortalUIView: UIView {
             webView.backgroundColor = UIColor.systemBackground
             webView.scrollView.backgroundColor = UIColor.systemBackground
         }
+        webView.capacitor.setKeyboardShouldRequireUserInteraction(false)
 
         // set our delegates
         webView.uiDelegate = delegationHandler
