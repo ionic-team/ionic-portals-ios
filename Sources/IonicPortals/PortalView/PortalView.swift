@@ -9,6 +9,16 @@ import SwiftUI
 import Capacitor
 
 /// A SwiftUI View to display ``Portal`` content
+///
+/// The underlying ``PortalUIView`` and its bridge are created once: a different ``Portal`` passed in
+/// later is ignored, and `onBridgeAvailable` is only called when the view is created. To display a
+/// different portal, give the view an identity that changes whenever the portal or its configuration
+/// does, so SwiftUI recreates it:
+///
+/// ```swift
+/// PortalView(portal: selectedPortal)
+///     .id(selectedPortal.name)
+/// ```
 public struct PortalView: UIViewRepresentable {
     private let portal: Portal
     private let onBridgeAvailable: (CapacitorBridge) -> Void
@@ -28,6 +38,6 @@ public struct PortalView: UIViewRepresentable {
         return view
     }
 
-    // Nothing to do here since there is no state to manage
+    // Portal changes are not applied; see the type documentation
     public func updateUIView(_ uiView: PortalUIView, context: Context) {}
 }
