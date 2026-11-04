@@ -28,7 +28,8 @@ let package = Package(
         ),
         .testTarget(
             name: "IonicPortalsTests",
-            dependencies: [ "IonicPortals" ]
+            dependencies: [ "IonicPortals" ],
+            resources: [ .copy("Fixtures/webapp") ]
         ),
         .testTarget(
             name: "IonicPortalsObjcTests",

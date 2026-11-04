@@ -37,9 +37,9 @@ final class PortalLiveUpdateSourceTests: XCTestCase {
     }
 }
 
-private struct MockSyncResult: ProviderSyncResult {}
+struct MockSyncResult: ProviderSyncResult {}
 
-private final class MockProviderManager: ProviderManager {
+final class MockProviderManager: ProviderManager {
     var latestAppDirectory: URL?
     var syncCallCount = 0
 
