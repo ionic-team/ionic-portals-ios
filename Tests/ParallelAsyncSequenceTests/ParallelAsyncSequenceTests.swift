@@ -67,4 +67,44 @@ final class ParallelAsyncSequenceTests: XCTestCase {
         XCTAssertEqual(value, 3)
     }
 
+    func testParallelAsyncSequence_continuesRemainingWork_whenIterationEndsEarly() async throws {
+        let clock = TestClock()
+        let counter = Counter()
+        let sequence = ParallelAsyncSequence(work: [1, 2, 3]
+            .map { number in
+                return {
+                    do {
+                        try await clock.sleep(for: .seconds(number))
+                        await counter.increment()
+                    } catch {}
+                    return number
+                }
+            }
+        )
+
+        let task = Task {
+            for await _ in sequence { break }
+        }
+
+        await clock.advance(by: .seconds(1))
+        await task.value
+        await clock.advance(by: .seconds(2))
+
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while await counter.value < 3, ContinuousClock.now < deadline {
+            await Task.yield()
+        }
+
+        let completed = await counter.value
+        // Breaking out of the loop must not cancel the work that is still in flight
+        XCTAssertEqual(completed, 3)
+    }
+}
+
+private actor Counter {
+    var value = 0
+
+    func increment() {
+        value += 1
+    }
 }

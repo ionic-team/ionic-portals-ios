@@ -49,7 +49,6 @@ public class PortalUIView: UIView {
     required public init(portal: Portal) {
         self.portal = portal
         super.init(frame: .zero)
-        initView()
         setup()
     }
 
@@ -64,6 +63,8 @@ public class PortalUIView: UIView {
     }
 
     private func setup() {
+        // Must run before anything touches `configuration`, which reads `liveUpdatePath`
+        initView()
         CAPLog.enableLogging = configuration.loggingEnabled
         logWarnings(for: configDescriptor)
         
@@ -72,7 +73,6 @@ public class PortalUIView: UIView {
             return
         }
 
-        initView()
         registerPlugins()
 
         let url = bridge.config.appStartServerURL
@@ -216,38 +216,15 @@ public class PortalUIView: UIView {
     }
 
     private func loadInitialContext(_ userContentViewController: WKUserContentController) {
-        let portalInitialContext: String
-
-        var initialContext: [String: Any] = ["name": portal.name]
-
-        if portal.initialContext.isNotEmpty {
-            initialContext["value"] = portal.initialContext
-        }
-
-        if portal.assetMaps.isNotEmpty {
-            initialContext["assets"] = portal.assetMaps.reduce(into: [:]) { acc, next in
-                acc[next.name] = next.virtualPath
-            }
-        }
-
-        if let jsonData = try? JSONSerialization.data(withJSONObject: initialContext),
-           let jsonString = String(data: jsonData, encoding: .utf8) {
-            portalInitialContext = jsonString
-        } else {
-            portalInitialContext = #"{ "name": "\#(portal.name)" }"#
-        }
-
-        let scriptSource = "window.portalInitialContext = " + portalInitialContext
-
         let userScript = WKUserScript(
-            source: scriptSource,
+            source: portal.initialContextScript,
             injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         )
 
         userContentViewController.addUserScript(userScript)
     }
-    
+
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
@@ -294,7 +271,8 @@ extension PortalUIView {
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
         if let latestAppPath = portal.latestAppDirectory,
-           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
+           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path,
+           FileManager.default.fileExists(atPath: latestAppPath.path) {
             liveUpdatePath = latestAppPath
             return setServerBasePath(path: latestAppPath.path)
         }
@@ -321,12 +299,43 @@ extension PortalUIView: CAPBridgeDelegate {
     }
 }
 
+extension Portal {
+    /// The script that exposes `window.portalInitialContext` to the web application
+    var initialContextScript: String {
+        var context: [String: Any] = ["name": name]
+
+        if initialContext.isNotEmpty {
+            // Dates are valid JSValues but not valid JSON, so they are converted to ISO 8601 strings
+            context["value"] = JSTypes.coerceDictionaryToJSObject(initialContext, formattingDatesAsStrings: true)
+        }
+
+        if assetMaps.isNotEmpty {
+            context["assets"] = assetMaps.reduce(into: [:]) { acc, next in
+                acc[next.name] = next.virtualPath
+            }
+        }
+
+        // JSONSerialization raises an uncatchable exception on invalid input (e.g. NaN), so check first
+        if !JSONSerialization.isValidJSONObject(context) {
+            CAPLog.print("⚡️  WARNING: initialContext for \"\(name)\" is not valid JSON; only the portal name will be provided.")
+            context = ["name": name]
+        }
+
+        let json = (try? JSONSerialization.data(withJSONObject: context))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+
+        return "window.portalInitialContext = " + json
+    }
+}
+
 internal struct PortalRouter: Router {
     var portal: Portal
     var basePath: String = ""
 
     func route(for path: String) -> String {
-        let pathUrl = URL(fileURLWithPath: path)
+        // Resolve any "." and ".." segments so a request cannot escape basePath or an asset map's directory
+        let pathUrl = URL(fileURLWithPath: path).standardized
+        let path = pathUrl.path
         // If there's no path extension it also means the path is empty or a SPA route
         if pathUrl.pathExtension.isEmpty {
             return basePath + "/\(portal.index)"

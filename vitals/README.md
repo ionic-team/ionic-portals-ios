@@ -11,5 +11,5 @@ If updating web-vitals is necessary run the build instructions above and then co
 cat dist/index.js | pbcopy
 ```
 
-Then paste the contents into the script source in `PortalUIView.swift`.
+Then paste the contents into the script source in `Sources/IonicPortals/WebVitalsPlugin.swift`.
 This is not anticipated to be updated frequently, so no automation or code generation has been done for this.

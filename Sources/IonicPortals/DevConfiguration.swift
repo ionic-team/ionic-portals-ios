@@ -34,11 +34,6 @@ struct ConfigUrl {
 struct DevConfiguration {
     var server: ServerUrl
     var capacitorConfig: ConfigUrl
-
-    init(server: ServerUrl, capacitorConfig: ConfigUrl) {
-        self.server = server
-        self.capacitorConfig = capacitorConfig
-    }
 }
 
 extension DevConfiguration {

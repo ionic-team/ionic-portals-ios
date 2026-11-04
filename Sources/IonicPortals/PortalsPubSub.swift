@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import Capacitor
 
-// An interface that enables marshalling data to and from a ``Portal`` over an event bus
+/// An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public class PortalsPubSub {
     private var publishers = ConcurrentDictionary<PassthroughSubject<SubscriptionResult, Never>>()
 
@@ -27,15 +27,7 @@ public class PortalsPubSub {
     }
     
     internal func subject(for topic: String) -> PassthroughSubject<SubscriptionResult, Never> {
-        let publisher: PassthroughSubject<SubscriptionResult, Never>
-        if let existing = publishers[topic] {
-            publisher = existing
-        } else {
-            publisher = PassthroughSubject<SubscriptionResult, Never>()
-            publishers[topic] = publisher
-        }
-        
-        return publisher
+        publishers.value(forKey: topic, default: PassthroughSubject())
     }
     
     /// Publish event to all listeners of a topic
@@ -88,6 +80,16 @@ class ConcurrentDictionary<Value> {
     subscript(_ key: String) -> Value? {
         get { lock.withLock { dict[key] } }
         set { lock.withLock { dict[key] = newValue } }
+    }
+
+    /// Returns the existing value for `key`, or atomically inserts and returns the result of `makeValue`
+    func value(forKey key: String, default makeValue: @autoclosure () -> Value) -> Value {
+        lock.withLock {
+            if let existing = dict[key] { return existing }
+            let value = makeValue()
+            dict[key] = value
+            return value
+        }
     }
 }
 
@@ -143,7 +145,7 @@ public struct SubscriptionResult {
     ///   - topic: The topic to publish to
     @objc(publishMessage:toTopic:) public static func publish(message: Any?, topic: String) {
         guard let data = message else { return PortalsPubSub.publish(to: topic) }
-        guard let value = coerceToJsValue(data) else { return print("\(data) is not a valid JSON type...not publishing") }
+        guard let value = coerceToJsValue(data) else { return CAPLog.print("\(data) is not a valid JSON type...not publishing") }
         PortalsPubSub.publish(value, to: topic)
     }
     
