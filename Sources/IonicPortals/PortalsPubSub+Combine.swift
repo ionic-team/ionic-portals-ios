@@ -1,5 +1,5 @@
 //
-//  PortalsPlugin+Combine.swift
+//  PortalsPubSub+Combine.swift
 //  IonicPortals
 //
 //  Created by Steven Sherry on 3/2/22.

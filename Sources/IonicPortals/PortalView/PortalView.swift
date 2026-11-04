@@ -1,5 +1,5 @@
 //
-//  PortalUIWebView.swift
+//  PortalView.swift
 //  IonicPortals
 //
 //  Created by Dan Giralté on 1/24/22.

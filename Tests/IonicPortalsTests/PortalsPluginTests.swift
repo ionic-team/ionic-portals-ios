@@ -174,7 +174,6 @@ class PortalsPluginTests: XCTestCase {
         
     }
     
-    #if compiler(>=5.6)
     func test_asyncSubscribe__when_values_are_published__they_are_able_to_be_manipulated_with_async_sequence_apis() async {
         let sut = Task {
             await PortalsPubSub.subscribe(to: "test:asyncstream")
@@ -198,5 +197,4 @@ class PortalsPluginTests: XCTestCase {
 
         XCTAssertEqual(firstValue, 1)
     }
-    #endif
 }
