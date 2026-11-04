@@ -131,6 +131,9 @@ public class PortalUIView: UIView {
         // set our delegates
         webView.uiDelegate = delegationHandler
         webView.navigationDelegate = delegationHandler
+        if !configuration.zoomingEnabled {
+            webView.scrollView.delegate = delegationHandler
+        }
         return webView
     }
 
