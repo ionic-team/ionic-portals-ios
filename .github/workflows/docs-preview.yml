@@ -4,9 +4,18 @@ on:
   push:
     branches:
       - "**"
+    paths:
+      - "Sources/**"
+      - "package.json"
+      - "vercel.json"
+      - ".github/workflows/docs-preview.yml"
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish-preview-docs:
