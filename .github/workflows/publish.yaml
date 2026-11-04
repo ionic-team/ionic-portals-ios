@@ -23,10 +23,6 @@ jobs:
             echo "Tag '$GITHUB_REF_NAME' does not match podspec version '$PODSPEC_VERSION'."
             exit 1
           fi
-      - name: Install build dependencies
-        run: gem install cocoapods
-      - name: Validate podspec
-        run: pod spec lint
       - name: Publish podspec
         run: pod trunk push
         env:

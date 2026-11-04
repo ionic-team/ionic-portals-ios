@@ -16,8 +16,6 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
       - uses: actions/checkout@v7
-      - name: Install build dependencies
-        run: gem install cocoapods
       - name: Assign version to RELEASE_VERSION environment variable
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/*/}" >> $GITHUB_ENV
       - name: Bump podspec version
