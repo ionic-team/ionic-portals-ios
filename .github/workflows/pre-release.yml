@@ -5,6 +5,9 @@ on:
     branches:
       - "release/**"
 
+permissions:
+  contents: write
+
 jobs:
   update-version:
     runs-on: macos-26
