@@ -5,21 +5,26 @@ on:
     branches:
       - "release/**"
 
+permissions:
+  contents: write
+
 jobs:
   update-version:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 30
     steps:
       - name: Show Xcode version
         run: xcodebuild -version
       - uses: actions/checkout@v7
-      - name: Install build dependencies
-        run: gem install cocoapods xcpretty fastlane
       - name: Assign version to RELEASE_VERSION environment variable
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/*/}" >> $GITHUB_ENV
       - name: Bump podspec version
-        run: fastlane run version_bump_podspec version_number:"${RELEASE_VERSION}"
+        run: |
+          ruby -i -pe "sub(/s\.version\s*=\s*'[^']+'/, %(s.version = '#{ENV['RELEASE_VERSION']}'))" IonicPortals.podspec
+          grep -q "s.version = '${RELEASE_VERSION}'" IonicPortals.podspec
       - name: Validate Pod Lib # We're not doing a pod spec lint because the tag is not valid yet
         run: pod lib lint
       - name: Push version bump commit
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v11
+        with:
+          add: IonicPortals.podspec
