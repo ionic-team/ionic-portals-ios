@@ -21,14 +21,12 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
       - uses: actions/checkout@v7
-      - name: Install xcpretty
-        run: gem install xcpretty
       - name: Run Tests
         run: |
           set -eo pipefail
           xcodebuild test \
             -scheme IonicPortals \
-            -destination 'platform=iOS Simulator,name=iPhone 17' | xcpretty
+            -destination 'platform=iOS Simulator,name=iPhone 17' | xcbeautify --renderer github-actions
   validate-podspec:
     runs-on: macos-26
     timeout-minutes: 30
