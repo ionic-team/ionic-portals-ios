@@ -27,6 +27,6 @@ jobs:
       - name: Validate Pod Lib # We're not doing a pod spec lint because the tag is not valid yet
         run: pod lib lint
       - name: Push version bump commit
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v11
         with:
           add: IonicPortals.podspec
