@@ -271,7 +271,8 @@ extension PortalUIView {
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
         if let latestAppPath = portal.latestAppDirectory,
-           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path {
+           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path,
+           FileManager.default.fileExists(atPath: latestAppPath.path) {
             liveUpdatePath = latestAppPath
             return setServerBasePath(path: latestAppPath.path)
         }
