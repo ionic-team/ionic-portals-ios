@@ -61,6 +61,17 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertFalse(userAgent.contains("  PortalsTests/1.0"), userAgent)
     }
 
+    func test_setServerBasePath__it_loads_the_portal_from_the_new_folder() async throws {
+        let view = makeView(for: fixture)
+        let webView = try XCTUnwrap(view.bridgedWebView)
+        _ = try await waitForTitle(in: webView)
+
+        view.setServerBasePath(path: try makeLiveUpdate(title: "Switched").path)
+
+        let title = try await waitForTitle(in: webView, toBe: "Switched")
+        XCTAssertEqual(title, "Switched")
+    }
+
     func test_init__by_default__pinch_zoom_is_handled_by_the_delegation_handler() throws {
         let view = makeView(for: fixture)
         let webView = try XCTUnwrap(view.bridgedWebView)
@@ -111,19 +122,20 @@ final class PortalUIViewTests: XCTestCase {
         return destination
     }
 
-    /// Waits until the portal's page has loaded, then returns its title
-    private func waitForTitle(in webView: WKWebView, timeout: TimeInterval = 10) async throws -> String {
+    /// Waits until the portal's page has loaded, and has the expected title if one is given, then returns its title
+    private func waitForTitle(in webView: WKWebView, toBe expected: String? = nil, timeout: TimeInterval = 10) async throws -> String {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             // webView.url changes as soon as navigation starts, while scripts still run in about:blank,
             // which also reports "complete", so ask the document itself where it was loaded from
             let script = "location.protocol === '\(InstanceDescriptorDefaults.scheme):' && document.readyState === 'complete'"
             if let loaded = try? await webView.evaluateJavaScript(script) as? Bool, loaded {
-                return try await webView.evaluateJavaScript("document.title") as? String ?? ""
+                let title = try await webView.evaluateJavaScript("document.title") as? String ?? ""
+                if expected == nil || title == expected { return title }
             }
             try await Task.sleep(nanoseconds: 50_000_000)
         }
-        XCTFail("The portal did not finish loading within \(timeout) seconds")
+        XCTFail("The portal did not finish loading\(expected.map { " \"\($0)\"" } ?? "") within \(timeout) seconds")
         return ""
     }
 }

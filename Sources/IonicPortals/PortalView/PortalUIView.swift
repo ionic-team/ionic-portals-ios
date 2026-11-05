@@ -247,11 +247,9 @@ public class PortalUIView: UIView {
 
 extension PortalUIView {
     public func setServerBasePath(path: String) {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        guard FileManager.default.fileExists(atPath: url.path) else { return }
-
-        bridge.config = bridge.config.updatingAppLocation(url)
-        bridge.webViewAssetHandler.setAssetPath(url.path)
+        // The bridge also ignores a missing path, but checking here skips the reload as well
+        guard FileManager.default.fileExists(atPath: path) else { return }
+        bridge.setServerBasePath(path)
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
