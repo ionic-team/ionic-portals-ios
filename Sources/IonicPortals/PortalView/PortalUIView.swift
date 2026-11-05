@@ -191,6 +191,12 @@ public class PortalUIView: UIView {
 
         let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: nil)
         descriptor.handleApplicationNotifications = false
+        #if DEBUG
+        // Capacitor only enables web debugging in debug builds while reading a config file, which a Capacitor app always has
+        if descriptor.warnings.contains(.missingFile) {
+            descriptor.isWebDebuggable = true
+        }
+        #endif
         return descriptor
     }
 
