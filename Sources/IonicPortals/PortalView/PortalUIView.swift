@@ -178,8 +178,8 @@ public class PortalUIView: UIView {
         #endif
 
         guard let path = liveUpdatePath ?? bundleURL else {
-            // DCG this should throw or something else
-            return InstanceDescriptor()
+            let expectedPath = (portal.bundle.resourceURL ?? portal.bundle.bundleURL).appendingPathComponent(portal.startDir, isDirectory: true)
+            return InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
         }
 
         var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
