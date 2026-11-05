@@ -72,6 +72,23 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertEqual(title, "Switched")
     }
 
+    func test_init__in_every_setup__it_leaves_application_notifications_to_the_host() throws {
+        // A missing folder and dev mode build their descriptors separately from a normal portal
+        setenv("PORTAL_CONFIG", Data(#"{"appId":"io.ionic.portals.tests"}"#.utf8).base64EncodedString(), 1)
+        let devMode = makeView(for: fixture)
+        unsetenv("PORTAL_CONFIG")
+
+        let views = [
+            "normal": makeView(for: fixture),
+            "missing folder": makeView(for: Portal(name: "missing", bundle: .module)),
+            "dev mode": devMode
+        ]
+
+        for (setup, view) in views {
+            XCTAssertFalse(view.bridge.config.handleApplicationNotifications, setup)
+        }
+    }
+
     func test_init__by_default__pinch_zoom_is_handled_by_the_delegation_handler() throws {
         let view = makeView(for: fixture)
         let webView = try XCTUnwrap(view.bridgedWebView)
