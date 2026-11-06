@@ -20,6 +20,7 @@ public class PortalsPubSub {
     ///   - topic: The topic to listen for events on
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: An `AnyCancellable` that unsubscribes from the topic when deallocated.
+    /// > Tip: The callback runs on the thread that published the event, which is a background queue for events from the web app. To update UI, use `publisher(for:)` with `receive(on: DispatchQueue.main)`.
     public func subscribe(to topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> AnyCancellable {
         let publisher = subject(for: topic)
         let cancellable = publisher.sink(receiveValue: callback)
@@ -56,6 +57,7 @@ public class PortalsPubSub {
     ///   - topic: The topic to listen for events on
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: An `AnyCancellable` that unsubscribes from the topic when deallocated.
+    /// > Tip: The callback runs on the thread that published the event, which is a background queue for events from the web app. To update UI, use `publisher(for:)` with `receive(on: DispatchQueue.main)`.
     public static func subscribe(to topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> AnyCancellable {
         shared.subscribe(to: topic, callback)
     }
@@ -131,6 +133,8 @@ public struct SubscriptionResult {
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: A subscription reference to use for unsubscribing
     /// > Tip: You must retain the returned reference to keep the subscription alive. To unsubscribe, set the reference to nil.
+    ///
+    /// > Tip: The callback runs on the thread that published the event, which is a background queue for events from the web app.
     @objc(subscribeToTopic:callback:) public static func subscribe(topic: String, callback: @escaping ([String: Any]) -> Void) -> Any {
         let cancellable = PortalsPubSub.subscribe(to: topic) { result in
             callback(result.dictionaryRepresentation as [String: Any])
