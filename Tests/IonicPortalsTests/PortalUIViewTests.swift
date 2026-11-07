@@ -25,6 +25,16 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertEqual(title, "Live update")
     }
 
+    func test_init__when_the_live_update_folder_is_missing__it_loads_the_bundle() async throws {
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        var portal = fixture
+        portal.liveUpdateSource = .provider(manager: MockProviderManager(latestAppDirectory: missing))
+        let webView = try makeWebView(for: portal)
+
+        let title = try await waitForTitle(in: webView)
+        XCTAssertEqual(title, "Bundled")
+    }
+
     func test_init__when_the_start_file_is_missing__it_does_not_load_anything() throws {
         let webView = try makeWebView(for: Portal(name: "missing", bundle: .module))
 
