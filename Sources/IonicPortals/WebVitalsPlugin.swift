@@ -51,10 +51,6 @@ public class WebVitalsPlugin: CAPInstancePlugin, CAPBridgedPlugin {
         contentController.add(PerformanceHandler(onFirstContentfulPaint: onFirstContentfulPaint), name: "vitals")
         contentController.addUserScript(handlerScript)
     }
-    
-    deinit {
-        bridge?.webView?.configuration.userContentController.removeScriptMessageHandler(forName: "vitals")
-    }
 }
 
 private class PerformanceHandler: NSObject, WKScriptMessageHandler {
@@ -67,15 +63,10 @@ private class PerformanceHandler: NSObject, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let body = message.body as? [String: Any],
               let portalName = body["portalName"] as? String,
-              let name = body["name"] as? String,
+              body["name"] as? String == "FCP",
               let value = body["value"] as? Double
         else { return }
 
-        switch name {
-        case "FCP":
-            onFirstContentfulPaint(portalName, value)
-        default:
-            return
-        }
+        onFirstContentfulPaint(portalName, value)
     }
 }
