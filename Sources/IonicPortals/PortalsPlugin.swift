@@ -10,7 +10,7 @@ public final class PortalsPlugin: CAPInstancePlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "publishNative", returnType: CAPPluginReturnPromise)
     ]
     
-    private let publishers = ConcurrentDictionary<AnyCancellable>()
+    private let subscriptions = ConcurrentDictionary<AnyCancellable>()
     private let pubsub: PortalsPubSub
     
     public init(pubsub: PortalsPubSub = .shared) {
@@ -30,13 +30,13 @@ public final class PortalsPlugin: CAPInstancePlugin, CAPBridgedPlugin {
     
     public override func addEventListener(_ eventName: String, listener: CAPPluginCall) {
         super.addEventListener(eventName, listener: listener)
-        guard publishers[eventName] == nil else { return }
-        publishers[eventName] = pubsub.publisher(for: eventName)
+        _ = subscriptions.value(forKey: eventName, default: pubsub.publisher(for: eventName)
             .sink { [weak self] result in
                 self?.notifyListeners(
                     eventName,
                     data: result.dictionaryRepresentation as [String: Any]
                 )
             }
+        )
     }
 }

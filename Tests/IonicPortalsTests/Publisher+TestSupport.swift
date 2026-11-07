@@ -11,20 +11,10 @@ import XCTest
 extension Publisher {
     func expectOutput(
         toBe values: [Output],
-        expectCompletion: Bool = false,
         file: StaticString = #file,
         line: UInt = #line
     ) -> (AnyCancellable, XCTestExpectation) where Output: Equatable {
-        let publisher: AnyPublisher<[Output], Failure>
-        
-        if expectCompletion {
-            publisher = collect(values.count)
-                .eraseToAnyPublisher()
-        } else {
-            publisher = prefix(values.count)
-                .collect(values.count)
-                .eraseToAnyPublisher()
-        }
+        let publisher = prefix(values.count).collect(values.count)
         
         let expectation = XCTestExpectation(description: "Publisher test")
         
@@ -32,18 +22,14 @@ extension Publisher {
             receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    if expectCompletion {
-                        expectation.fulfill()
-                    }
+                    break
                 case .failure:
                     XCTFail("Unexpected failure", file: file, line: line)
                 }
             },
             receiveValue: { outputs in
                 XCTAssertEqual(values, outputs, file: file, line: line)
-                if !expectCompletion {
-                    expectation.fulfill()
-                }
+                expectation.fulfill()
             }
         )
         
@@ -52,29 +38,18 @@ extension Publisher {
     
     func expectOutput(
         toBe value: Output,
-        expectCompletion: Bool = false,
         file: StaticString = #file,
         line: UInt = #line
     ) -> (AnyCancellable, XCTestExpectation) where Output: Equatable {
-        expectOutput(toBe: [value], expectCompletion: expectCompletion, file: file, line: line)
+        expectOutput(toBe: [value], file: file, line: line)
     }
     
     func assertOutputs(
         _ predicates: [(Output) -> Bool],
-        expectCompletion: Bool = false,
         file: StaticString = #file,
         line: UInt = #line
     ) -> (AnyCancellable, XCTestExpectation) {
-        let publisher: AnyPublisher<[Output], Failure>
-        
-        if expectCompletion {
-            publisher = collect(predicates.count)
-                .eraseToAnyPublisher()
-        } else {
-            publisher = prefix(predicates.count)
-                .collect(predicates.count)
-                .eraseToAnyPublisher()
-        }
+        let publisher = prefix(predicates.count).collect(predicates.count)
         
         let expectation = XCTestExpectation(description: "Publisher test")
         
@@ -82,9 +57,7 @@ extension Publisher {
             receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    if expectCompletion {
-                        expectation.fulfill()
-                    }
+                    break
                 case .failure:
                     XCTFail("Unexpected failure", file: file, line: line)
                 }
@@ -94,9 +67,7 @@ extension Publisher {
                     XCTAssertTrue(predicate(output), "Issue asserting on element number \(index) - \(output)", file: file, line: line)
                 }
                 
-                if !expectCompletion {
-                    expectation.fulfill()
-                }
+                expectation.fulfill()
             }
         )
         

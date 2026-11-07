@@ -18,12 +18,7 @@ public struct AssetMap {
     public var bundle: Bundle
 
     /// The directory name relative to the bundle (similar to Portals.startDir)
-    public var startDir: String {
-        startDirComponents.joined(separator: "/")
-    }
-
-    private var startDirComponents: [Substring]
-
+    public private(set) var startDir: String
 
     /// - Parameters:
     ///   - name: The name to index the asset map by
@@ -39,39 +34,6 @@ public struct AssetMap {
         self.name = name
         self.virtualPath = virtualPath ?? "/\(name)"
         self.bundle = bundle
-        self.startDirComponents = startDir.split(separator: "/")
+        self.startDir = startDir.split(separator: "/").joined(separator: "/")
     }
-}
-
-extension AssetMap {
-    func path(for virtualPath: String) -> String? {
-        guard virtualPath.hasPrefix(self.virtualPath) else { return nil }
-        let relativeAssetPath = String(virtualPath.dropFirst(self.virtualPath.count))
-        // Only match whole path segments, e.g. /img must not match /imgs/logo.png
-        guard relativeAssetPath.isEmpty
-                || relativeAssetPath.hasPrefix("/")
-                || self.virtualPath.hasSuffix("/")
-        else { return nil }
-        return url(for: relativeAssetPath)?.relativePath
-    }
-
-    private func url(for path: String) -> URL? {
-        let assetPath = bundle.bundleURL
-            .appending(startDir)
-            .appending(path.cleaned)
-
-        guard FileManager.default.fileExists(atPath: assetPath.relativePath) else { return nil }
-        return assetPath
-    }
-}
-
-extension URL {
-    func appending(_ pathComponent: String) -> URL {
-        guard pathComponent.isNotEmpty else { return self }
-        return self.appendingPathComponent(pathComponent)
-    }
-}
-
-extension String {
-    var cleaned: String { self.split(separator: "/").joined(separator: "/") }
 }

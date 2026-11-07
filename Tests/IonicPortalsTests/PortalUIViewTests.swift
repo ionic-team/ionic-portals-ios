@@ -78,12 +78,10 @@ final class PortalUIViewTests: XCTestCase {
 
         view.setServerBasePath(path: try makeLiveUpdate(title: "Switched").path)
 
-        let title = try await waitForTitle(in: webView, toBe: "Switched")
-        XCTAssertEqual(title, "Switched")
+        _ = try await waitForTitle(in: webView, toBe: "Switched")
     }
 
     func test_init__in_every_setup__it_leaves_application_notifications_to_the_host() throws {
-        // A missing folder and dev mode build their descriptors separately from a normal portal
         setenv("PORTAL_CONFIG", Data(#"{"appId":"io.ionic.portals.tests"}"#.utf8).base64EncodedString(), 1)
         let devMode = makeView(for: fixture)
         unsetenv("PORTAL_CONFIG")
