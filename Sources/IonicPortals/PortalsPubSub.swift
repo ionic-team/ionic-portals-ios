@@ -11,7 +11,7 @@ import Capacitor
 
 /// An interface that enables marshalling data to and from a ``Portal`` over an event bus
 public class PortalsPubSub {
-    private var publishers = ConcurrentDictionary<PassthroughSubject<SubscriptionResult, Never>>()
+    private let publishers = ConcurrentDictionary<PassthroughSubject<SubscriptionResult, Never>>()
 
     public init() {}
 
@@ -21,9 +21,7 @@ public class PortalsPubSub {
     ///   - callback: The code to be executed when an event is received for the topic
     /// - Returns: An `AnyCancellable` that unsubscribes from the topic when deallocated.
     public func subscribe(to topic: String, _ callback: @escaping (SubscriptionResult) -> Void) -> AnyCancellable {
-        let publisher = subject(for: topic)
-        let cancellable = publisher.sink(receiveValue: callback)
-        return cancellable
+        subject(for: topic).sink(receiveValue: callback)
     }
     
     internal func subject(for topic: String) -> PassthroughSubject<SubscriptionResult, Never> {
@@ -70,16 +68,11 @@ public class PortalsPubSub {
 }
 
 class ConcurrentDictionary<Value> {
-    private var dict: [String: Value]
+    private var dict: [String: Value] = [:]
     private let lock = NSLock()
 
-    init(dict: [String: Value] = [:]) {
-        self.dict = dict
-    }
-    
     subscript(_ key: String) -> Value? {
-        get { lock.withLock { dict[key] } }
-        set { lock.withLock { dict[key] = newValue } }
+        lock.withLock { dict[key] }
     }
 
     /// Returns the existing value for `key`, or atomically inserts and returns the result of `makeValue`
