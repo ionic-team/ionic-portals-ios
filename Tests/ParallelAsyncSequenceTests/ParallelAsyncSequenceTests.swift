@@ -10,7 +10,6 @@ import XCTest
 import Clocks
 
 
-@available(iOS 16, *)
 final class ParallelAsyncSequenceTests: XCTestCase {
     func testParallelAsyncSequence_runsTasksInParallel_andCompletesSuccessfullyWhenNoCancellationOccurs() async throws {
         let clock = TestClock()

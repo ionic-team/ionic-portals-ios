@@ -21,7 +21,6 @@ public class PortalUIView: UIView {
     public private(set) lazy var bridge = CapacitorBridge(
         with: configuration,
         delegate: self,
-        cordovaConfiguration: configDescriptor.cordovaConfiguration,
         assetHandler: assetHandler,
         delegationHandler: delegationHandler,
         autoRegisterPlugins: false
@@ -62,6 +61,12 @@ public class PortalUIView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // WebKit moves the web view out for element fullscreen and back on exit, which drops any constraints on it
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        webView.frame = bounds
+    }
+
     private func setup() {
         // Must run before anything touches `configuration`, which reads `liveUpdatePath`
         initView()
@@ -82,8 +87,8 @@ public class PortalUIView: UIView {
     }
 
     private func initView () {
-        self.liveUpdatePath = portal.latestAppDirectory
-        addPinnedSubview(webView)
+        self.liveUpdatePath = portal.latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
+        addSubview(webView)
     }
 
     private func registerPlugins() {
@@ -128,10 +133,14 @@ public class PortalUIView: UIView {
             webView.backgroundColor = UIColor.systemBackground
             webView.scrollView.backgroundColor = UIColor.systemBackground
         }
+        webView.capacitor.setKeyboardShouldRequireUserInteraction(false)
 
         // set our delegates
         webView.uiDelegate = delegationHandler
         webView.navigationDelegate = delegationHandler
+        if !configuration.zoomingEnabled {
+            webView.scrollView.delegate = delegationHandler
+        }
         return webView
     }
 
@@ -143,10 +152,11 @@ public class PortalUIView: UIView {
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
         webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        webViewConfiguration.preferences.isElementFullscreenEnabled = true
 
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
+                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
@@ -175,31 +185,30 @@ public class PortalUIView: UIView {
         #endif
 
         guard let path = liveUpdatePath ?? bundleURL else {
-            // DCG this should throw or something else
-            return InstanceDescriptor()
+            let expectedPath = (portal.bundle.resourceURL ?? portal.bundle.bundleURL).appendingPathComponent(portal.startDir, isDirectory: true)
+            return InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
         }
 
         var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-        var cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
 
         if let updatedCapConfig = liveUpdatePath?.appendingPathComponent("capacitor.config.json"),
            FileManager.default.fileExists(atPath: updatedCapConfig.path) {
             capConfigUrl = updatedCapConfig
         }
 
-        if let updatedCordovaConfig = liveUpdatePath?.appendingPathComponent("config.xml"),
-           FileManager.default.fileExists(atPath: updatedCordovaConfig.path) {
-            cordovaConfigUrl = updatedCordovaConfig
+        let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: nil)
+        #if DEBUG
+        // Capacitor only enables web debugging in debug builds while reading a config file, which a Capacitor app always has
+        if descriptor.warnings.contains(.missingFile) {
+            descriptor.isWebDebuggable = true
         }
-
-
-        let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
-        descriptor.handleApplicationNotifications = false
+        #endif
         return descriptor
     }
 
     private func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = createInstanceDescriptor()
+        descriptor.handleApplicationNotifications = false
         portal.descriptorConfiguration.forEach { $0(descriptor) }
 
         #if DEBUG
@@ -236,12 +245,6 @@ public class PortalUIView: UIView {
             if descriptor.warnings.contains(.invalidFile) {
                 CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
             }
-            if descriptor.warnings.contains(.missingCordovaFile) {
-                CAPLog.print("Unable to find config.xml, make sure it exists and run npx cap copy.")
-            }
-            if descriptor.warnings.contains(.invalidCordovaFile) {
-                CAPLog.print("Unable to parse config.xml. Make sure it's valid XML.")
-            }
         }
     }
     
@@ -257,11 +260,9 @@ public class PortalUIView: UIView {
 
 extension PortalUIView {
     public func setServerBasePath(path: String) {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        guard FileManager.default.fileExists(atPath: url.path) else { return }
-
-        bridge.config = bridge.config.updatingAppLocation(url)
-        bridge.webViewAssetHandler.setAssetPath(url.path)
+        // The bridge also ignores a missing path, but checking here skips the reload as well
+        guard FileManager.default.fileExists(atPath: path) else { return }
+        bridge.setServerBasePath(path)
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -355,21 +356,4 @@ internal struct PortalRouter: Router {
 
 extension Collection {
     var isNotEmpty: Bool { !isEmpty }
-}
-
-extension UIView {
-    func constraintsPinned(to view: UIView) -> [NSLayoutConstraint] {
-        return [
-            topAnchor.constraint(equalTo: view.topAnchor),
-            bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ]
-    }
-
-    func addPinnedSubview(_ view: UIView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(view)
-        NSLayoutConstraint.activate(view.constraintsPinned(to: self))
-    }
 }
