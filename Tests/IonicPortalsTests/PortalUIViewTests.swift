@@ -102,6 +102,18 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertFalse(webView.scrollView.delegate === view.bridge.webViewDelegationHandler)
     }
 
+    func test_layout__when_the_web_view_returns_from_element_fullscreen__it_fills_the_portal_again() throws {
+        let view = makeView(for: fixture)
+        let webView = try XCTUnwrap(view.bridgedWebView)
+
+        // WebKit moves the web view into its own fullscreen view, then back into the portal on exit
+        UIView(frame: CGRect(x: 0, y: 0, width: 402, height: 874)).addSubview(webView)
+        view.addSubview(webView)
+        view.layoutIfNeeded()
+
+        XCTAssertEqual(webView.frame, view.bounds)
+    }
+
     func test_init__programmatic_focus_does_not_require_user_interaction() throws {
         let webView = try makeWebView(for: fixture)
 

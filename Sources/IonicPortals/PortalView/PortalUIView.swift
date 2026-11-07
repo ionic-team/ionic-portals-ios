@@ -61,6 +61,12 @@ public class PortalUIView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // WebKit moves the web view out for element fullscreen and back on exit, which drops any constraints on it
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        webView.frame = bounds
+    }
+
     private func setup() {
         // Must run before anything touches `configuration`, which reads `liveUpdatePath`
         initView()
@@ -82,7 +88,7 @@ public class PortalUIView: UIView {
 
     private func initView () {
         self.liveUpdatePath = portal.latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
-        addPinnedSubview(webView)
+        addSubview(webView)
     }
 
     private func registerPlugins() {
@@ -146,6 +152,7 @@ public class PortalUIView: UIView {
         webViewConfiguration.allowsAirPlayForMediaPlayback = true
         webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
         webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
+        webViewConfiguration.preferences.isElementFullscreenEnabled = true
 
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
@@ -358,21 +365,4 @@ internal struct PortalRouter: Router {
 
 extension Collection {
     var isNotEmpty: Bool { !isEmpty }
-}
-
-extension UIView {
-    func constraintsPinned(to view: UIView) -> [NSLayoutConstraint] {
-        return [
-            topAnchor.constraint(equalTo: view.topAnchor),
-            bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ]
-    }
-
-    func addPinnedSubview(_ view: UIView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(view)
-        NSLayoutConstraint.activate(view.constraintsPinned(to: self))
-    }
 }
