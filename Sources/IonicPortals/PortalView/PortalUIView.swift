@@ -81,7 +81,7 @@ public class PortalUIView: UIView {
     }
 
     private func initView () {
-        self.liveUpdatePath = portal.latestAppDirectory
+        self.liveUpdatePath = portal.latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
         addPinnedSubview(webView)
     }
 
