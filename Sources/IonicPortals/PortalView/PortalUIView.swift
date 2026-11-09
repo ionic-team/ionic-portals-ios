@@ -127,10 +127,14 @@ public class PortalUIView: UIView {
             webView.backgroundColor = UIColor.systemBackground
             webView.scrollView.backgroundColor = UIColor.systemBackground
         }
+        webView.capacitor.setKeyboardShouldRequireUserInteraction(false)
 
         // set our delegates
         webView.uiDelegate = delegationHandler
         webView.navigationDelegate = delegationHandler
+        if !configuration.zoomingEnabled {
+            webView.scrollView.delegate = delegationHandler
+        }
         return webView
     }
 
@@ -145,7 +149,7 @@ public class PortalUIView: UIView {
 
         if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
             if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName)  \(appendUserAgent)"
+                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
             } else {
                 webViewConfiguration.applicationNameForUserAgent = appendUserAgent
             }
