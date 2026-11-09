@@ -21,7 +21,6 @@ public class PortalUIView: UIView {
     public private(set) lazy var bridge = CapacitorBridge(
         with: configuration,
         delegate: self,
-        cordovaConfiguration: configDescriptor.cordovaConfiguration,
         assetHandler: assetHandler,
         delegationHandler: delegationHandler,
         autoRegisterPlugins: false
@@ -180,20 +179,13 @@ public class PortalUIView: UIView {
         }
 
         var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-        var cordovaConfigUrl = portal.bundle.url(forResource: "config", withExtension: "xml", subdirectory: portal.startDir)
 
         if let updatedCapConfig = liveUpdatePath?.appendingPathComponent("capacitor.config.json"),
            FileManager.default.fileExists(atPath: updatedCapConfig.path) {
             capConfigUrl = updatedCapConfig
         }
 
-        if let updatedCordovaConfig = liveUpdatePath?.appendingPathComponent("config.xml"),
-           FileManager.default.fileExists(atPath: updatedCordovaConfig.path) {
-            cordovaConfigUrl = updatedCordovaConfig
-        }
-
-
-        let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: cordovaConfigUrl)
+        let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: nil)
         descriptor.handleApplicationNotifications = false
         return descriptor
     }
@@ -235,12 +227,6 @@ public class PortalUIView: UIView {
             }
             if descriptor.warnings.contains(.invalidFile) {
                 CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
-            }
-            if descriptor.warnings.contains(.missingCordovaFile) {
-                CAPLog.print("Unable to find config.xml, make sure it exists and run npx cap copy.")
-            }
-            if descriptor.warnings.contains(.invalidCordovaFile) {
-                CAPLog.print("Unable to parse config.xml. Make sure it's valid XML.")
             }
         }
     }
