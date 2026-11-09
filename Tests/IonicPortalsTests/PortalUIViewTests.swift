@@ -162,7 +162,8 @@ final class PortalUIViewTests: XCTestCase {
     }
 
     /// Waits until the portal's page has loaded, and has the expected title if one is given, then returns its title
-    private func waitForTitle(in webView: WKWebView, toBe expected: String? = nil, timeout: TimeInterval = 10) async throws -> String {
+    /// The first load on a fresh simulator waits for WebKit to start, which takes over 10 seconds on CI
+    private func waitForTitle(in webView: WKWebView, toBe expected: String? = nil, timeout: TimeInterval = 60) async throws -> String {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             // webView.url changes as soon as navigation starts, while scripts still run in about:blank,
