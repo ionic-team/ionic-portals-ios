@@ -334,9 +334,16 @@ internal struct PortalRouter: Router {
     var basePath: String = ""
 
     func route(for path: String) -> String {
-        // Resolve any "." and ".." segments so a request cannot escape basePath or an asset map's directory
-        let pathUrl = URL(fileURLWithPath: path).standardized
-        let path = pathUrl.path
+        // Resolve any "." and ".." segments so a request cannot escape basePath or an asset map's directory.
+        // Done by hand because URL.standardized keeps ".." segments above the root on iOS 27
+        let path = "/" + path.split(separator: "/").reduce(into: [Substring]()) { segments, segment in
+            switch segment {
+            case ".": break
+            case "..": _ = segments.popLast()
+            default: segments.append(segment)
+            }
+        }.joined(separator: "/")
+        let pathUrl = URL(fileURLWithPath: path)
         // If there's no path extension it also means the path is empty or a SPA route
         if pathUrl.pathExtension.isEmpty {
             return basePath + "/\(portal.index)"
