@@ -25,6 +25,16 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertEqual(title, "Live update")
     }
 
+    func test_init__when_the_live_update_folder_is_missing__it_loads_the_bundle() async throws {
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        var portal = fixture
+        portal.liveUpdateSource = .provider(manager: MockProviderManager(latestAppDirectory: missing))
+        let webView = try makeWebView(for: portal)
+
+        let title = try await waitForTitle(in: webView)
+        XCTAssertEqual(title, "Bundled")
+    }
+
     func test_init__when_the_start_file_is_missing__it_does_not_load_anything() throws {
         let webView = try makeWebView(for: Portal(name: "missing", bundle: .module))
 
@@ -59,6 +69,23 @@ final class PortalUIViewTests: XCTestCase {
         let userAgent = try XCTUnwrap(result as? String)
         XCTAssertTrue(userAgent.hasSuffix(" PortalsTests/1.0"), userAgent)
         XCTAssertFalse(userAgent.contains("  PortalsTests/1.0"), userAgent)
+    }
+
+    func test_init__in_every_setup__it_leaves_application_notifications_to_the_host() throws {
+        // A missing folder and dev mode build their descriptors separately from a normal portal
+        setenv("PORTAL_CONFIG", Data(#"{"appId":"io.ionic.portals.tests"}"#.utf8).base64EncodedString(), 1)
+        let devMode = makeView(for: fixture)
+        unsetenv("PORTAL_CONFIG")
+
+        let views = [
+            "normal": makeView(for: fixture),
+            "missing folder": makeView(for: Portal(name: "missing", bundle: .module)),
+            "dev mode": devMode
+        ]
+
+        for (setup, view) in views {
+            XCTAssertFalse(view.bridge.config.handleApplicationNotifications, setup)
+        }
     }
 
     func test_init__by_default__pinch_zoom_is_handled_by_the_delegation_handler() throws {

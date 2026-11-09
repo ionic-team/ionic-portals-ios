@@ -81,7 +81,7 @@ public class PortalUIView: UIView {
     }
 
     private func initView () {
-        self.liveUpdatePath = portal.latestAppDirectory
+        self.liveUpdatePath = portal.latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
         addPinnedSubview(webView)
     }
 
@@ -178,8 +178,8 @@ public class PortalUIView: UIView {
         #endif
 
         guard let path = liveUpdatePath ?? bundleURL else {
-            // DCG this should throw or something else
-            return InstanceDescriptor()
+            let expectedPath = (portal.bundle.resourceURL ?? portal.bundle.bundleURL).appendingPathComponent(portal.startDir, isDirectory: true)
+            return InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
         }
 
         var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
@@ -190,12 +190,18 @@ public class PortalUIView: UIView {
         }
 
         let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: nil)
-        descriptor.handleApplicationNotifications = false
+        #if DEBUG
+        // Capacitor only enables web debugging in debug builds while reading a config file, which a Capacitor app always has
+        if descriptor.warnings.contains(.missingFile) {
+            descriptor.isWebDebuggable = true
+        }
+        #endif
         return descriptor
     }
 
     private func instanceDescriptor() -> InstanceDescriptor {
         let descriptor = createInstanceDescriptor()
+        descriptor.handleApplicationNotifications = false
         portal.descriptorConfiguration.forEach { $0(descriptor) }
 
         #if DEBUG
