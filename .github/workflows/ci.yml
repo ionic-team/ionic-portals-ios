@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 30
     steps:
       - name: Show Xcode version
@@ -28,7 +28,7 @@ jobs:
             -scheme IonicPortals \
             -destination 'platform=iOS Simulator,name=iPhone 17' | xcbeautify --renderer github-actions
   validate-podspec:
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 30
     steps:
       - name: Show Xcode version
