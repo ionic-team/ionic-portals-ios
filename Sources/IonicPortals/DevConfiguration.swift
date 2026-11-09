@@ -1,19 +1,26 @@
 import Foundation
 
 #if DEBUG
-struct ServerUrl {
-    var variableName: String
-    var url: URL? {
-        ProcessInfo.processInfo.environment[variableName].flatMap(URL.init)
+/// Overrides set through environment variables named after the portal (e.g. `CHECKOUT_SERVER`),
+/// falling back to ones shared by every portal (e.g. `PORTAL_SERVER`)
+struct DevConfiguration {
+    var serverUrl: URL?
+    var capacitorConfigUrl: URL?
+
+    init(portalName: String) {
+        let environment = ProcessInfo.processInfo.environment
+        let prefixes = [portalName.uppercased(), "PORTAL"]
+        serverUrl = prefixes.lazy
+            .compactMap { environment["\($0)_SERVER"].flatMap(URL.init(string:)) }
+            .first
+        capacitorConfigUrl = prefixes.lazy
+            .compactMap { environment["\($0)_CONFIG"].flatMap(Self.writeConfig) }
+            .first
     }
-}
 
-struct ConfigUrl {
-    var variableName: String
-
-    var url: URL? {
-        guard let value = ProcessInfo.processInfo.environment[variableName],
-              let decodedData = Data(base64Encoded: value, options: [.ignoreUnknownCharacters]),
+    /// Capacitor only reads its config from a file, so the base64 value is written to one
+    private static func writeConfig(base64: String) -> URL? {
+        guard let decodedData = Data(base64Encoded: base64, options: [.ignoreUnknownCharacters]),
               let decodedString = String(data: decodedData, encoding: .utf8)
         else { return nil }
 
@@ -29,21 +36,5 @@ struct ConfigUrl {
 
         return targetTempFile
     }
-}
-
-struct DevConfiguration {
-    var server: ServerUrl
-    var capacitorConfig: ConfigUrl
-}
-
-extension DevConfiguration {
-    init(baseName: String) {
-        server = .init(variableName: "\(baseName.uppercased())_SERVER") 
-        capacitorConfig = .init(variableName: "\(baseName.uppercased())_CONFIG")
-    }
-}
-
-extension DevConfiguration {
-    static let `default` = DevConfiguration(baseName: "PORTAL")
 }
 #endif

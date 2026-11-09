@@ -6,16 +6,12 @@ import Capacitor
 /// A UIKit UIView to display ``Portal`` content
 @objc(IONPortalUIView)
 public class PortalUIView: UIView {
-    // MARK: Capacitor
-    private lazy var webView: WKWebView = createWebView(
-        with: configuration,
-        assetHandler: assetHandler,
-        delegationHandler: delegationHandler
-    )
-
-    private lazy var configDescriptor = instanceDescriptor()
-    private lazy var configuration = InstanceConfiguration(with: configDescriptor, isDebug: CapacitorBridge.isDevEnvironment)
-    private lazy var delegationHandler = WebViewDelegationHandler()
+    private let portal: Portal
+    private var liveUpdatePath: URL?
+    private let configuration: InstanceConfiguration
+    private let assetHandler: WebViewAssetHandler
+    private let delegationHandler = WebViewDelegationHandler()
+    private let webView: WKWebView
 
     @objc
     public private(set) lazy var bridge = CapacitorBridge(
@@ -26,29 +22,47 @@ public class PortalUIView: UIView {
         autoRegisterPlugins: false
     )
 
-    private lazy var assetHandler: WebViewAssetHandler = {
-        let handler = WebViewAssetHandler(router: router)
-        handler.setAssetPath(configuration.appLocation.path)
-        handler.setServerUrl(configuration.serverURL)
-        return handler
-    }()
-
-    private lazy var router = PortalRouter(portal: portal)
-    
-
-    #if DEBUG
-    private lazy var devConfiguration = DevConfiguration(baseName: portal.name)
-    #endif
-
-    private let portal: Portal
-    private var liveUpdatePath: URL?
-
     /// Creates an instance of ``PortalUIView``
     /// - Parameter portal: The ``Portal`` to render.
     required public init(portal: Portal) {
         self.portal = portal
+        liveUpdatePath = portal.liveUpdateDirectory
+        let descriptor = portal.instanceDescriptor(liveUpdateDirectory: liveUpdatePath)
+        configuration = InstanceConfiguration(with: descriptor, isDebug: CapacitorBridge.isDevEnvironment)
+        CAPLog.enableLogging = configuration.loggingEnabled
+        CapacitorWebViewSetup.logWarnings(for: descriptor)
+
+        assetHandler = WebViewAssetHandler(router: PortalRouter(index: portal.index, assetMaps: portal.assetMaps))
+        assetHandler.setAssetPath(configuration.appLocation.path)
+        assetHandler.setServerUrl(configuration.serverURL)
+
+        delegationHandler.contentController.addUserScript(WKUserScript(
+            source: portal.initialContextScript,
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        ))
+        webView = CapacitorWebViewSetup.makeWebView(
+            with: configuration,
+            assetHandler: assetHandler,
+            delegationHandler: delegationHandler
+        )
+
         super.init(frame: .zero)
-        setup()
+
+        backgroundColor = webView.scrollView.backgroundColor
+        addSubview(webView)
+
+        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else {
+            CapacitorWebViewSetup.printLoadError(startFile: bridge.config.appStartFileURL)
+            return
+        }
+
+        registerPlugins()
+
+        let url = bridge.config.appStartServerURL
+        CAPLog.print("⚡️  Loading app at \(url.absoluteString)")
+        bridge.webViewDelegationHandler.willLoadWebview(webView)
+        _ = webView.load(URLRequest(url: url))
     }
 
     /// Creates an instance of ``PortalUIView``
@@ -67,30 +81,6 @@ public class PortalUIView: UIView {
         webView.frame = bounds
     }
 
-    private func setup() {
-        // Must run before anything touches `configuration`, which reads `liveUpdatePath`
-        initView()
-        CAPLog.enableLogging = configuration.loggingEnabled
-        logWarnings(for: configDescriptor)
-        
-        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else {
-            printLoadError()
-            return
-        }
-
-        registerPlugins()
-
-        let url = bridge.config.appStartServerURL
-        CAPLog.print("⚡️  Loading app at \(url.absoluteString)")
-        bridge.webViewDelegationHandler.willLoadWebview(webView)
-        _ = webView.load(URLRequest(url: url))
-    }
-
-    private func initView () {
-        self.liveUpdatePath = portal.latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
-        addSubview(webView)
-    }
-
     private func registerPlugins() {
         bridge.registerPluginInstance(PortalsPlugin())
 
@@ -103,186 +93,29 @@ public class PortalUIView: UIView {
             }
         }
     }
-
-    private func createWebView(with configuration: InstanceConfiguration, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) -> WKWebView {
-        // set the cookie policy
-        HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
-        // setup the web view configuration
-        let webViewConfig = _webViewConfiguration(for: configuration)
-        webViewConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
-        webViewConfig.userContentController = delegationHandler.contentController
-        // create the web view and set its properties
-        loadInitialContext(webViewConfig.userContentController)
-        let webView = WKWebView(frame: .zero, configuration: webViewConfig)
-        webView.scrollView.bounces = false
-        webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
-        webView.allowsLinkPreview = configuration.allowLinkPreviews
-        webView.scrollView.isScrollEnabled = configuration.scrollingEnabled
-
-        if let overrideUserAgent = configuration.overridenUserAgentString {
-            webView.customUserAgent = overrideUserAgent
-        }
-
-        if let backgroundColor = configuration.backgroundColor {
-            self.backgroundColor = backgroundColor
-            webView.backgroundColor = backgroundColor
-            webView.scrollView.backgroundColor = backgroundColor
-        } else {
-            // Use the system background colors if background is not set by user
-            self.backgroundColor = UIColor.systemBackground
-            webView.backgroundColor = UIColor.systemBackground
-            webView.scrollView.backgroundColor = UIColor.systemBackground
-        }
-        webView.capacitor.setKeyboardShouldRequireUserInteraction(false)
-
-        // set our delegates
-        webView.uiDelegate = delegationHandler
-        webView.navigationDelegate = delegationHandler
-        if !configuration.zoomingEnabled {
-            webView.scrollView.delegate = delegationHandler
-        }
-        return webView
-    }
-
-    private func _webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
-        let webViewConfiguration = WKWebViewConfiguration()
-        webViewConfiguration.websiteDataStore.httpCookieStore.add(CapacitorWKCookieObserver())
-        webViewConfiguration.allowsInlineMediaPlayback = true
-        webViewConfiguration.suppressesIncrementalRendering = false
-        webViewConfiguration.allowsAirPlayForMediaPlayback = true
-        webViewConfiguration.mediaTypesRequiringUserActionForPlayback = []
-        webViewConfiguration.limitsNavigationsToAppBoundDomains = instanceConfiguration.limitsNavigationsToAppBoundDomains
-        webViewConfiguration.preferences.isElementFullscreenEnabled = true
-
-        if let appendUserAgent = instanceConfiguration.appendedUserAgentString {
-            if let appName = webViewConfiguration.applicationNameForUserAgent {
-                webViewConfiguration.applicationNameForUserAgent = "\(appName) \(appendUserAgent)"
-            } else {
-                webViewConfiguration.applicationNameForUserAgent = appendUserAgent
-            }
-        }
-
-        if let preferredContentMode = instanceConfiguration.preferredContentMode {
-            var mode = WKWebpagePreferences.ContentMode.recommended
-            if preferredContentMode == "mobile" {
-                mode = WKWebpagePreferences.ContentMode.mobile
-            } else if preferredContentMode == "desktop" {
-                mode = WKWebpagePreferences.ContentMode.desktop
-            }
-            webViewConfiguration.defaultWebpagePreferences.preferredContentMode = mode
-        }
-
-        return webViewConfiguration
-    }
-
-    private func createInstanceDescriptor() -> InstanceDescriptor {
-        let bundleURL = portal.bundle.url(forResource: portal.startDir, withExtension: nil)
-
-        #if DEBUG
-        if portal.devModeEnabled, let debugConfigUrl = devConfiguration.capacitorConfig.url ?? DevConfiguration.default.capacitorConfig.url {
-            return InstanceDescriptor(at: Bundle.main.bundleURL, configuration: debugConfigUrl, cordovaConfiguration: nil)
-        }
-        #endif
-
-        guard let path = liveUpdatePath ?? bundleURL else {
-            let expectedPath = (portal.bundle.resourceURL ?? portal.bundle.bundleURL).appendingPathComponent(portal.startDir, isDirectory: true)
-            return InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
-        }
-
-        var capConfigUrl = portal.bundle.url(forResource: "capacitor.config", withExtension: "json", subdirectory: portal.startDir)
-
-        if let updatedCapConfig = liveUpdatePath?.appendingPathComponent("capacitor.config.json"),
-           FileManager.default.fileExists(atPath: updatedCapConfig.path) {
-            capConfigUrl = updatedCapConfig
-        }
-
-        let descriptor = InstanceDescriptor(at: path, configuration: capConfigUrl, cordovaConfiguration: nil)
-        #if DEBUG
-        // Capacitor only enables web debugging in debug builds while reading a config file, which a Capacitor app always has
-        if descriptor.warnings.contains(.missingFile) {
-            descriptor.isWebDebuggable = true
-        }
-        #endif
-        return descriptor
-    }
-
-    private func instanceDescriptor() -> InstanceDescriptor {
-        let descriptor = createInstanceDescriptor()
-        descriptor.handleApplicationNotifications = false
-        portal.descriptorConfiguration.forEach { $0(descriptor) }
-
-        #if DEBUG
-        if portal.devModeEnabled, let serverUrl = devConfiguration.server.url ?? DevConfiguration.default.server.url {
-            descriptor.serverURL = serverUrl.absoluteString
-            // This allows for not having any files on disk during dev
-            if !FileManager.default.fileExists(atPath: descriptor.appLocation.path) {
-                descriptor.appLocation = Bundle.main.bundleURL
-            }
-        }
-        #endif
-
-        return descriptor
-    }
-
-    private func loadInitialContext(_ userContentViewController: WKUserContentController) {
-        let userScript = WKUserScript(
-            source: portal.initialContextScript,
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: true
-        )
-
-        userContentViewController.addUserScript(userScript)
-    }
-
-    private func logWarnings(for descriptor: InstanceDescriptor) {
-        if descriptor.warnings.contains(.missingAppDir) {
-            CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
-        }
-        if descriptor.instanceType == .fixed {
-            if descriptor.warnings.contains(.missingFile) {
-                CAPLog.print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy.")
-            }
-            if descriptor.warnings.contains(.invalidFile) {
-                CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON.")
-            }
-        }
-    }
-    
-    private func printLoadError() {
-        let fullStartPath = bridge.config.appStartFileURL.path
-
-        CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath)")
-        CAPLog.print("⚡️  This file is the root of your web app and must exist before")
-        CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
-        CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
-    }
 }
 
 extension PortalUIView {
     public func setServerBasePath(path: String) {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        guard FileManager.default.fileExists(atPath: url.path) else { return }
-
-        bridge.config = bridge.config.updatingAppLocation(url)
-        bridge.webViewAssetHandler.setAssetPath(url.path)
+        // The bridge also ignores a missing path, but checking here skips the reload as well
+        guard FileManager.default.fileExists(atPath: path) else { return }
+        bridge.setServerBasePath(path)
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             _ = webView.load(URLRequest(url: bridge.config.serverURL))
         }
     }
+
     /// Reloads the underlying `WKWebView`
     @objc public func reload() {
-        if let latestAppPath = portal.latestAppDirectory,
-           liveUpdatePath == nil || liveUpdatePath?.path != latestAppPath.path,
-           FileManager.default.fileExists(atPath: latestAppPath.path) {
+        if let latestAppPath = portal.liveUpdateDirectory, latestAppPath.path != liveUpdatePath?.path {
             liveUpdatePath = latestAppPath
             return setServerBasePath(path: latestAppPath.path)
         }
 
         DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            bridge.webView?.reload()
+            self?.webView.reload()
         }
     }
 }
@@ -293,76 +126,10 @@ extension PortalUIView: CAPBridgeDelegate {
     }
 
     public var bridgedViewController: UIViewController? {
-        // search for the parent view controller
         var object = self.next
         while !(object is UIViewController) && object != nil {
             object = object?.next
         }
         return object as? UIViewController
     }
-}
-
-extension Portal {
-    /// The script that exposes `window.portalInitialContext` to the web application
-    var initialContextScript: String {
-        var context: [String: Any] = ["name": name]
-
-        if initialContext.isNotEmpty {
-            // Dates are valid JSValues but not valid JSON, so they are converted to ISO 8601 strings
-            context["value"] = JSTypes.coerceDictionaryToJSObject(initialContext, formattingDatesAsStrings: true)
-        }
-
-        if assetMaps.isNotEmpty {
-            context["assets"] = assetMaps.reduce(into: [:]) { acc, next in
-                acc[next.name] = next.virtualPath
-            }
-        }
-
-        // JSONSerialization raises an uncatchable exception on invalid input (e.g. NaN), so check first
-        if !JSONSerialization.isValidJSONObject(context) {
-            CAPLog.print("⚡️  WARNING: initialContext for \"\(name)\" is not valid JSON; only the portal name will be provided.")
-            context = ["name": name]
-        }
-
-        let json = (try? JSONSerialization.data(withJSONObject: context))
-            .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-
-        return "window.portalInitialContext = " + json
-    }
-}
-
-internal struct PortalRouter: Router {
-    var portal: Portal
-    var basePath: String = ""
-
-    func route(for path: String) -> String {
-        // Resolve any "." and ".." segments so a request cannot escape basePath or an asset map's directory.
-        // Done by hand because URL.standardized keeps ".." segments above the root on iOS 27
-        let path = "/" + path.split(separator: "/").reduce(into: [Substring]()) { segments, segment in
-            switch segment {
-            case ".": break
-            case "..": _ = segments.popLast()
-            default: segments.append(segment)
-            }
-        }.joined(separator: "/")
-        let pathUrl = URL(fileURLWithPath: path)
-        // If there's no path extension it also means the path is empty or a SPA route
-        if pathUrl.pathExtension.isEmpty {
-            return basePath + "/\(portal.index)"
-        }
-
-        if let assetPath = portal
-            .assetMaps
-            .compactMap({ $0.path(for: path) })
-            .first {
-
-            return assetPath
-        }
-
-        return basePath + path
-    }
-}
-
-extension Collection {
-    var isNotEmpty: Bool { !isEmpty }
 }

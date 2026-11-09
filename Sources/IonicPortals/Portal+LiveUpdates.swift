@@ -42,14 +42,14 @@ extension Portal {
     /// }
     /// ```
     public static func sync(_ portals: [Portal]) -> ParallelLiveUpdateSyncGroup {
-        .init(portals)
+        portals.sync()
     }
 
     /// Synchronizes the external live update provider sources of the provided ``Portal``s in parallel.
     /// - Parameter portals: The ``Portal``s to synchronize with ``Portal/syncProvider()``
     /// - Returns: A ``ParallelLiveUpdateProviderSyncGroup`` of the results of each call to ``Portal/syncProvider()``
     public static func syncProvider(_ portals: [Portal]) -> ParallelLiveUpdateProviderSyncGroup {
-        .init(portals)
+        portals.syncProvider()
     }
 
     /// The directory of the latest synced web application assets for this portal, if present.
@@ -62,6 +62,11 @@ extension Portal {
         case .none:
             return nil
         }
+    }
+
+    /// The latest live update directory, if it is on disk
+    var liveUpdateDirectory: URL? {
+        latestAppDirectory.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
     }
 }
 
@@ -77,13 +82,13 @@ extension Array where Element == Portal {
     /// }
     /// ```
     public func sync() -> ParallelLiveUpdateSyncGroup {
-        .init(self)
+        .init(self) { try await $0.sync() }
     }
 
     /// Synchronizes the external live update provider sources for the elements in the array.
     /// - Returns: A ``ParallelLiveUpdateProviderSyncGroup`` of the results of each call to ``Portal/syncProvider()``
     public func syncProvider() -> ParallelLiveUpdateProviderSyncGroup {
-        .init(self)
+        .init(self) { try await $0.syncProvider() }
     }
 }
 
@@ -94,7 +99,6 @@ public typealias ParallelLiveUpdateSyncGroup = ParallelAsyncSequence<Result<Live
 public typealias ParallelLiveUpdateProviderSyncGroup = ParallelAsyncSequence<Result<(any ProviderSyncResult)?, any Error>>
 
 extension ParallelAsyncSequence {
-    /// Builds the sequence's work list by running `operation` for each portal in parallel.
     init<Success>(
         _ portals: [Portal],
         operation: @escaping (Portal) async throws -> Success
@@ -102,18 +106,6 @@ extension ParallelAsyncSequence {
         work = portals.map { portal in
             { await Result(catching: { try await operation(portal) }) }
         }
-    }
-}
-
-extension ParallelLiveUpdateSyncGroup {
-    init(_ portals: [Portal]) {
-        self.init(portals) { try await $0.sync() }
-    }
-}
-
-extension ParallelLiveUpdateProviderSyncGroup {
-    init(_ portals: [Portal]) {
-        self.init(portals) { try await $0.syncProvider() }
     }
 }
 

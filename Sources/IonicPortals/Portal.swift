@@ -81,11 +81,18 @@ public struct Portal {
         do {
             try manager.add(
                 config,
-                existingCacheUrl: bundle.url(forResource: startDir, withExtension: nil)
+                existingCacheUrl: bundledAppDirectory
             )
         } catch {
             CAPLog.print("⚡️  ERROR: Unable to register live update \"\(config.appId)\" for \"\(name)\": \(error)")
         }
+    }
+}
+
+extension Portal {
+    /// The web application's directory in ``bundle``, if present
+    var bundledAppDirectory: URL? {
+        bundle.url(forResource: startDir, withExtension: nil)
     }
 }
 
@@ -210,6 +217,35 @@ extension Portal {
     ///   - value: The value to write
     public mutating func configure<Value>(_ keyPath: ReferenceWritableKeyPath<InstanceDescriptor, Value>, _ value: Value) {
         descriptorConfiguration.append { $0[keyPath: keyPath] = value }
+    }
+}
+
+extension Portal {
+    /// The script that exposes `window.portalInitialContext` to the web application
+    var initialContextScript: String {
+        var context: [String: Any] = ["name": name]
+
+        if !initialContext.isEmpty {
+            // Dates are valid JSValues but not valid JSON, so they are converted to ISO 8601 strings
+            context["value"] = JSTypes.coerceDictionaryToJSObject(initialContext, formattingDatesAsStrings: true)
+        }
+
+        if !assetMaps.isEmpty {
+            context["assets"] = assetMaps.reduce(into: [:]) { acc, next in
+                acc[next.name] = next.virtualPath
+            }
+        }
+
+        // JSONSerialization raises an uncatchable exception on invalid input (e.g. NaN), so check first
+        if !JSONSerialization.isValidJSONObject(context) {
+            CAPLog.print("⚡️  WARNING: initialContext for \"\(name)\" is not valid JSON; only the portal name will be provided.")
+            context = ["name": name]
+        }
+
+        let json = (try? JSONSerialization.data(withJSONObject: context))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+
+        return "window.portalInitialContext = " + json
     }
 }
 

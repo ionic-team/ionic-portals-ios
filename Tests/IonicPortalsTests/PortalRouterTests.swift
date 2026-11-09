@@ -20,7 +20,7 @@ final class PortalRouterTests: XCTestCase {
     }
 
     private func router(assetMaps: [AssetMap] = []) -> PortalRouter {
-        PortalRouter(portal: Portal(name: "test", assetMaps: assetMaps), basePath: "/base")
+        PortalRouter(index: "index.html", assetMaps: assetMaps, basePath: "/base")
     }
 
     private func imagesAssetMap(virtualPath: String? = nil) throws -> AssetMap {

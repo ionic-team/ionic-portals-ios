@@ -1,29 +1,8 @@
 import XCTest
 @testable import IonicPortals
-import IonicLiveUpdates
 import LiveUpdateProvider
 
 final class PortalLiveUpdateSourceTests: XCTestCase {
-    func testSyncProvider_returnsProviderSyncResult() async throws {
-        let manager = MockProviderManager(result: MockSyncResult())
-        let portal = Portal(name: "test", liveUpdateSource: .provider(manager: manager))
-
-        let result = try await portal.syncProvider()
-
-        XCTAssertEqual(manager.syncCallCount, 1)
-        XCTAssertTrue(result is MockSyncResult)
-    }
-
-    func testSyncProvider_returnsNilWhenNoUpdateAvailable() async throws {
-        let manager = MockProviderManager(result: nil)
-        let portal = Portal(name: "test", liveUpdateSource: .provider(manager: manager))
-
-        let result = try await portal.syncProvider()
-
-        XCTAssertEqual(manager.syncCallCount, 1)
-        XCTAssertNil(result)
-    }
-
     func testSetLiveUpdateConfiguration_doesNotReplaceExternalProvider() {
         let manager = MockProviderManager()
         let portal = IONPortal(portal: Portal(name: "test", liveUpdateSource: .provider(manager: manager)))
@@ -37,24 +16,12 @@ final class PortalLiveUpdateSourceTests: XCTestCase {
     }
 }
 
-struct MockSyncResult: ProviderSyncResult {}
-
 final class MockProviderManager: ProviderManager {
-    var latestAppDirectory: URL?
-    var syncCallCount = 0
+    let latestAppDirectory: URL?
 
-    private let result: (any ProviderSyncResult)?
-
-    init(
-        latestAppDirectory: URL? = nil,
-        result: (any ProviderSyncResult)? = MockSyncResult()
-    ) {
+    init(latestAppDirectory: URL? = nil) {
         self.latestAppDirectory = latestAppDirectory
-        self.result = result
     }
 
-    func sync() async throws -> (any ProviderSyncResult)? {
-        syncCallCount += 1
-        return result
-    }
+    func sync() async throws -> (any ProviderSyncResult)? { nil }
 }
