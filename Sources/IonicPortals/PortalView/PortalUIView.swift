@@ -4,6 +4,18 @@ import UIKit
 import Capacitor
 
 /// A UIKit UIView to display ``Portal`` content
+///
+/// To pass deep links to plugins in a portal, such as `@capacitor/app`'s `appUrlOpen` event, forward
+/// them with `ApplicationDelegateProxy` or with `SceneDelegateProxy`'s `scene(_:openURLContexts:)` and
+/// `scene(_:continue:)`. `SceneDelegateProxy`'s `handle(openURL:)`, `handle(userActivity:)` and
+/// `scene(_:willConnectTo:options:)` hold links until a `CAPBridgeViewController` appears, so in an
+/// app that only shows portals they're never delivered:
+///
+/// ```swift
+/// .onOpenURL { url in
+///     _ = ApplicationDelegateProxy.shared.application(UIApplication.shared, open: url)
+/// }
+/// ```
 @objc(IONPortalUIView)
 public class PortalUIView: UIView {
     private let portal: Portal
