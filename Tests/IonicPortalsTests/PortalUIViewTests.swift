@@ -36,9 +36,13 @@ final class PortalUIViewTests: XCTestCase {
     }
 
     func test_init__when_the_start_file_is_missing__it_does_not_load_anything() throws {
-        let webView = try makeWebView(for: Portal(name: "missing", bundle: .module))
+        let view = makeView(for: Portal(name: "missing", bundle: .module))
+        let webView = try XCTUnwrap(view.bridgedWebView)
+        let expected = try XCTUnwrap(Bundle.module.resourceURL).appendingPathComponent("missing")
 
         XCTAssertNil(webView.url)
+        // Capacitor's default location is the host app's own web app
+        XCTAssertEqual(view.bridge.config.appLocation.standardizedFileURL.path, expected.standardizedFileURL.path)
     }
 
     // A dev server portal often has no folder on disk
