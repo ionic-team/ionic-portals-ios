@@ -41,6 +41,13 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertNil(webView.url)
     }
 
+    // A dev server portal often has no folder on disk
+    func test_init__when_the_start_file_is_missing__it_enables_web_debugging_in_debug_builds() {
+        let view = makeView(for: Portal(name: "missing", bundle: .module))
+
+        XCTAssertTrue(view.bridge.config.isWebDebuggable)
+    }
+
     func test_init__it_provides_the_initial_context_before_the_page_runs() async throws {
         var portal = fixture
         portal.initialContext = ["greeting": "hello"]
