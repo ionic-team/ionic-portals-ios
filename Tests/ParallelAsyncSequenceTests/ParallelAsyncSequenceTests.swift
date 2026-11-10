@@ -39,6 +39,7 @@ final class ParallelAsyncSequenceTests: XCTestCase {
 
     func testParallelAsyncSequence_finishesAndCancelsTasks_whenTopLevelTaskIsCancelled() async throws {
         let clock = TestClock()
+        let cancelled = Counter()
         let sequence = ParallelAsyncSequence(work: [1, 2, 3, 4, 5]
             .map { number in
                 return {
@@ -46,6 +47,7 @@ final class ParallelAsyncSequenceTests: XCTestCase {
                         try await clock.sleep(for: .seconds(number))
                         return number
                     } catch is CancellationError {
+                        await cancelled.increment()
                         return 0
                     } catch {
                         XCTFail("Unexpected error thrown from call to clock.sleep")
@@ -64,6 +66,15 @@ final class ParallelAsyncSequenceTests: XCTestCase {
         let value = await task.value
         // The reduction should have only had a chance to reduce the first two elements before the task was cancelled
         XCTAssertEqual(value, 3)
+
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while await cancelled.value < 3, ContinuousClock.now < deadline {
+            await Task.yield()
+        }
+
+        let cancelledCount = await cancelled.value
+        // The stream ends on cancellation by itself, so only this shows the remaining work was cancelled
+        XCTAssertEqual(cancelledCount, 3)
     }
 
     func testParallelAsyncSequence_continuesRemainingWork_whenIterationEndsEarly() async throws {
