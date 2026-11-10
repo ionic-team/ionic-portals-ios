@@ -68,6 +68,22 @@ final class PortalUIViewTests: XCTestCase {
         XCTAssertEqual(available, true)
     }
 
+    func test_reload__when_the_live_update_folder_appears_after_init__it_loads_the_live_update() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        var portal = fixture
+        portal.liveUpdateSource = .provider(manager: MockProviderManager(latestAppDirectory: directory))
+        let view = makeView(for: portal)
+        let webView = try XCTUnwrap(view.bridgedWebView)
+        _ = try await waitForTitle(in: webView, toBe: "Bundled")
+
+        try FileManager.default.copyItem(at: makeLiveUpdate(title: "Live update"), to: directory)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        view.reload()
+
+        let title = try await waitForTitle(in: webView, toBe: "Live update")
+        XCTAssertEqual(title, "Live update")
+    }
+
     func test_init__when_appendUserAgent_is_set__it_is_appended_after_a_single_space() async throws {
         let webView = try makeWebView(for: fixture.configuring(\.appendedUserAgentString, "PortalsTests/1.0"))
         _ = try await waitForTitle(in: webView)
