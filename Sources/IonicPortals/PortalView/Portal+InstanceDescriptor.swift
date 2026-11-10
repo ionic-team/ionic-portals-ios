@@ -30,17 +30,19 @@ extension Portal {
     }
 
     private func appInstanceDescriptor(liveUpdateDirectory: URL?) -> InstanceDescriptor {
-        guard let appDirectory = liveUpdateDirectory ?? bundledAppDirectory else {
+        let descriptor: InstanceDescriptor
+        if let appDirectory = liveUpdateDirectory ?? bundledAppDirectory {
+            let capConfigUrl = [appDirectory, bundledAppDirectory].lazy
+                .compactMap { $0?.appendingPathComponent("capacitor.config.json") }
+                .first { FileManager.default.fileExists(atPath: $0.path) }
+
+            descriptor = InstanceDescriptor(at: appDirectory, configuration: capConfigUrl, cordovaConfiguration: nil)
+        } else {
             // Without a location Capacitor would load the host app's own web app
             let expectedPath = (bundle.resourceURL ?? bundle.bundleURL).appendingPathComponent(startDir, isDirectory: true)
-            return InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
+            descriptor = InstanceDescriptor(at: expectedPath, configuration: nil, cordovaConfiguration: nil)
         }
 
-        let capConfigUrl = [appDirectory, bundledAppDirectory].lazy
-            .compactMap { $0?.appendingPathComponent("capacitor.config.json") }
-            .first { FileManager.default.fileExists(atPath: $0.path) }
-
-        let descriptor = InstanceDescriptor(at: appDirectory, configuration: capConfigUrl, cordovaConfiguration: nil)
         #if DEBUG
         // Capacitor only enables web debugging in debug builds while reading a config file, which a Capacitor app always has
         if descriptor.warnings.contains(.missingFile) {
