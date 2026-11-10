@@ -36,9 +36,13 @@ final class PortalUIViewTests: XCTestCase {
     }
 
     func test_init__when_the_start_file_is_missing__it_does_not_load_anything() throws {
-        let webView = try makeWebView(for: Portal(name: "missing", bundle: .module))
+        let view = makeView(for: Portal(name: "missing", bundle: .module))
+        let webView = try XCTUnwrap(view.bridgedWebView)
+        let expected = try XCTUnwrap(Bundle.module.resourceURL).appendingPathComponent("missing")
 
         XCTAssertNil(webView.url)
+        // Capacitor's default location is the host app's own web app
+        XCTAssertEqual(view.bridge.config.appLocation.standardizedFileURL.path, expected.standardizedFileURL.path)
     }
 
     // A dev server portal often has no folder on disk
@@ -66,6 +70,22 @@ final class PortalUIViewTests: XCTestCase {
 
         let available = try await webView.evaluateJavaScript("window.Capacitor.isPluginAvailable('Portals')") as? Bool
         XCTAssertEqual(available, true)
+    }
+
+    func test_reload__when_the_live_update_folder_appears_after_init__it_loads_the_live_update() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        var portal = fixture
+        portal.liveUpdateSource = .provider(manager: MockProviderManager(latestAppDirectory: directory))
+        let view = makeView(for: portal)
+        let webView = try XCTUnwrap(view.bridgedWebView)
+        _ = try await waitForTitle(in: webView, toBe: "Bundled")
+
+        try FileManager.default.copyItem(at: makeLiveUpdate(title: "Live update"), to: directory)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        view.reload()
+
+        let title = try await waitForTitle(in: webView, toBe: "Live update")
+        XCTAssertEqual(title, "Live update")
     }
 
     func test_init__when_appendUserAgent_is_set__it_is_appended_after_a_single_space() async throws {
